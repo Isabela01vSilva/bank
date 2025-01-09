@@ -31,7 +31,9 @@ public class Historico {
     @JoinColumn(name = "idCliente")
     private Cliente cliente;
 
+    @Enumerated(EnumType.STRING)
     private TipoOperacao tipo_operacao;
+
     private Double valor;
     private String descricao;
     private Date data_transicao;
