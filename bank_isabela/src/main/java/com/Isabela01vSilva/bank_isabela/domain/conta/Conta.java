@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 
@@ -36,6 +39,7 @@ public class Conta {
     private Double saldo;
     private Date dataCriacao;
 
+
     public void atualizarInformacoes(Conta dados) {
         if (dados.getNumero() != null) {
             this.numero = dados.getNumero();
@@ -57,13 +61,19 @@ public class Conta {
         }
     }
 
-    public void desativar() {
-        statusConta = StatusConta.DESATIVADA;
+    public void atualizarStatusConta(StatusConta statusConta) {
+        if (StatusConta.DESATIVADA.equals(statusConta)){
+            this.statusConta = StatusConta.DESATIVADA;
+        } else {
+            this.statusConta = StatusConta.ATIVADA;
+        }
     }
 
     public void sacar(Double valor) {
         if (valor > this.saldo) {
             throw new IllegalArgumentException("Saldo insuficiente");
+        } else if (valor <= 0) {
+            throw new IllegalArgumentException("O valor deve ser maior que R$0.00");
         }
         this.saldo -= valor;
     }
@@ -73,6 +83,14 @@ public class Conta {
             throw new IllegalArgumentException("O valor deve ser maior que R$0.00");
         }
         this.saldo += valor;
+    }
+
+    public void statusDaConta() {
+        if (StatusConta.DESATIVADA.equals(this.statusConta)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Conta está desativada"
+            );
+        }
     }
 
     public Long getId() {

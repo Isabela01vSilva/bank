@@ -1,5 +1,8 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
+import com.Isabela01vSilva.bank_isabela.controller.request.AlterarStatusContaRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.DepositoRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.SaqueRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.TransferenciaRequest;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.service.ContaService;
@@ -44,18 +47,34 @@ public class ContaController {
         return ResponseEntity.ok(atualizar);
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/status")
     @Transactional
-    public ResponseEntity<Conta> desativarConta(@PathVariable Long id) {
-        Conta conta =  contaService.desativarConta(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Conta> atualizarSttsConta(@RequestBody AlterarStatusContaRequest alterarStatus) {
+        Conta conta = contaService.atualizarSttsConta(alterarStatus);
+        return ResponseEntity.ok(conta);
     }
 
+    //
     @PutMapping("/transferir")
     @Transactional
     public String realizarTransferencia(@RequestBody TransferenciaRequest transferenciaRequest) {
         String mensagem = contaService.realizarTransferencia(transferenciaRequest);
         return mensagem;
     }
+
+    @PutMapping("/depositar")
+    @Transactional
+    public String depositar(@RequestBody DepositoRequest depositoRequest) {
+        String mensagem = contaService.depositar(depositoRequest);
+        return mensagem;
+    }
+
+    @PutMapping("/saque")
+    @Transactional
+    public String saque(@RequestBody SaqueRequest saqueRequest) {
+        String mensagem = contaService.saque(saqueRequest);
+        return mensagem;
+    }
+
 
 }
