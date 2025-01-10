@@ -9,10 +9,10 @@ import lombok.Setter;
 
 import java.util.Date;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "contas")
 @Entity(name = "Conta")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Conta {
 
     @Id
@@ -21,44 +21,58 @@ public class Conta {
     private Long id;
 
     @Column(unique = true)
-    private Integer numero_conta;
+    private String numero;
 
     @Enumerated(EnumType.STRING)
-    private TipoConta tipo_conta;
+    private TipoConta tipoConta;
 
     @Enumerated(EnumType.STRING)
-    private StatusConta status_conta;
+    private StatusConta statusConta;
 
     @OneToOne
-    @JoinColumn(name = "id_cliente")
+    @JoinColumn(name = "idCliente")
     private Cliente cliente;
 
     private Double saldo;
-    private Date data_criacao;
+    private Date dataCriacao;
 
     public void atualizarInformacoes(Conta dados) {
-        if (dados.getNumero_conta() != null) {
-            this.numero_conta = dados.getNumero_conta();
+        if (dados.getNumero() != null) {
+            this.numero = dados.getNumero();
         }
-        if (dados.getTipo_conta() != null) {
-            this.tipo_conta = dados.getTipo_conta();
+        if (dados.getTipoConta() != null) {
+            this.tipoConta = dados.getTipoConta();
         }
         if (dados.getSaldo() != null) {
             this.saldo = dados.getSaldo();
         }
-        if (dados.getStatus_conta() != null) {
-           this.status_conta = dados.getStatus_conta();
+        if (dados.getStatusConta() != null) {
+            this.statusConta = dados.getStatusConta();
         }
-        if (dados.getData_criacao() != null) {
-            this.data_criacao = dados.getData_criacao();
+        if (dados.getDataCriacao() != null) {
+            this.dataCriacao = dados.getDataCriacao();
         }
         if (dados.getCliente() != null) {
             this.cliente = dados.getCliente();
         }
     }
 
-    public void desativar(){
-        status_conta = StatusConta.DESATIVADA;
+    public void desativar() {
+        statusConta = StatusConta.DESATIVADA;
+    }
+
+    public void sacar(Double valor) {
+        if (valor > this.saldo) {
+            throw new IllegalArgumentException("Saldo insuficiente");
+        }
+        this.saldo -= valor;
+    }
+
+    public void depositar(Double valor) {
+        if (valor <= 0) {
+            throw new IllegalArgumentException("O valor deve ser maior que R$0.00");
+        }
+        this.saldo += valor;
     }
 
     public Long getId() {
@@ -69,20 +83,36 @@ public class Conta {
         this.id = id;
     }
 
-    public Integer getNumero_conta() {
-        return numero_conta;
+    public String getNumero() {
+        return numero;
     }
 
-    public void setNumero_conta(Integer numero_conta) {
-        this.numero_conta = numero_conta;
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
-    public TipoConta getTipo_conta() {
-        return tipo_conta;
+    public TipoConta getTipoConta() {
+        return tipoConta;
     }
 
-    public void setTipo_conta(TipoConta tipo_conta) {
-        this.tipo_conta = tipo_conta;
+    public void setTipoConta(TipoConta tipoConta) {
+        this.tipoConta = tipoConta;
+    }
+
+    public StatusConta getStatusConta() {
+        return statusConta;
+    }
+
+    public void setStatusConta(StatusConta statusConta) {
+        this.statusConta = statusConta;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
     public Double getSaldo() {
@@ -93,27 +123,11 @@ public class Conta {
         this.saldo = saldo;
     }
 
-    public StatusConta getStatus_conta() {
-        return status_conta;
+    public Date getDataCriacao() {
+        return dataCriacao;
     }
 
-    public void setStatus_conta(StatusConta status_conta) {
-        this.status_conta = status_conta;
-    }
-
-    public Date getData_criacao() {
-        return data_criacao;
-    }
-
-    public void setData_criacao(Date data_criacao) {
-        this.data_criacao = data_criacao;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    public void setDataCriacao(Date dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 }

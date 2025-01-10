@@ -1,9 +1,13 @@
 package com.Isabela01vSilva.bank_isabela.domain.cliente;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Table(name = "clientes")
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Cliente {
 
     @Id

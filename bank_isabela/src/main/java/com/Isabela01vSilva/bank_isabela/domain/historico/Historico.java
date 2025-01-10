@@ -30,11 +30,11 @@ public class Historico {
     private Cliente cliente;
 
     @Enumerated(EnumType.STRING)
-    private TipoOperacao tipo_operacao;
+    private TipoOperacao tipoOperacao;
 
     private Double valor;
     private String descricao;
-    private Date data_transicao;
+    private Date dataTransicao;
 
     public Long getId() {
         return id;
@@ -60,12 +60,12 @@ public class Historico {
         this.cliente = cliente;
     }
 
-    public TipoOperacao getTipo_operacao() {
-        return tipo_operacao;
+    public TipoOperacao getTipoOperacao() {
+        return tipoOperacao;
     }
 
-    public void setTipo_operacao(TipoOperacao tipo_operacao) {
-        this.tipo_operacao = tipo_operacao;
+    public void setTipoOperacao(TipoOperacao tipoOperacao) {
+        this.tipoOperacao = tipoOperacao;
     }
 
     public Double getValor() {
@@ -84,11 +84,11 @@ public class Historico {
         this.descricao = descricao;
     }
 
-    public Date getData_transicao() {
-        return data_transicao;
+    public Date getDataTransicao() {
+        return dataTransicao;
     }
 
-    public void setData_transicao(Date data_transicao) {
-        this.data_transicao = data_transicao;
+    public void setDataTransicao(Date dataTransicao) {
+        this.dataTransicao = dataTransicao;
     }
 }

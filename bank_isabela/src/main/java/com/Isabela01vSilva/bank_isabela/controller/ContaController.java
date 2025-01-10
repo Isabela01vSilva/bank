@@ -1,5 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
+import com.Isabela01vSilva.bank_isabela.controller.request.TransferenciaRequest;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.service.ContaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,13 @@ public class ContaController {
     public ResponseEntity<Conta> desativarConta(@PathVariable Long id) {
         Conta conta =  contaService.desativarConta(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/transferir")
+    @Transactional
+    public String realizarTransferencia(@RequestBody TransferenciaRequest transferenciaRequest) {
+        String mensagem = contaService.realizarTransferencia(transferenciaRequest);
+        return mensagem;
     }
 
 }

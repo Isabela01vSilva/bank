@@ -1,5 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
+import com.Isabela01vSilva.bank_isabela.controller.request.TransferenciaRequest;
 import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
 import com.Isabela01vSilva.bank_isabela.domain.cliente.ClienteRepository;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
@@ -43,12 +44,28 @@ public class ContaService {
         return contaRepository.save(conta);
     }
 
-    public Conta desativarConta(Long id){
+    public Conta desativarConta(Long id) {
         Conta conta = contaRepository.getReferenceById(id);
         conta.desativar();
         return contaRepository.save(conta);
     }
 
     //
+    public String realizarTransferencia(TransferenciaRequest transferenciaRequest) {
+
+        Conta contaOrigem = contaRepository.findByNumero(transferenciaRequest.numeroContaOrigem())
+                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
+
+        Conta contaDestino = contaRepository.findByNumero(transferenciaRequest.numeroContaDestino())
+                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
+
+        contaOrigem.sacar(transferenciaRequest.valor());
+        contaDestino.depositar(transferenciaRequest.valor());
+
+        contaRepository.save(contaOrigem);
+        contaRepository.save(contaDestino);
+
+        return "Transferência realizada com sucesso";
+    }
 
 }
