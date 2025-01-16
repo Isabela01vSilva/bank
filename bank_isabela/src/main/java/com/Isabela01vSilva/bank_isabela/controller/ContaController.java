@@ -5,6 +5,7 @@ import com.Isabela01vSilva.bank_isabela.controller.request.DepositoRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.SaqueRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.TransferenciaRequest;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
+import com.Isabela01vSilva.bank_isabela.domain.conta.StatusConta;
 import com.Isabela01vSilva.bank_isabela.service.ContaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -76,5 +77,14 @@ public class ContaController {
         return mensagem;
     }
 
+    @GetMapping("/{id}/saldo")
+    public String saldo(@PathVariable Long id) {
+        String mensagem = contaService.consultaSaldo(id);
+        return mensagem;
+    }
 
+    @GetMapping("/{id}/stts")
+    public List<StatusConta> exibir(@PathVariable Long id){
+        return contaService.exibirSttsConta(id);
+    }
 }

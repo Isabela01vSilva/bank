@@ -1,13 +1,12 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.AlterarStatusContaRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.DepositoRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.SaqueRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.TransferenciaRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.*;
 import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
 import com.Isabela01vSilva.bank_isabela.domain.cliente.ClienteRepository;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.domain.conta.ContaRepository;
+import com.Isabela01vSilva.bank_isabela.domain.conta.StatusConta;
+import com.Isabela01vSilva.bank_isabela.domain.historico.TipoOperacao;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +22,9 @@ public class ContaService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private HistoricoService historicoService;
+
     //CRUD
     public Conta cadastrar(Conta dados) {
         Cliente cliente = clienteRepository.findById(dados.getCliente().getId())
@@ -33,6 +35,7 @@ public class ContaService {
 
     public List<Conta> exibirTodasAsContas() {
         return contaRepository.findAll();
+
     }
 
     public Conta exibirContaPorId(Long id) {
@@ -50,6 +53,15 @@ public class ContaService {
     public Conta atualizarSttsConta(AlterarStatusContaRequest alterarStatus) {
         Conta conta = contaRepository.getReferenceById(alterarStatus.id());
         conta.atualizarStatusConta(alterarStatus.statusConta());
+
+        historicoService.cadastrar(new CadastroHistoricoRequest(
+                conta,
+                conta.getCliente(),
+                TipoOperacao.ATUALIZACAO_STTS_CONTA,
+                "Atualizando stts conta para " + alterarStatus.statusConta(),
+                null
+        ));
+
         return contaRepository.save(conta);
     }
 
@@ -69,6 +81,26 @@ public class ContaService {
         contaRepository.save(contaOrigem);
         contaRepository.save(contaDestino);
 
+        historicoService.cadastrar(
+                new CadastroHistoricoRequest(
+                        contaOrigem,
+                        contaOrigem.getCliente(),
+                        TipoOperacao.PIX,
+                        "Pix enviado para a conta: " + transferenciaRequest.numeroContaDestino(),
+                        transferenciaRequest.valor()
+                )
+        );
+
+        historicoService.cadastrar(
+                new CadastroHistoricoRequest(
+                        contaDestino,
+                        contaDestino.getCliente(),
+                        TipoOperacao.PIX,
+                        "Pix recebido da conta: " + transferenciaRequest.numeroContaOrigem(),
+                        transferenciaRequest.valor()
+                )
+        );
+
         return "Transferência realizada com sucesso";
     }
 
@@ -78,6 +110,16 @@ public class ContaService {
 
         conta.statusDaConta();
         conta.depositar(deposito.valor());
+
+        historicoService.cadastrar(
+                new CadastroHistoricoRequest(
+                        conta,
+                        conta.getCliente(),
+                        TipoOperacao.DEPOSITO,
+                        "Operação de deposito realizada",
+                        deposito.valor()
+                )
+        );
 
         return "Valor depositado: R$" + deposito.valor();
     }
@@ -89,6 +131,30 @@ public class ContaService {
         conta.statusDaConta();
         conta.sacar(saque.valor());
 
+        historicoService.cadastrar(
+                new CadastroHistoricoRequest(
+                        conta,
+                        conta.getCliente(),
+                        TipoOperacao.SAQUE,
+                        "Operação de saque realizada",
+                        saque.valor()
+                )
+        );
+
         return "Valor sacado: R$" + saque.valor();
+    }
+
+    public String consultaSaldo(Long id) {
+        Conta conta = contaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
+
+        return "Saldo R$" + conta.getSaldo() + " da conta:" + conta.getNumero();
+    }
+
+    public List<StatusConta> exibirSttsConta(Long id){
+        Conta conta = contaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
+
+        return List.of(conta.getStatusConta());
     }
 }

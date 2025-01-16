@@ -4,11 +4,9 @@ import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,7 +32,7 @@ public class Historico {
 
     private Double valor;
     private String descricao;
-    private Date dataTransicao;
+    private LocalDate dataTransicao;
 
     public Long getId() {
         return id;
@@ -84,11 +82,11 @@ public class Historico {
         this.descricao = descricao;
     }
 
-    public Date getDataTransicao() {
+    public LocalDate getDataTransicao() {
         return dataTransicao;
     }
 
-    public void setDataTransicao(Date dataTransicao) {
+    public void setDataTransicao(LocalDate dataTransicao) {
         this.dataTransicao = dataTransicao;
     }
 }

@@ -3,14 +3,11 @@ package com.Isabela01vSilva.bank_isabela.domain.conta;
 import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Table(name = "contas")
 @Entity(name = "Conta")
@@ -37,7 +34,7 @@ public class Conta {
     private Cliente cliente;
 
     private Double saldo;
-    private Date dataCriacao;
+    private LocalDate dataCriacao;
 
 
     public void atualizarInformacoes(Conta dados) {
@@ -62,8 +59,8 @@ public class Conta {
     }
 
     public void atualizarStatusConta(StatusConta statusConta) {
-        if (StatusConta.DESATIVADA.equals(statusConta)){
-            this.statusConta = StatusConta.DESATIVADA;
+        if (StatusConta.ENCERRADA.equals(statusConta)){
+            this.statusConta = StatusConta.ENCERRADA;
         } else {
             this.statusConta = StatusConta.ATIVADA;
         }
@@ -86,7 +83,7 @@ public class Conta {
     }
 
     public void statusDaConta() {
-        if (StatusConta.DESATIVADA.equals(this.statusConta)) {
+        if (StatusConta.ENCERRADA.equals(this.statusConta)) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Conta está desativada"
             );
@@ -141,11 +138,11 @@ public class Conta {
         this.saldo = saldo;
     }
 
-    public Date getDataCriacao() {
+    public LocalDate getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(Date dataCriacao) {
+    public void setDataCriacao(LocalDate dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 }
