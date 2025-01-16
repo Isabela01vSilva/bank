@@ -2,18 +2,17 @@ package com.Isabela01vSilva.bank_isabela.service;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.CadastroHistoricoRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.HistoricoResponse;
-import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
+import com.Isabela01vSilva.bank_isabela.controller.response.HistoricoSttsContaResponse;
 import com.Isabela01vSilva.bank_isabela.domain.conta.ContaRepository;
-import com.Isabela01vSilva.bank_isabela.domain.conta.StatusConta;
 import com.Isabela01vSilva.bank_isabela.domain.historico.Historico;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoricoRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.Isabela01vSilva.bank_isabela.domain.historico.TipoOperacao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Stream;
 
 @Service
 public class HistoricoService {
@@ -54,5 +53,16 @@ public class HistoricoService {
         )).toList();
     }
 
+    public List<HistoricoSttsContaResponse> exibirHistoricoStts(Long id) {
+        List<Historico> historico = historicoRepository.findByContaId(id);
+
+        return historico.stream()
+                .filter(historicos -> historicos.getTipoOperacao().equals(TipoOperacao.ATUALIZACAO_STTS_CONTA))
+                .map(historicos -> new HistoricoSttsContaResponse(
+                        historicos.getId(),
+                        historicos.getTipoOperacao(),
+                        historicos.getDescricao()
+                )).toList();
+    }
 
 }

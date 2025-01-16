@@ -1,6 +1,7 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
 import com.Isabela01vSilva.bank_isabela.controller.response.HistoricoResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.HistoricoSttsContaResponse;
 import com.Isabela01vSilva.bank_isabela.domain.historico.Historico;
 import com.Isabela01vSilva.bank_isabela.service.HistoricoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,12 @@ public class HistoricoController {
     @GetMapping("/{id}/conta")
     public ResponseEntity<List<HistoricoResponse>> exibirHistoricoPorConta(@PathVariable Long id){
         List<HistoricoResponse> historico = historicoService.exibirHistoricoPorConta(id);
+        return ResponseEntity.ok(historico);
+    }
+
+    @GetMapping("/{id}/stts")
+    public ResponseEntity<List<HistoricoSttsContaResponse>> exibirHistoricoSttsConta(@PathVariable Long id){
+        List<HistoricoSttsContaResponse> historico = historicoService.exibirHistoricoStts(id);
         return ResponseEntity.ok(historico);
     }
 
