@@ -1,5 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
+import com.Isabela01vSilva.bank_isabela.controller.request.HistoricoEntreDatasResquest;
 import com.Isabela01vSilva.bank_isabela.controller.response.HistoricoResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.HistoricoSttsContaResponse;
 import com.Isabela01vSilva.bank_isabela.domain.historico.Historico;
@@ -18,26 +19,48 @@ public class HistoricoController {
     private HistoricoService historicoService;
 
     @GetMapping
-    public ResponseEntity<List<Historico>> listarHistoricos(){
-        List<Historico> listar =  historicoService.exibirTodosHistoricos();
+    public ResponseEntity<List<Historico>> listarHistoricos() {
+        List<Historico> listar = historicoService.exibirTodosHistoricos();
         return ResponseEntity.ok(listar);
     }
 
     @GetMapping("/{id}/cliente")
-    public ResponseEntity<List<HistoricoResponse>> exibirHistoricoPorCliente(@PathVariable Long id){
+    public ResponseEntity<List<HistoricoResponse>> exibirHistoricoPorCliente(@PathVariable Long id) {
         List<HistoricoResponse> historico = historicoService.exibirHistoricoPorCliente(id);
         return ResponseEntity.ok(historico);
     }
 
     @GetMapping("/{id}/conta")
-    public ResponseEntity<List<HistoricoResponse>> exibirHistoricoPorConta(@PathVariable Long id){
+    public ResponseEntity<List<HistoricoResponse>> exibirHistoricoPorConta(@PathVariable Long id) {
         List<HistoricoResponse> historico = historicoService.exibirHistoricoPorConta(id);
         return ResponseEntity.ok(historico);
     }
 
     @GetMapping("/{id}/stts")
-    public ResponseEntity<List<HistoricoSttsContaResponse>> exibirHistoricoSttsConta(@PathVariable Long id){
+    public ResponseEntity<List<HistoricoSttsContaResponse>> exibirHistoricoSttsConta(@PathVariable Long id) {
         List<HistoricoSttsContaResponse> historico = historicoService.exibirHistoricoStts(id);
+        return ResponseEntity.ok(historico);
+    }
+
+    @GetMapping("/entreDatas")
+    public ResponseEntity<List<HistoricoResponse>> exibirHistoricoEntreDatas(@RequestBody HistoricoEntreDatasResquest datas) {
+        List<HistoricoResponse> historico = historicoService.exibirHistoricoEntreDatas(datas);
+
+        if (historico.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(historico);
+    }
+
+    @GetMapping("/extrato")
+    public ResponseEntity<List<HistoricoResponse>> exibirExtrato(@RequestBody HistoricoEntreDatasResquest datas) {
+        List<HistoricoResponse> historico = historicoService.exibirExtrato(datas);
+
+        if (historico.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
         return ResponseEntity.ok(historico);
     }
 

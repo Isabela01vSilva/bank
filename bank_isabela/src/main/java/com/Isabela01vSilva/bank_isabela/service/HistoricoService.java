@@ -1,9 +1,9 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.CadastroHistoricoRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.HistoricoEntreDatasResquest;
 import com.Isabela01vSilva.bank_isabela.controller.response.HistoricoResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.HistoricoSttsContaResponse;
-import com.Isabela01vSilva.bank_isabela.domain.conta.ContaRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.Historico;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoricoRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.TipoOperacao;
@@ -12,16 +12,12 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 public class HistoricoService {
 
     @Autowired
     private HistoricoRepository historicoRepository;
-
-    @Autowired
-    private ContaRepository contaRepository;
 
     public Historico cadastrar(CadastroHistoricoRequest dados) {
         Historico historico = new Historico();
@@ -42,14 +38,14 @@ public class HistoricoService {
     public List<HistoricoResponse> exibirHistoricoPorCliente(Long id) {
         List<Historico> historico = historicoRepository.findByClienteId(id);
         return historico.stream().map(historico1 -> new HistoricoResponse(
-                historico1.getId(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransicao()
+                historico1.getId(), historico1.getCliente().getNome(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransicao()
         )).toList();
     }
 
     public List<HistoricoResponse> exibirHistoricoPorConta(Long id) {
         List<Historico> historico = historicoRepository.findByContaId(id);
         return historico.stream().map(historico1 -> new HistoricoResponse(
-                historico1.getId(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransicao()
+                historico1.getId(), historico1.getCliente().getNome(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransicao()
         )).toList();
     }
 
@@ -64,5 +60,58 @@ public class HistoricoService {
                         historicos.getDescricao()
                 )).toList();
     }
+
+    public List<HistoricoResponse> exibirHistoricoEntreDatas(HistoricoEntreDatasResquest datasResquest) {
+
+        List<Historico> historicos = historicoRepository.findByContaIdAndDataTransicaoBetween(datasResquest.id(), datasResquest.dataInicio(), datasResquest.dataFim());
+
+        return historicos.stream()
+                .map(historico -> new HistoricoResponse(
+                        historico.getId(),
+                        historico.getCliente().getNome(),
+                        historico.getValor(),
+                        historico.getDescricao(),
+                        historico.getDataTransicao()
+                )).toList();
+    }
+
+    public List<HistoricoResponse> exibirExtrato(HistoricoEntreDatasResquest datasResquest) {
+
+        List<Historico> historico = historicoRepository.findByContaIdAndDataTransicaoBetween(datasResquest.id(), datasResquest.dataInicio(), datasResquest.dataFim());
+
+        return historico.stream()
+                .filter(historicos -> !historicos.getTipoOperacao().equals(TipoOperacao.ATUALIZACAO_STTS_CONTA))
+                .map(historicos -> new HistoricoResponse(
+                        historicos.getId(),
+                        historicos.getCliente().getNome(),
+                        historicos.getValor(),
+                        historicos.getDescricao(),
+                        historicos.getDataTransicao()
+                )).toList();
+    }
+
+   /* public List<HistoricoResponse> calculoGastosPorPeriodo(HistoricoEntreDatasResquest datasResquest) {
+
+        List<Historico> historico = historicoRepository.findByContaIdAndDataTransicaoBetween(datasResquest.id(), datasResquest.dataInicio(), datasResquest.dataFim());
+
+        return historico.stream()
+                .filter(historicos -> historicos.getTipoOperacao().equals(TipoOperacao.SAQUE))
+                .map(historicos -> new HistoricoResponse(
+                        historicos.getId(),
+                        historicos.getCliente().getNome(),
+                        historicos.getValor(),
+                        historicos.getDescricao(),
+                        historicos.getDataTransicao()
+                )).toList();
+
+        *//*
+    precisar do
+    -> id da conta
+    -> data inicial e data final
+    preciso somar todos os saques realizados e exibir o total gasto do periodo tal a te tal periodo
+     *//*
+    }*/
+
+
 
 }
