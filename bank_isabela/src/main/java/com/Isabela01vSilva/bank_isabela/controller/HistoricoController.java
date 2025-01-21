@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -62,6 +63,17 @@ public class HistoricoController {
         }
 
         return ResponseEntity.ok(historico);
+    }
+
+    @GetMapping("/gastos")
+    public ResponseEntity<List<String>> gastos(@RequestBody HistoricoEntreDatasResquest datas) {
+        String totalGastos = historicoService.calculoGastosPorPeriodo(datas);
+
+        if (totalGastos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(Collections.singletonList(totalGastos));
     }
 
 }

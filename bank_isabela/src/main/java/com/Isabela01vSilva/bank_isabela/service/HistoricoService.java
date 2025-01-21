@@ -90,28 +90,24 @@ public class HistoricoService {
                 )).toList();
     }
 
-   /* public List<HistoricoResponse> calculoGastosPorPeriodo(HistoricoEntreDatasResquest datasResquest) {
+    public String calculoGastosPorPeriodo(HistoricoEntreDatasResquest gastosRequest) {
+        List<Historico> historico = historicoRepository.findByContaIdAndDataTransicaoBetween(
+                gastosRequest.id(),
+                gastosRequest.dataInicio(),
+                gastosRequest.dataFim()
+        );
 
-        List<Historico> historico = historicoRepository.findByContaIdAndDataTransicaoBetween(datasResquest.id(), datasResquest.dataInicio(), datasResquest.dataFim());
+        List<Double> numeros = historico.stream()
+                .filter(h -> h.getTipoOperacao().equals(TipoOperacao.SAQUE) || h.getTipoOperacao().equals(TipoOperacao.PIX))
+                .map(Historico::getValor)
+                .toList();
 
-        return historico.stream()
-                .filter(historicos -> historicos.getTipoOperacao().equals(TipoOperacao.SAQUE))
-                .map(historicos -> new HistoricoResponse(
-                        historicos.getId(),
-                        historicos.getCliente().getNome(),
-                        historicos.getValor(),
-                        historicos.getDescricao(),
-                        historicos.getDataTransicao()
-                )).toList();
+        Double calculado = numeros.stream().reduce(0.0, Double::sum);
 
-        *//*
-    precisar do
-    -> id da conta
-    -> data inicial e data final
-    preciso somar todos os saques realizados e exibir o total gasto do periodo tal a te tal periodo
-     *//*
-    }*/
-
-
-
+        return String.format("Total de gastos: R$ %.2f da conta de id: %d no período de %s até %s",
+                calculado,
+                gastosRequest.id(),
+                gastosRequest.dataInicio(),
+                gastosRequest.dataFim());
+    }
 }
