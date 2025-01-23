@@ -2,10 +2,10 @@ package com.Isabela01vSilva.bank_isabela.controller;
 
 import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
 import com.Isabela01vSilva.bank_isabela.service.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,8 +18,7 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping
-    @Transactional
-    public ResponseEntity<Cliente> cadastrarCliente(@RequestBody Cliente dados) {
+    public ResponseEntity<Cliente> cadastrarCliente(@Valid @RequestBody Cliente dados) {
         Cliente novoCliente = clienteService.cadastrar(dados);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoCliente);
     }
@@ -37,8 +36,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    @Transactional
-    public ResponseEntity<Cliente> atualizarCliente(@PathVariable Long id, @RequestBody Cliente dados) {
+    public ResponseEntity<Cliente> atualizarCliente(@Valid @PathVariable Long id, @RequestBody Cliente dados) {
         Cliente atualizar = clienteService.atualizarCliente(id, dados);
         return ResponseEntity.ok(atualizar);
     }

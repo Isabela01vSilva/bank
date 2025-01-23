@@ -5,6 +5,7 @@ import com.Isabela01vSilva.bank_isabela.domain.cliente.ClienteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Transactional
     public Cliente cadastrar(Cliente dados) {
         return clienteRepository.save(dados);
     }
@@ -27,6 +29,7 @@ public class ClienteService {
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
     }
 
+    @Transactional
     public Cliente atualizarCliente(Long id, Cliente dados) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
