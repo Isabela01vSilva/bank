@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Este projeto é uma API REST para gerenciamento de clientes em um banco. Ele permite cadastrar, listar, buscar, atualizar e excluir clientes do sistema.
+Este projeto é uma API REST para o gerenciamento de clientes, contas bancárias e históricos de transações. Ele permite cadastrar, listar, buscar, atualizar e excluir clientes e contas, além de realizar operações bancárias como depósitos, saques, transferências e consulta de saldo.
 
 ## Tecnologias Utilizadas
 
