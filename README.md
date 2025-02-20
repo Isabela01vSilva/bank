@@ -18,9 +18,12 @@ Este projeto é uma API REST para o gerenciamento de clientes, contas bancárias
 
 Clone o repositório:
 git clone https://github.com/seu-usuario/bank-isabela.git
+
 Acesse o diretório do projeto:
 cd bank-isabela
+
 Configure o banco de dados no application.properties ou application.yml
+
 Execute o projeto com Maven:
 mvn spring-boot:run
 
