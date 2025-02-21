@@ -16,8 +16,7 @@ Este projeto é uma API REST para o gerenciamento de clientes, contas bancárias
 
 ## Como Executar o Projeto
 
-Clone o repositório:
-git clone https://github.com/seu-usuario/bank-isabela.git
+Clone o repositório
 
 Acesse o diretório do projeto:
 cd bank-isabela
@@ -29,5 +28,5 @@ mvn spring-boot:run
 
 ## Autor
 
-Isabela Silva - [LinkedIn](https://www.linkedin.com/in/isabela-silva-6570271a0/)
+Isabela Silva
 
