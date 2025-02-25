@@ -58,6 +58,15 @@ jobs:
           # Registra a nova definição da task
           aws ecs register-task-definition --cli-input-json file://final-task-def.json
 
+      - name: Verificar status do Serviço ECS
+        run: |
+          SERVICE_STATUS=$(aws ecs describe-services --cluster ${{ secrets.ECS_CLUSTER }} --services ${{ secrets.ECS_SERVICE }} --query "services[0].status" --output text)
+          
+          if [ "$SERVICE_STATUS" != "ACTIVE" ]; then
+            echo "O serviço ECS não está ativo. Status atual: $SERVICE_STATUS"
+            exit 1
+          fi
+
       - name: Atualizar o Serviço ECS
         run: |
           aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER }} --service ${{ secrets.ECS_SERVICE }} --force-new-deployment
