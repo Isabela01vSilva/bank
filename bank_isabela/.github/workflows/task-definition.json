@@ -1,0 +1,81 @@
+{
+  "taskDefinitionArn": "arn:aws:ecs:us-east-1:277707110624:task-definition/TaskSubirSpring:2",
+  "containerDefinitions": [
+    {
+      "name": "containerBank",
+      "image": "277707110624.dkr.ecr.us-east-1.amazonaws.com/repositorios/bank:latest",
+      "cpu": 0,
+      "portMappings": [
+        {
+          "name": "containerbank-8080-tcp",
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "SPRING_DATASOURCE_USERNAME",
+          "value": "admin"
+        },
+        {
+          "name": "SPRING_DATASOURCE_PASSWORD",
+          "value": "vqhi6364"
+        },
+        {
+          "name": "SPRING_DATASOURCE_URL",
+          "value": "dbc:mysql://bank.chsueuokwgbc.us-east-1.rds.amazonaws.com/bank"
+        },
+        {
+          "name": "SPRING_JPA_HIBERNATE_DDL_AUTO",
+          "value": "update"
+        },
+        {
+          "name": "SPRING_PROFILES_ACTIVE",
+          "value": "docker"
+        }
+      ],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "ulimits": [],
+      "systemControls": []
+    }
+  ],
+  "family": "TaskSubirSpring",
+  "executionRoleArn": "arn:aws:iam::277707110624:role/ecsTaskExecutionRole",
+  "networkMode": "host",
+  "revision": 2,
+  "volumes": [],
+  "status": "ACTIVE",
+  "requiresAttributes": [
+    {
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    },
+    {
+      "name": "ecs.capability.execution-role-ecr-pull"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+    }
+  ],
+  "placementConstraints": [],
+  "compatibilities": [
+    "EC2"
+  ],
+  "requiresCompatibilities": [
+    "EC2"
+  ],
+  "cpu": "1024",
+  "memory": "3072",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "registeredAt": "2025-02-25T21:05:09.356Z",
+  "registeredBy": "arn:aws:iam::277707110624:root",
+  "enableFaultInjection": false,
+  "tags": []
+}

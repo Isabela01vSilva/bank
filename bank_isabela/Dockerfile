@@ -1,5 +1,5 @@
 
-FROM amazoncorretto:21-alpine as builder
+FROM amazoncorretto:21 as builder
 
 WORKDIR /app
 
