@@ -41,16 +41,22 @@ jobs:
       - name: Construir e enviar a imagem para o Amazon ECR
         run: |
           IMAGE_TAG=$(date +%s)
-          docker build -t ${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG .
+          docker build --build-arg JAR_FILE=target/*.jar -t ${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG .
           docker tag ${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Atualizar Task Definition
         run: |
+          # Baixa a definição atual da task e remove os campos inválidos
           aws ecs describe-task-definition --task-definition ${{ secrets.ECS_TASK_DEFINITION }} --query taskDefinition > task-def.json
-          jq '.containerDefinitions[0].image = "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:'"${{ env.IMAGE_TAG }}"'"' task-def.json > new-task-def.json
-          aws ecs register-task-definition --cli-input-json file://new-task-def.json
+          jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' task-def.json > clean-task-def.json
+
+          # Atualiza a imagem no JSON
+          jq '.containerDefinitions[0].image = "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"' clean-task-def.json > final-task-def.json
+
+          # Registra a nova definição da task
+          aws ecs register-task-definition --cli-input-json file://final-task-def.json
 
       - name: Atualizar o Serviço ECS
         run: |
