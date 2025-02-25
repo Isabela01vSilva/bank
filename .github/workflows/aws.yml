@@ -1,45 +1,57 @@
 name: Deploy para AWS ECS
 
 on:
-    push:
-        branches:
-            - main  # Ou a branch que você usa para produção
+  push:
+    branches:
+      - main  # Ou a branch usada para produção
 
 jobs:
-    deploy:
-        name: Build, Push e Deploy no ECS
-        runs-on: ubuntu-latest
+  deploy:
+    name: Build, Push e Deploy no ECS
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout do código
-              uses: actions/checkout@v3
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
 
-            - name: Configurar credenciais AWS
-              uses: aws-actions/configure-aws-credentials@v2
-              with:
-                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  aws-region: ${{ secrets.AWS_REGION }}
+      - name: Configurar JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-            - name: Autenticar no Amazon ECR
-              id: login-ecr
-              run: |
-                  aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+      - name: Construir o projeto com Maven
+        run: mvn clean package
 
-            - name: Construir e enviar a imagem para o Amazon ECR
-              run: |
-                  IMAGE_TAG=$(date +%s)
-                  docker build -t ${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG .
-                  docker tag ${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
-                  docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
-                  echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+      - name: Verificar arquivos gerados
+        run: ls -l target/
 
-            - name: Atualizar Task Definition
-              run: |
-                  aws ecs describe-task-definition --task-definition ${{ secrets.ECS_TASK_DEFINITION }} --query taskDefinition > task-def.json
-                  sed -i "s|<IMAGE>|${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}|g" task-def.json
-                  aws ecs register-task-definition --cli-input-json file://task-def.json
+      - name: Configurar credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-            - name: Atualizar o Serviço ECS
-              run: |
-                  aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER }} --service ${{ secrets.ECS_SERVICE }} --force-new-deployment
+      - name: Autenticar no Amazon ECR
+        id: login-ecr
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+      - name: Construir e enviar a imagem para o Amazon ECR
+        run: |
+          IMAGE_TAG=$(date +%s)
+          docker build -t ${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG .
+          docker tag ${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Atualizar Task Definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ secrets.ECS_TASK_DEFINITION }} --query taskDefinition > task-def.json
+          jq '.containerDefinitions[0].image = "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:'"${{ env.IMAGE_TAG }}"'"' task-def.json > new-task-def.json
+          aws ecs register-task-definition --cli-input-json file://new-task-def.json
+
+      - name: Atualizar o Serviço ECS
+        run: |
+          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER }} --service ${{ secrets.ECS_SERVICE }} --force-new-deployment
