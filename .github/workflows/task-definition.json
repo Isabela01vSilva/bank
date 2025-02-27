@@ -1,5 +1,5 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:us-east-1:277707110624:task-definition/TaskSubirSpring:7",
+  "taskDefinitionArn": "arn:aws:ecs:us-east-1:277707110624:task-definition/TaskSubirSpring:13",
   "containerDefinitions": [
     {
       "name": "containerBank",
@@ -59,7 +59,7 @@
   "family": "TaskSubirSpring",
   "executionRoleArn": "arn:aws:iam::277707110624:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
-  "revision": 7,
+  "revision": 13,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
@@ -106,7 +106,7 @@
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
   },
-  "registeredAt": "2025-02-27T20:08:58.086Z",
+  "registeredAt": "2025-02-27T20:58:27.432Z",
   "registeredBy": "arn:aws:iam::277707110624:root",
   "enableFaultInjection": false,
   "tags": []
