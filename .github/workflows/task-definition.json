@@ -26,7 +26,7 @@
         },
         {
           "name": "SPRING_DATASOURCE_URL",
-          "value": "dbc:mysql://bank.chsueuokwgbc.us-east-1.rds.amazonaws.com/bank"
+          "value": "jdbc:mysql://bank.chsueuokwgbc.us-east-1.rds.amazonaws.com/bank"
         },
         {
           "name": "SPRING_JPA_HIBERNATE_DDL_AUTO",
@@ -35,6 +35,10 @@
         {
           "name": "SPRING_PROFILES_ACTIVE",
           "value": "docker"
+        },
+        {
+          "name": "SPRING_JPA_DATABASE_PLATFORM",
+          "value": "org.hibernate.dialect.MySQLDialect"
         }
       ],
       "environmentFiles": [],
