@@ -1,8 +1,7 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.*;
-import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
-import com.Isabela01vSilva.bank_isabela.domain.cliente.ClienteRepository;
+import com.Isabela01vSilva.bank_isabela.controller.request.conta.*;
+import com.Isabela01vSilva.bank_isabela.controller.request.historico.CadastroHistoricoRequest;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.domain.conta.ContaRepository;
 import com.Isabela01vSilva.bank_isabela.domain.conta.StatusConta;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -21,18 +21,23 @@ public class ContaService {
     private ContaRepository contaRepository;
 
     @Autowired
-    private ClienteRepository clienteRepository;
+    private ClienteService clienteService;
 
     @Autowired
     private HistoricoService historicoService;
 
     //CRUD
     @Transactional
-    public Conta cadastrar(Conta dados) {
-        Cliente cliente = clienteRepository.findById(dados.getCliente().getId())
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
-        dados.setCliente(cliente);
-        return contaRepository.save(dados);
+    public Conta cadastrar(CriarContaRequest dados) {
+        Conta novaConta = new Conta();
+        novaConta.setStatusConta(StatusConta.ATIVADA);
+        novaConta.setDataCriacao(LocalDate.now());
+        novaConta.setNumero(dados.numero());
+        novaConta.setTipoConta(dados.tipoConta());
+        novaConta.setCliente(clienteService.exibirClientePorId(dados.idCliente()));
+        novaConta.setSaldo(0.00);
+
+        return contaRepository.save(novaConta);
     }
 
     public List<Conta> exibirTodasAsContas() {
@@ -46,18 +51,10 @@ public class ContaService {
     }
 
     @Transactional
-    public Conta atualizarConta(Long id, Conta dados) {
-        Conta conta = contaRepository.getReferenceById(id);
-        conta.statusDaConta();
-        conta.atualizarInformacoes(dados);
-        return contaRepository.save(conta);
-    }
-
-    @Transactional
     public Conta atualizarSttsConta(Long id, AlterarStatusContaRequest alterarStatus) {
 
         //Busca contas
-        Conta conta = contaRepository.getReferenceById(alterarStatus.id());
+        Conta conta = contaRepository.getReferenceById(id);
 
         //Atualiza o stts da conta
         conta.atualizarStatusConta(alterarStatus.statusConta());
@@ -77,7 +74,7 @@ public class ContaService {
 
     //
     @Transactional
-    public String realizarTransferencia(TransferenciaRequest transferenciaRequest) {
+    public void realizarTransferencia(TransferenciaRequest transferenciaRequest) {
 
         //Busca a conta de origem
         Conta contaOrigem = contaRepository.findByNumero(transferenciaRequest.numeroContaOrigem())
@@ -121,8 +118,6 @@ public class ContaService {
                 )
         );
 
-        //Retorna uma mensagem indicando que a transferência foi realizada com sucesso.
-        return "Transferência realizada com sucesso";
     }
 
     @Transactional
@@ -189,15 +184,5 @@ public class ContaService {
 
         // Retorna o saldo da conta e o número da conta.
         return "Saldo R$" + conta.getSaldo() + " da conta:" + conta.getNumero();
-    }
-
-    public List<StatusConta> exibirSttsConta(Long id) {
-
-        // Busca a conta com o ID fornecido.
-        Conta conta = contaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
-
-        // Retorna o status da conta.
-        return List.of(conta.getStatusConta());
     }
 }

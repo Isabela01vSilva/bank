@@ -1,9 +1,9 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.CadastroHistoricoRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.HistoricoEntreDatasResquest;
-import com.Isabela01vSilva.bank_isabela.controller.response.HistoricoResponse;
-import com.Isabela01vSilva.bank_isabela.controller.response.HistoricoSttsContaResponse;
+import com.Isabela01vSilva.bank_isabela.controller.request.historico.CadastroHistoricoRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.historico.HistoricoEntreDatasResquest;
+import com.Isabela01vSilva.bank_isabela.controller.response.historico.HistoricoResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.historico.HistoricoSttsContaResponse;
 import com.Isabela01vSilva.bank_isabela.domain.historico.Historico;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoricoRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.TipoOperacao;

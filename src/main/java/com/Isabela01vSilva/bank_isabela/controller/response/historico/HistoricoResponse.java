@@ -1,6 +1,4 @@
-package com.Isabela01vSilva.bank_isabela.controller.response;
-
-import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
+package com.Isabela01vSilva.bank_isabela.controller.response.historico;
 
 import java.time.LocalDate;
 

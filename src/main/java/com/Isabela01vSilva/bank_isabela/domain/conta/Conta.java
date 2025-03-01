@@ -37,27 +37,6 @@ public class Conta {
     private LocalDate dataCriacao;
 
 
-    public void atualizarInformacoes(Conta dados) {
-        if (dados.getNumero() != null) {
-            this.numero = dados.getNumero();
-        }
-        if (dados.getTipoConta() != null) {
-            this.tipoConta = dados.getTipoConta();
-        }
-        if (dados.getSaldo() != null) {
-            this.saldo = dados.getSaldo();
-        }
-        if (dados.getStatusConta() != null) {
-            this.statusConta = dados.getStatusConta();
-        }
-        if (dados.getDataCriacao() != null) {
-            this.dataCriacao = dados.getDataCriacao();
-        }
-        if (dados.getCliente() != null) {
-            this.cliente = dados.getCliente();
-        }
-    }
-
     public void atualizarStatusConta(StatusConta statusConta) {
         if (StatusConta.ENCERRADA.equals(statusConta)){
             this.statusConta = StatusConta.ENCERRADA;

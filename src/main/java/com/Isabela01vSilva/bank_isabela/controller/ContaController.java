@@ -1,11 +1,10 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.AlterarStatusContaRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.DepositoRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.SaqueRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.TransferenciaRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.conta.*;
+import com.Isabela01vSilva.bank_isabela.controller.response.conta.ContaResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.conta.NovaContaResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.conta.MensagemResponse;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
-import com.Isabela01vSilva.bank_isabela.domain.conta.StatusConta;
 import com.Isabela01vSilva.bank_isabela.service.ContaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,62 +22,51 @@ public class ContaController {
     private ContaService contaService;
 
     @PostMapping
-    public ResponseEntity<Conta> cadastrarConta(@Valid @RequestBody Conta dados) {
+    public ResponseEntity<NovaContaResponse> cadastrarConta(@Valid @RequestBody CriarContaRequest dados) {
         Conta novaConta = contaService.cadastrar(dados);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novaConta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new NovaContaResponse(novaConta.getNumero(), novaConta.getTipoConta(), novaConta.getCliente().getId()));
     }
 
     @GetMapping
-    public ResponseEntity<List<Conta>> listarContas() {
+    public ResponseEntity<List<ContaResponse>> listarContas() {
         List<Conta> listar = contaService.exibirTodasAsContas();
-        return ResponseEntity.ok(listar);
+        return ResponseEntity.ok(listar.stream().map(conta -> new ContaResponse(conta.getNumero(), conta.getTipoConta(), conta.getStatusConta(), conta.getCliente().getId(), conta.getSaldo(), conta.getDataCriacao())).toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Conta> listarContaPorId(@PathVariable Long id) {
+    public ResponseEntity<ContaResponse> listarContaPorId(@PathVariable Long id) {
         Conta buscarConta = contaService.exibirContaPorId(id);
-        return ResponseEntity.ok(buscarConta);
+        return ResponseEntity.ok(new ContaResponse(buscarConta.getNumero(), buscarConta.getTipoConta(), buscarConta.getStatusConta(), buscarConta.getCliente().getId(), buscarConta.getSaldo(), buscarConta.getDataCriacao()));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Conta> atualizarConta(@PathVariable Long id, @RequestBody Conta dados) {
-        Conta atualizar = contaService.atualizarConta(id, dados);
-        return ResponseEntity.ok(atualizar);
-    }
-
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Conta> atualizarSttsConta(@PathVariable Long id, @RequestBody AlterarStatusContaRequest alterarStatus) {
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ContaResponse> atualizarSttsConta(@PathVariable Long id, @RequestBody AlterarStatusContaRequest alterarStatus) {
         Conta conta = contaService.atualizarSttsConta(id, alterarStatus);
-        return ResponseEntity.ok(conta);
+        return ResponseEntity.ok(new ContaResponse(conta.getNumero(), conta.getTipoConta(), conta.getStatusConta(), conta.getCliente().getId(), conta.getSaldo(), conta.getDataCriacao()));
     }
 
-    @PutMapping("/transferir")
-    public ResponseEntity<String> realizarTransferencia(@RequestBody TransferenciaRequest transferenciaRequest) {
-        String mensagem = contaService.realizarTransferencia(transferenciaRequest);
-        return ResponseEntity.ok(mensagem);
+    @PostMapping("/transferir")
+    public ResponseEntity<MensagemResponse> realizarTransferencia(@RequestBody TransferenciaRequest transferenciaRequest) {
+        contaService.realizarTransferencia(transferenciaRequest);
+        return ResponseEntity.ok(new MensagemResponse("Transferencia realizada com sucesso!"));
     }
 
-    @PutMapping("/depositar")
-    public ResponseEntity<String>depositar(@RequestBody DepositoRequest depositoRequest) {
+    @PostMapping("/depositar")
+    public ResponseEntity<MensagemResponse> depositar(@RequestBody DepositoRequest depositoRequest) {
         String mensagem = contaService.depositar(depositoRequest);
-        return ResponseEntity.ok(mensagem);
+        return ResponseEntity.ok(new MensagemResponse(mensagem));
     }
 
-    @PutMapping("/saque")
-    public ResponseEntity<String> saque(@RequestBody SaqueRequest saqueRequest) {
+    @PostMapping("/saque")
+    public ResponseEntity<MensagemResponse> saque(@RequestBody SaqueRequest saqueRequest) {
         String mensagem = contaService.saque(saqueRequest);
-        return ResponseEntity.ok(mensagem);
+        return ResponseEntity.ok(new MensagemResponse(mensagem));
     }
 
     @GetMapping("/{id}/saldo")
-    public ResponseEntity<String> saldo(@PathVariable Long id) {
+    public ResponseEntity<MensagemResponse> saldo(@PathVariable Long id) {
         String mensagem = contaService.consultaSaldo(id);
-        return ResponseEntity.ok(mensagem);
+        return ResponseEntity.ok(new MensagemResponse(mensagem));
     }
 
-    @GetMapping("/{id}/stts")
-    public ResponseEntity<List<StatusConta>> exibir(@PathVariable Long id){
-        List<StatusConta> statusContas = contaService.exibirSttsConta(id);
-        return ResponseEntity.ok(statusContas);
-    }
 }

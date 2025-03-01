@@ -1,4 +1,4 @@
-package com.Isabela01vSilva.bank_isabela.controller.request;
+package com.Isabela01vSilva.bank_isabela.controller.request.historico;
 
 import java.time.LocalDate;
 
