@@ -34,7 +34,7 @@ public class ContaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ContaResponse> listarContaPorId(@PathVariable Long id) {
+    public ResponseEntity<ContaResponse> buscarContaPorId(@PathVariable Long id) {
         Conta buscarConta = contaService.exibirContaPorId(id);
         return ResponseEntity.ok(new ContaResponse(buscarConta.getNumero(), buscarConta.getTipoConta(), buscarConta.getStatusConta(), buscarConta.getCliente().getId(), buscarConta.getSaldo(), buscarConta.getDataCriacao()));
     }

@@ -1,5 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.domain.cliente;
 
+import com.Isabela01vSilva.bank_isabela.controller.request.cliente.ClienteRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -14,24 +15,28 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idCliente")
     private Long id;
+
     private String nome;
+
     @Column(unique = true)
     private String cpf;
+
     private String email;
+
     private String telefone;
 
-    public void atualizarInformacoes(Cliente dados) {
-        if (dados.getNome() != null) {
-            this.nome = dados.getNome();
+    public void atualizarInformacoes(ClienteRequest dados) {
+        if (dados.nome() != null) {
+            this.nome = dados.nome();
         }
-        if (dados.getCpf() != null) {
-            this.cpf = dados.getCpf();
+        if (dados.cpf() != null) {
+            this.cpf = dados.cpf();
         }
-        if (dados.getEmail() != null) {
-            this.email = dados.getEmail();
+        if (dados.email() != null) {
+            this.email = dados.email();
         }
-        if (dados.getTelefone() != null) {
-            this.telefone = dados.getTelefone();
+        if (dados.telefone() != null) {
+            this.telefone = dados.telefone();
         }
 
     }

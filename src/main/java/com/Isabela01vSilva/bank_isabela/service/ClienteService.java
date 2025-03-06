@@ -1,5 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
+import com.Isabela01vSilva.bank_isabela.controller.request.cliente.ClienteRequest;
 import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
 import com.Isabela01vSilva.bank_isabela.domain.cliente.ClienteRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,8 +17,14 @@ public class ClienteService {
     private ClienteRepository clienteRepository;
 
     @Transactional
-    public Cliente cadastrar(Cliente dados) {
-        return clienteRepository.save(dados);
+    public Cliente cadastrar(ClienteRequest dados) {
+        Cliente cliente = new Cliente();
+        cliente.setNome(dados.nome());
+        cliente.setCpf(dados.cpf());
+        cliente.setEmail(dados.email());
+        cliente.setTelefone(dados.telefone());
+
+        return clienteRepository.save(cliente);
     }
 
     public List<Cliente> exibirTodosOsClients() {
@@ -30,7 +37,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public Cliente atualizarCliente(Long id, Cliente dados) {
+    public Cliente atualizarCliente(Long id, ClienteRequest dados) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
 
@@ -38,10 +45,6 @@ public class ClienteService {
         clienteRepository.save(cliente);
 
         return cliente;
-    }
-
-    public void excluirCliente(Long id) {
-         clienteRepository.deleteById(id);
     }
 
 }
