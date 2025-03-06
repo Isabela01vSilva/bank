@@ -30,7 +30,7 @@ public class HistoricoService {
         historico.setTipoOperacao(dados.tipoOperacao());
         historico.setDescricao(dados.descricao());
         historico.setValor(dados.valor());
-        historico.setDataTransicao(LocalDate.now());
+        historico.setDataTransacao(LocalDate.now());
 
         // Salva o histórico no banco de dados e retorna a entidade salva
         return historicoRepository.save(historico);
@@ -45,7 +45,7 @@ public class HistoricoService {
         // Busca os históricos relacionados a um cliente pelo id
         List<Historico> historico = historicoRepository.findByClienteId(id);
         return historico.stream().map(historico1 -> new HistoricoResponse(
-                historico1.getId(), historico1.getCliente().getNome(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransicao()
+                historico1.getId(), historico1.getCliente().getNome(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransacao()
         )).toList(); // Converte os históricos para uma lista de HistoricoResponse e retorna
     }
 
@@ -53,7 +53,7 @@ public class HistoricoService {
         // Busca os históricos relacionados a um conta pelo id
         List<Historico> historico = historicoRepository.findByContaId(id);
         return historico.stream().map(historico1 -> new HistoricoResponse(
-                historico1.getId(), historico1.getCliente().getNome(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransicao()
+                historico1.getId(), historico1.getCliente().getNome(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransacao()
         )).toList(); // Converte os históricos para uma lista de HistoricoResponse e retorna
     }
 
@@ -82,7 +82,7 @@ public class HistoricoService {
                         historico.getCliente().getNome(),
                         historico.getValor(),
                         historico.getDescricao(),
-                        historico.getDataTransicao()
+                        historico.getDataTransacao()
                 )).toList(); // Converte os históricos encontrados em HistoricoResponse e retorna
     }
 
@@ -98,7 +98,7 @@ public class HistoricoService {
                         historicos.getCliente().getNome(),
                         historicos.getValor(),
                         historicos.getDescricao(),
-                        historicos.getDataTransicao()
+                        historicos.getDataTransacao()
                 )).toList(); // Converte e retorna os históricos filtrados
     }
 

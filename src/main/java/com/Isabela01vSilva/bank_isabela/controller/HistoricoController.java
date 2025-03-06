@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -20,9 +19,10 @@ public class HistoricoController {
     private HistoricoService historicoService;
 
     @GetMapping
-    public ResponseEntity<List<Historico>> listarHistoricos() {
+    public ResponseEntity<List<HistoricoResponse>> listarHistoricos() {
         List<Historico> listar = historicoService.exibirTodosHistoricos();
-        return ResponseEntity.ok(listar);
+        return ResponseEntity.ok(listar.stream().map(historico -> new HistoricoResponse(historico.getId(),
+                historico.getCliente().getNome(), historico.getValor(), historico.getDescricao(), historico.getDataTransacao())).toList());
     }
 
     @GetMapping("/{id}/cliente")
@@ -66,14 +66,14 @@ public class HistoricoController {
     }
 
     @GetMapping("/gastos")
-    public ResponseEntity<List<String>> gastos(@RequestBody HistoricoEntreDatasResquest datas) {
+    public ResponseEntity<String> gastos(@RequestBody HistoricoEntreDatasResquest datas) {
         String totalGastos = historicoService.calculoGastosPorPeriodo(datas);
 
         if (totalGastos.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(Collections.singletonList(totalGastos));
+        return ResponseEntity.ok(totalGastos);
     }
 
 }
