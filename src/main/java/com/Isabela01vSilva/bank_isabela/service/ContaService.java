@@ -21,20 +21,18 @@ public class ContaService {
     private ContaRepository contaRepository;
 
     @Autowired
-    private ClienteService clienteService;
-
-    @Autowired
     private HistoricoService historicoService;
 
     //CRUD
     @Transactional
-    public Conta cadastrar(CriarContaRequest dados) {
+    public Conta cadastrar(CriarContaDTO dados) {
         Conta novaConta = new Conta();
         novaConta.setStatusConta(StatusConta.ATIVADA);
         novaConta.setDataCriacao(LocalDate.now());
-        novaConta.setNumero(dados.numero());
+        novaConta.setNumero(novaConta.gerarNumeroConta());
         novaConta.setTipoConta(dados.tipoConta());
-        novaConta.setCliente(clienteService.exibirClientePorId(dados.idCliente()));
+        novaConta.setCliente(dados.cliente());
+        novaConta.setNumeroAgencia(dados.numeroAgencia());
         novaConta.setSaldo(0.00);
 
         return contaRepository.save(novaConta);

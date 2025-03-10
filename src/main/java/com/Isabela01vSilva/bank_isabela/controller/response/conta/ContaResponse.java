@@ -7,9 +7,9 @@ import java.time.LocalDate;
 
 public record ContaResponse(
         String numero,
+        String numeroAgencia,
         TipoConta tipoConta,
         StatusConta statusConta,
-        Long idCliente,
         Double saldo,
         LocalDate dataCriacao
 ) {

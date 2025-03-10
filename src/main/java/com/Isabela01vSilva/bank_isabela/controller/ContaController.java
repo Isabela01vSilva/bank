@@ -2,13 +2,10 @@ package com.Isabela01vSilva.bank_isabela.controller;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.conta.*;
 import com.Isabela01vSilva.bank_isabela.controller.response.conta.ContaResponse;
-import com.Isabela01vSilva.bank_isabela.controller.response.conta.NovaContaResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.conta.MensagemResponse;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.service.ContaService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,28 +18,22 @@ public class ContaController {
     @Autowired
     private ContaService contaService;
 
-    @PostMapping
-    public ResponseEntity<NovaContaResponse> cadastrarConta(@Valid @RequestBody CriarContaRequest dados) {
-        Conta novaConta = contaService.cadastrar(dados);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new NovaContaResponse(novaConta.getNumero(), novaConta.getTipoConta(), novaConta.getCliente().getId()));
-    }
-
     @GetMapping
     public ResponseEntity<List<ContaResponse>> listarContas() {
         List<Conta> listar = contaService.exibirTodasAsContas();
-        return ResponseEntity.ok(listar.stream().map(conta -> new ContaResponse(conta.getNumero(), conta.getTipoConta(), conta.getStatusConta(), conta.getCliente().getId(), conta.getSaldo(), conta.getDataCriacao())).toList());
+        return ResponseEntity.ok(listar.stream().map(conta -> new ContaResponse(conta.getNumero(), conta.getNumeroAgencia(), conta.getTipoConta(), conta.getStatusConta(),  conta.getSaldo(), conta.getDataCriacao())).toList());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ContaResponse> buscarContaPorId(@PathVariable Long id) {
         Conta buscarConta = contaService.exibirContaPorId(id);
-        return ResponseEntity.ok(new ContaResponse(buscarConta.getNumero(), buscarConta.getTipoConta(), buscarConta.getStatusConta(), buscarConta.getCliente().getId(), buscarConta.getSaldo(), buscarConta.getDataCriacao()));
+        return ResponseEntity.ok(new ContaResponse(buscarConta.getNumero(), buscarConta.getNumeroAgencia(), buscarConta.getTipoConta(), buscarConta.getStatusConta(),  buscarConta.getSaldo(), buscarConta.getDataCriacao()));
     }
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<ContaResponse> atualizarSttsConta(@PathVariable Long id, @RequestBody AlterarStatusContaRequest alterarStatus) {
         Conta conta = contaService.atualizarSttsConta(id, alterarStatus);
-        return ResponseEntity.ok(new ContaResponse(conta.getNumero(), conta.getTipoConta(), conta.getStatusConta(), conta.getCliente().getId(), conta.getSaldo(), conta.getDataCriacao()));
+        return ResponseEntity.ok(new ContaResponse(conta.getNumero(), conta.getNumeroAgencia(), conta.getTipoConta(), conta.getStatusConta(),  conta.getSaldo(), conta.getDataCriacao()));
     }
 
     @PostMapping("/transferir")

@@ -32,7 +32,7 @@ public class Historico {
 
     private Double valor;
     private String descricao;
-    private LocalDate dataTransacao;
+    private LocalDate dataTransicao;
 
     public Long getId() {
         return id;
@@ -82,11 +82,11 @@ public class Historico {
         this.descricao = descricao;
     }
 
-    public LocalDate getDataTransacao() {
-        return dataTransacao;
+    public LocalDate getDataTransicao() {
+        return dataTransicao;
     }
 
-    public void setDataTransacao(LocalDate dataTransacao) {
-        this.dataTransacao = dataTransacao;
+    public void setDataTransicao(LocalDate dataTransicao) {
+        this.dataTransicao = dataTransicao;
     }
 }

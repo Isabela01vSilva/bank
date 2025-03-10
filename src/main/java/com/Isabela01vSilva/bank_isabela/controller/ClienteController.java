@@ -1,9 +1,14 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
+import com.Isabela01vSilva.bank_isabela.controller.request.ClienteContaRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.cliente.ClienteRequest;
+import com.Isabela01vSilva.bank_isabela.controller.response.ClienteContaResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.cliente.ClienteResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.conta.ContaResponse;
 import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
+import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.service.ClienteService;
+import com.Isabela01vSilva.bank_isabela.service.DTO.ClienteContaDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,15 +25,19 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping
-    public ResponseEntity<ClienteResponse> cadastrarCliente(@Valid @RequestBody ClienteRequest dados) {
-        Cliente novoCliente = clienteService.cadastrar(dados);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ClienteResponse(novoCliente.getId(), novoCliente.getNome(), novoCliente.getCpf(), novoCliente.getEmail(), novoCliente.getTelefone()));
+    public ResponseEntity<ClienteContaResponse> cadastrarCliente(@Valid @RequestBody ClienteContaRequest dados) {
+        ClienteContaDTO novoClienteConta = clienteService.cadastrar(dados);
+
+        Conta conta = novoClienteConta.conta();
+        Cliente cliente = novoClienteConta.cliente();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ClienteContaResponse(new ClienteResponse(cliente.getId(), cliente.getNome(), cliente.getCpf(), cliente.getEmail(), cliente.getTelefone()), new ContaResponse(conta.getNumero(), conta.getNumeroAgencia(), conta.getTipoConta(), conta.getStatusConta(), conta.getSaldo(), conta.getDataCriacao())));
     }
 
     @GetMapping
     public ResponseEntity<List<ClienteResponse>> listarTodosOsClientes() {
         List<Cliente> listar = clienteService.exibirTodosOsClients();
-        return ResponseEntity.ok(listar.stream().map( cliente -> new ClienteResponse(cliente.getId(), cliente.getNome(), cliente.getCpf(), cliente.getEmail(), cliente.getTelefone())).toList());
+        return ResponseEntity.ok(listar.stream().map(cliente -> new ClienteResponse(cliente.getId(), cliente.getNome(), cliente.getCpf(), cliente.getEmail(), cliente.getTelefone())).toList());
     }
 
     @GetMapping("/{id}")
