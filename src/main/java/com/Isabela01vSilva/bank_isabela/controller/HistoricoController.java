@@ -22,7 +22,7 @@ public class HistoricoController {
     public ResponseEntity<List<HistoricoResponse>> listarHistoricos() {
         List<Historico> listar = historicoService.exibirTodosHistoricos();
         return ResponseEntity.ok(listar.stream().map(historico -> new HistoricoResponse(historico.getId(),
-                historico.getCliente().getNome(), historico.getValor(), historico.getDescricao(), historico.getDataTransicao())).toList());
+                historico.getCliente().getNome(), historico.getValor(), historico.getDescricao(), historico.getDataTransacao())).toList());
     }
 
     @GetMapping("/{id}/cliente")

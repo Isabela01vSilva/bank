@@ -11,6 +11,7 @@ public interface HistoricoRepository extends JpaRepository<Historico, Long> {
 
     List<Historico> findByContaId(Long conta);
 
-    List<Historico> findByContaIdAndDataTransicaoBetween(Long id, LocalDate dataInicio, LocalDate dataFim);
+    List<Historico> findByContaIdAndDataTransacaoBetween(Long id, LocalDate dataInicio, LocalDate dataFim);
+
 
 }

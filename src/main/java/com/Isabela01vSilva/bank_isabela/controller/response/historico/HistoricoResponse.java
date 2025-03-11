@@ -7,6 +7,6 @@ public record HistoricoResponse(
         String cliente,
         Double valor,
         String descricao,
-        LocalDate dataTransicao
+        LocalDate dataTransacao
 ) {
 }

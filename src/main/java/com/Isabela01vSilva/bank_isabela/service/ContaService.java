@@ -32,6 +32,12 @@ public class ContaService {
         novaConta.setNumero(novaConta.gerarNumeroConta());
         novaConta.setTipoConta(dados.tipoConta());
         novaConta.setCliente(dados.cliente());
+
+        String numeroConta;
+        do {
+            numeroConta = novaConta.gerarNumeroConta();
+        } while (contaRepository.existsByNumero(numeroConta));
+
         novaConta.setNumeroAgencia(dados.numeroAgencia());
         novaConta.setSaldo(0.00);
 
