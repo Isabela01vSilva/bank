@@ -1,32 +1,53 @@
-# Bank Isabela - API REST
+# Bank Isabela — API REST para Sistemas Bancários
 
-## Descrição
+🚧 **Status:** Em andamento (integração com [Schedule](https://github.com/Isabela01vSilva/schedule) em desenvolvimento)
 
-Este projeto é uma API REST para o gerenciamento de clientes, contas bancárias e históricos de transações. Ele permite cadastrar, listar, buscar, atualizar e excluir clientes e contas, além de realizar operações bancárias como depósitos, saques, transferências e consulta de saldo.
+---
 
-## Tecnologias Utilizadas
+Projeto para gerenciamento de clientes, contas bancárias e operações financeiras, pensado para oferecer uma API REST completa para sistemas bancários.
 
-- Java 17+
-- Spring Boot
-- Spring Data JPA
-- Hibernate
-- Jakarta Validation
-- Banco de dados relacional (ex: PostgreSQL, MySQL)
-- Maven
+Este sistema permite o cadastro, consulta, atualização e exclusão de clientes e contas, além de operações como depósitos, saques, transferências e consulta de saldo.
 
-## Como Executar o Projeto
+---
 
-Clone o repositório
+### Funcionalidades principais
 
-Acesse o diretório do projeto:
-cd bank-isabela
+- CRUD de clientes e contas bancárias  
+- Depósitos, saques e transferências imediatas  
+- Consulta de saldo e extratos  
+- Integração futura com o microserviço **Schedule** para agendamento de transferências
 
-Configure o banco de dados no application.properties ou application.yml
+---
 
-Execute o projeto com Maven:
-mvn spring-boot:run
+📌 *Os diagramas abaixo estão em versão preliminar e serão atualizados conforme o desenvolvimento do projeto.*
+
+#### Diagrama de Uso   
+![Diagrama de Uso](docs/diagrama-uso.png)
+
+#### Diagrama de Arquitetura  
+![Diagrama de Arquitetura](docs/diagrama-arquitetura.png)
+
+---
+
+### Integração com Schedule
+
+O [Schedule](https://github.com/Isabela01vSilva/schedule) é um microserviço complementar responsável pelo agendamento de transferências bancárias futuras. Ele foi desenvolvido para funcionar de forma desacoplada, permitindo que o Bank se concentre nas operações imediatas, enquanto o Schedule cuida do processamento agendado.
+
+- Comunicação via API REST utilizando `WebClient` do Spring Boot  
+- Integração ainda em fase de desenvolvimento
+
+---
+
+### Tecnologias usadas
+
+- Java 21  
+- Spring Boot  
+- Spring Data JPA  
+- MySQL   
+- Maven  
+
+---
 
 ## Autor
 
 [Isabela Silva](https://www.linkedin.com/in/isabela01vsilva)
-
