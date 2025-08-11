@@ -6,7 +6,7 @@ import com.Isabela01vSilva.bank_isabela.controller.request.conta.CriarContaDTO;
 import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
 import com.Isabela01vSilva.bank_isabela.domain.cliente.ClienteRepository;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
-import com.Isabela01vSilva.bank_isabela.service.DTO.ClienteContaDTO;
+import com.Isabela01vSilva.bank_isabela.service.dto.ClienteContaDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

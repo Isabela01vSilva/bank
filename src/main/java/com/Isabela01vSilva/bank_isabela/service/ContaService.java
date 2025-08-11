@@ -77,52 +77,6 @@ public class ContaService {
     }
 
     //
-    @Transactional
-    public void realizarTransferencia(TransferenciaRequest transferenciaRequest) {
-
-        //Busca a conta de origem
-        Conta contaOrigem = contaRepository.findByNumero(transferenciaRequest.numeroContaOrigem())
-                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
-
-        //Busca a conta de destino
-        Conta contaDestino = contaRepository.findByNumero(transferenciaRequest.numeroContaDestino())
-                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
-
-        //Verifica o stts de ambas as contas antes de realizar qualquer operação
-        contaOrigem.statusDaConta();
-        contaDestino.statusDaConta();
-
-        //Realiza o saque na conta de origem e o deposito na conta de destino
-        contaOrigem.sacar(transferenciaRequest.valor());
-        contaDestino.depositar(transferenciaRequest.valor());
-
-        //Salva as mudanças nas duas contas
-        contaRepository.save(contaOrigem);
-        contaRepository.save(contaDestino);
-
-        //Registra o histórico da transferência para a conta de origem.
-        historicoService.cadastrar(
-                new CadastroHistoricoRequest(
-                        contaOrigem,
-                        contaOrigem.getCliente(),
-                        TipoOperacao.PIX,
-                        "Pix enviado para a conta: " + transferenciaRequest.numeroContaDestino(),
-                        transferenciaRequest.valor()
-                )
-        );
-
-        //Registra o histórico da transferência para a conta de destino.
-        historicoService.cadastrar(
-                new CadastroHistoricoRequest(
-                        contaDestino,
-                        contaDestino.getCliente(),
-                        TipoOperacao.PIX,
-                        "Pix recebido da conta: " + transferenciaRequest.numeroContaOrigem(),
-                        transferenciaRequest.valor()
-                )
-        );
-
-    }
 
     @Transactional
     public String depositar(DepositoRequest deposito) {

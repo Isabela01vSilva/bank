@@ -8,7 +8,7 @@ import com.Isabela01vSilva.bank_isabela.controller.response.conta.ContaResponse;
 import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.service.ClienteService;
-import com.Isabela01vSilva.bank_isabela.service.DTO.ClienteContaDTO;
+import com.Isabela01vSilva.bank_isabela.service.dto.ClienteContaDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

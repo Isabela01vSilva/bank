@@ -36,12 +36,6 @@ public class ContaController {
         return ResponseEntity.ok(new ContaResponse(conta.getNumero(), conta.getNumeroAgencia(), conta.getTipoConta(), conta.getStatusConta(),  conta.getSaldo(), conta.getDataCriacao()));
     }
 
-    @PostMapping("/transferir")
-    public ResponseEntity<MensagemResponse> realizarTransferencia(@RequestBody TransferenciaRequest transferenciaRequest) {
-        contaService.realizarTransferencia(transferenciaRequest);
-        return ResponseEntity.ok(new MensagemResponse("Transferencia realizada com sucesso!"));
-    }
-
     @PostMapping("/depositar")
     public ResponseEntity<MensagemResponse> depositar(@RequestBody DepositoRequest depositoRequest) {
         String mensagem = contaService.depositar(depositoRequest);

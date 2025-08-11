@@ -18,8 +18,7 @@ import java.util.Random;
 @Entity(name = "Conta")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+
 public class Conta {
 
     @Id
@@ -103,4 +102,67 @@ public class Conta {
         }
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
+    public String getNumeroAgencia() {
+        return numeroAgencia;
+    }
+
+    public void setNumeroAgencia(String numeroAgencia) {
+        this.numeroAgencia = numeroAgencia;
+    }
+
+    public TipoConta getTipoConta() {
+        return tipoConta;
+    }
+
+    public void setTipoConta(TipoConta tipoConta) {
+        this.tipoConta = tipoConta;
+    }
+
+    public StatusConta getStatusConta() {
+        return statusConta;
+    }
+
+    public void setStatusConta(StatusConta statusConta) {
+        this.statusConta = statusConta;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public Double getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(Double saldo) {
+        this.saldo = saldo;
+    }
+
+    public LocalDate getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDate dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
 }

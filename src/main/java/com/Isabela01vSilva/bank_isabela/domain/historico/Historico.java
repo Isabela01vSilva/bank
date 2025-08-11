@@ -14,8 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Table(name = "historicos")
 @Entity(name = "Historico")
-@Getter
-@Setter
+
 public class Historico {
 
     @Id
@@ -38,4 +37,59 @@ public class Historico {
     private String descricao;
     private LocalDate dataTransacao;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Conta getConta() {
+        return conta;
+    }
+
+    public void setConta(Conta conta) {
+        this.conta = conta;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public TipoOperacao getTipoOperacao() {
+        return tipoOperacao;
+    }
+
+    public void setTipoOperacao(TipoOperacao tipoOperacao) {
+        this.tipoOperacao = tipoOperacao;
+    }
+
+    public Double getValor() {
+        return valor;
+    }
+
+    public void setValor(Double valor) {
+        this.valor = valor;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public LocalDate getDataTransacao() {
+        return dataTransacao;
+    }
+
+    public void setDataTransacao(LocalDate dataTransacao) {
+        this.dataTransacao = dataTransacao;
+    }
 }
