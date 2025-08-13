@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public record CreateScheduleDTO(LocalDate executionDate,
                                 PayloadDTO payloadDTO,
-                                String appName
+                                String appName,
+                                Status status
 ) {
 }

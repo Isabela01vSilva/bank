@@ -5,6 +5,7 @@ import com.Isabela01vSilva.bank_isabela.exception.SchedulingNotFoundException;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.SchedulingDTO;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.CreateScheduleDTO;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.StatusDTO;
+import com.Isabela01vSilva.bank_isabela.service.client.dto.UpdateAppointmentDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -54,24 +55,44 @@ public class ScheduleClientService {
                 .get()
                 .uri(getAllAppointmentsPath)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<SchedulingDTO>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<SchedulingDTO>>() {
+                })
                 .block();
     }
 
-    public void createAppointment(CreateScheduleDTO request) {
+    public SchedulingDTO createAppointment(CreateScheduleDTO request) {
 
         CreateAppointmentRequest schenduleRequest = new CreateAppointmentRequest(
                 request.executionDate(),
                 request.payloadDTO(),
-                request.appName()
+                "BANK",
+                request.status()
         );
 
-        webClient
+        return webClient
                 .post()
                 .uri(createAppointmentPath)
                 .bodyValue(schenduleRequest)
                 .retrieve()
-                .bodyToMono(String.class).block();
+                .bodyToMono(SchedulingDTO.class)
+                .block();
+    }
+
+    public SchedulingDTO updateAppointment(UpdateAppointmentDTO dto) {
+        UpdateAppointmentDTO scheduleRequest = new UpdateAppointmentDTO(
+                dto.executionDate(),
+                dto.payload(),
+                "BANK",
+                dto.status()
+        );
+
+        return webClient
+                .put()
+                .uri(updateAppointmentPath)
+                .bodyValue(scheduleRequest)
+                .retrieve()
+                .bodyToMono(SchedulingDTO.class)
+                .block();
     }
 
     public StatusDTO cancelAppointment(Long id){

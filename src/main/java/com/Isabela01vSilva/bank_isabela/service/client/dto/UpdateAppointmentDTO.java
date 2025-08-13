@@ -2,14 +2,21 @@ package com.Isabela01vSilva.bank_isabela.service.client.dto;
 
 import java.time.LocalDate;
 
-public class SchedulingDTO {
+public class UpdateAppointmentDTO {
+
     private LocalDate executionDate;
     private PayloadDTO payload;
+    private String appName;
     private Status status;
 
-    public SchedulingDTO(LocalDate executionDate, PayloadDTO payload, Status status) {
+    public UpdateAppointmentDTO() {
+        // Construtor vazio para frameworks (Jackson, etc)
+    }
+
+    public UpdateAppointmentDTO(LocalDate executionDate, PayloadDTO payload, String appName, Status status) {
         this.executionDate = executionDate;
         this.payload = payload;
+        this.appName = appName;
         this.status = status;
     }
 
@@ -27,6 +34,14 @@ public class SchedulingDTO {
 
     public void setPayload(PayloadDTO payload) {
         this.payload = payload;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     public Status getStatus() {
