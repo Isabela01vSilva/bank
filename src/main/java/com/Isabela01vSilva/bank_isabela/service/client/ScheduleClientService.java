@@ -2,10 +2,8 @@ package com.Isabela01vSilva.bank_isabela.service.client;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.CreateAppointmentRequest;
 import com.Isabela01vSilva.bank_isabela.exception.SchedulingNotFoundException;
-import com.Isabela01vSilva.bank_isabela.service.client.dto.SchedulingDTO;
-import com.Isabela01vSilva.bank_isabela.service.client.dto.CreateScheduleDTO;
-import com.Isabela01vSilva.bank_isabela.service.client.dto.StatusDTO;
-import com.Isabela01vSilva.bank_isabela.service.client.dto.UpdateAppointmentDTO;
+import com.Isabela01vSilva.bank_isabela.service.client.dto.*;
+import com.Isabela01vSilva.bank_isabela.service.data.request.CreateAppointmentScheduleRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -30,6 +28,9 @@ public class ScheduleClientService {
 
     @Value("${cancel-appointment-path}")
     private String cancelAppointmentPath;
+
+    @Value("{update-appointment-path}")
+    private String updateAppointmentPath;
 
     public ScheduleClientService(WebClient.Builder builder) {
         this.webClient = builder.baseUrl("http://localhost:8081").build();
@@ -60,19 +61,11 @@ public class ScheduleClientService {
                 .block();
     }
 
-    public SchedulingDTO createAppointment(CreateScheduleDTO request) {
-
-        CreateAppointmentRequest schenduleRequest = new CreateAppointmentRequest(
-                request.executionDate(),
-                request.payloadDTO(),
-                "BANK",
-                request.status()
-        );
-
+    public SchedulingDTO createAppointment(CreateAppointmentScheduleRequest request) {
         return webClient
                 .post()
                 .uri(createAppointmentPath)
-                .bodyValue(schenduleRequest)
+                .bodyValue(request)
                 .retrieve()
                 .bodyToMono(SchedulingDTO.class)
                 .block();
@@ -81,8 +74,7 @@ public class ScheduleClientService {
     public SchedulingDTO updateAppointment(UpdateAppointmentDTO dto) {
         UpdateAppointmentDTO scheduleRequest = new UpdateAppointmentDTO(
                 dto.executionDate(),
-                dto.payload(),
-                "BANK",
+                dto.payloadDTO(),
                 dto.status()
         );
 

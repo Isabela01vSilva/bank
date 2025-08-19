@@ -12,7 +12,7 @@ public class WebClientConfig {
     private String scheduleUrl;
 
     @Bean
-    public WebClient webClient(WebClient.Builder builder){
-        return builder.baseUrl(scheduleUrl).build();
+    public WebClient webClient() {
+        return WebClient.builder().baseUrl(scheduleUrl).build();
     }
 }

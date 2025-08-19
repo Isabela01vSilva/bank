@@ -3,6 +3,8 @@ package com.Isabela01vSilva.bank_isabela.service.client.dto;
 import java.time.LocalDate;
 
 public class SchedulingDTO {
+
+    private Long id;
     private LocalDate executionDate;
     private PayloadDTO payload;
     private Status status;
@@ -11,6 +13,14 @@ public class SchedulingDTO {
         this.executionDate = executionDate;
         this.payload = payload;
         this.status = status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDate getExecutionDate() {

@@ -1,12 +1,11 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
-
 import com.Isabela01vSilva.bank_isabela.controller.request.conta.TransferenciaRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.conta.MensagemResponse;
 import com.Isabela01vSilva.bank_isabela.service.TransferenciaService;
-import com.Isabela01vSilva.bank_isabela.service.client.dto.PayloadDTO;
-import com.Isabela01vSilva.bank_isabela.service.client.dto.SchedulingDTO;
-import com.Isabela01vSilva.bank_isabela.service.client.dto.Status;
+import com.Isabela01vSilva.bank_isabela.service.client.ScheduleClientService;
+import com.Isabela01vSilva.bank_isabela.service.client.dto.CreateScheduleDTO;
+import com.Isabela01vSilva.bank_isabela.service.data.request.CreateAppointmentScheduleRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,21 +20,18 @@ public class PagamentoController {
     @Autowired
     private TransferenciaService service;
 
-    @PostMapping("/tt")
+    @Autowired
+    private ScheduleClientService scheduleClient;
+
+    @PostMapping("/realizar")
     public ResponseEntity<MensagemResponse> realizarTransferencia(@RequestBody TransferenciaRequest transferenciaRequest) {
+        service.agendarTransferencia(transferenciaRequest);
+        return ResponseEntity.ok(new MensagemResponse("Transferencia agendada com sucesso!"));
+    }
 
-        SchedulingDTO transferenciaDTO = new SchedulingDTO(
-                transferenciaRequest.executionDate(),
-                new PayloadDTO(
-                        transferenciaRequest.valor(),
-                        transferenciaRequest.numeroContaOrigem(),
-                        transferenciaRequest.numeroContaDestino()
-                ),
-                Status.AGENDADO
-        );
-
-        service.realizarTransferencia(transferenciaDTO);
-
-        return ResponseEntity.ok(new MensagemResponse("Transferencia realizada com sucesso!"));
+    @PostMapping("/agendar")
+    public ResponseEntity<String> criarAgendamento(@RequestBody CreateAppointmentScheduleRequest request) {
+        scheduleClient.createAppointment(request);
+        return ResponseEntity.ok("Agendamento enviado para o Schendulo");
     }
 }

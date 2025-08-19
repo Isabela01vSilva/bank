@@ -4,6 +4,7 @@ import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,8 +31,6 @@ public class Conta {
     private String numero;
 
     @Column(length = 3, nullable = false)
-    @Min(3)
-    @Max(3)
     private String numeroAgencia;
 
     @Enumerated(EnumType.STRING)
