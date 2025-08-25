@@ -1,6 +1,5 @@
 package com.Isabela01vSilva.bank_isabela.service.client;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.CreateAppointmentRequest;
 import com.Isabela01vSilva.bank_isabela.exception.SchedulingNotFoundException;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.*;
 import com.Isabela01vSilva.bank_isabela.service.data.request.CreateAppointmentScheduleRequest;
@@ -29,8 +28,11 @@ public class ScheduleClientService {
     @Value("${cancel-appointment-path}")
     private String cancelAppointmentPath;
 
-    @Value("{update-appointment-path}")
+    @Value("${update-appointment-path}")
     private String updateAppointmentPath;
+
+    @Value("${callback-appointment-path}")
+    private String callbackAppointmentPath;
 
     public ScheduleClientService(WebClient.Builder builder) {
         this.webClient = builder.baseUrl("http://localhost:8081").build();
@@ -100,5 +102,21 @@ public class ScheduleClientService {
         } catch (Exception e) {
             throw new RuntimeException("Erro ao buscar o agendamento: " + e.getMessage());
         }
+    }
+
+    public String enviarCallback(CallbackDTO dto) {
+
+        CallbackDTO scheduleCallback = new CallbackDTO(
+                dto.getAppointmentId(),
+                dto.getStatus()
+        );
+
+        return webClient
+                .put()
+                .uri(callbackAppointmentPath)
+                .bodyValue(scheduleCallback)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
     }
 }

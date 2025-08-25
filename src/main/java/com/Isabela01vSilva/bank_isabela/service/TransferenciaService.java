@@ -122,7 +122,7 @@ public class TransferenciaService {
         UpdateAppointmentDTO atualizado = new UpdateAppointmentDTO(
                 create.executionDate(),
                 create.payload(),
-                Status.FALHOU
+                Status.ERRO
         );
 
         scheduleClientService.updateAppointment(atualizado);

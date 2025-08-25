@@ -3,20 +3,29 @@ package com.Isabela01vSilva.bank_isabela.service.client.dto;
 public class CallbackDTO {
 
     private Long appointmentId;
-    private boolean sucesso;
+    private Status status;
 
     public CallbackDTO() {
     }
 
-    public CallbackDTO(Long appointmentId, boolean sucesso) {
+    public CallbackDTO(Long appointmentId, Status status) {
         this.appointmentId = appointmentId;
-        this.sucesso = sucesso;
+        this.status = status;
     }
 
-    // getters e setters
-    public Long getAppointmentId() { return appointmentId; }
-    public void setAppointmentId(Long appointmentId) { this.appointmentId = appointmentId; }
+    public Long getAppointmentId() {
+        return appointmentId;
+    }
 
-    public boolean isSucesso() { return sucesso; }
-    public void setSucesso(boolean sucesso) { this.sucesso = sucesso; }
+    public void setAppointmentId(Long appointmentId) {
+        this.appointmentId = appointmentId;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }

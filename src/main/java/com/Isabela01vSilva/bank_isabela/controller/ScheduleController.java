@@ -1,5 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
+import com.Isabela01vSilva.bank_isabela.service.client.dto.CallbackDTO;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.SchedulingDTO;
 import com.Isabela01vSilva.bank_isabela.service.client.ScheduleClientService;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.StatusDTO;
