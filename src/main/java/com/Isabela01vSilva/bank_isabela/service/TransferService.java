@@ -1,8 +1,11 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.conta.TransferenciaRequest;
-import com.Isabela01vSilva.bank_isabela.domain.Transferencia;
-import com.Isabela01vSilva.bank_isabela.domain.TransferenciaRepository;
+import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferenciaRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.historico.CadastroHistoricoRequest;
+import com.Isabela01vSilva.bank_isabela.domain.historico.TipoOperacao;
+import com.Isabela01vSilva.bank_isabela.domain.transfer.Transferencia;
+import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferenciaRepository;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.domain.conta.ContaRepository;
 import com.Isabela01vSilva.bank_isabela.service.client.ScheduleClientService;
@@ -10,11 +13,13 @@ import com.Isabela01vSilva.bank_isabela.service.client.dto.*;
 import com.Isabela01vSilva.bank_isabela.service.data.request.CreateAppointmentScheduleRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class TransferenciaService {
+public class TransferService {
 
     @Autowired
     private ContaRepository contaRepository;
@@ -85,7 +90,7 @@ public class TransferenciaService {
                         dtoAgendamento.getPayload(),
                         Status.CONCLUIDO
                 );
-                transferir(contaOrigem, contaDestino, valor);
+                executarOperacoesFinanceiras(contaOrigem, contaDestino, valor);
             }
             return dtoAgendamento;
 
@@ -129,11 +134,15 @@ public class TransferenciaService {
     }
 
 
-    //Transferências
-    @Transactional
-    public boolean transferir(Conta contaOrigem, Conta contaDestino, Double valor){
+    public boolean transferir(TransferRequest request) {
         try {
-            executarOperacoesFinanceiras(contaOrigem, contaDestino, valor);
+            Conta contaOrigem = contaRepository.findByNumero(request.numeroContaOrigem())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta origem não encontrada"));
+
+            Conta contaDestino = contaRepository.findByNumero(request.numeroContaDestino())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta destino não encontrada"));
+
+            executarOperacoesFinanceiras(contaOrigem, contaDestino, request.valor());
             return true; // sucesso
         } catch (Exception e) {
             System.err.println("Falha na transferência: " + e.getMessage());
@@ -141,7 +150,9 @@ public class TransferenciaService {
         }
     }
 
-    private void executarOperacoesFinanceiras(Conta contaOrigem, Conta contaDestino, Double valor){
+
+    @Transactional
+    public void executarOperacoesFinanceiras(Conta contaOrigem, Conta contaDestino, Double valor){
         if (contaOrigem.getSaldo() < valor) {
             throw new RuntimeException("Saldo insuficiente");
         }
@@ -151,17 +162,19 @@ public class TransferenciaService {
 
         contaRepository.save(contaOrigem);
         contaRepository.save(contaDestino);
+
+        registrarHistorico(contaOrigem, contaDestino, valor);
     }
-/*
+
     //Histórico
-    private void registrarHistorico(Conta contaOrigem, Conta contaDestino, SchedulingDTO transferencia){
+    private void registrarHistorico(Conta contaOrigem, Conta contaDestino, Double valor){
         historicoService.cadastrar(
                 new CadastroHistoricoRequest(
                         contaOrigem,
                         contaOrigem.getCliente(),
                         TipoOperacao.TRANSFERENCIA,
-                        "TRANSFERENCIA enviado para a conta: " + transferencia.getPayload().numeroContaDestino(),
-                        transferencia.getPayload().valor()
+                        "TRANSFERENCIA enviado para a conta: " + contaDestino.getNumero(),
+                        valor
                 )
         );
 
@@ -170,9 +183,9 @@ public class TransferenciaService {
                         contaDestino,
                         contaDestino.getCliente(),
                         TipoOperacao.TRANSFERENCIA,
-                        "TRANSFERENCIA recebido da conta: " + transferencia.getPayload().numeroContaOrigem(),
-                        transferencia.getPayload().valor()
+                        "TRANSFERENCIA recebida da conta: " + contaOrigem.getNumero(),
+                        valor
                 )
         );
-    }*/
+    }
 }

@@ -1,4 +1,4 @@
-package com.Isabela01vSilva.bank_isabela.domain;
+package com.Isabela01vSilva.bank_isabela.domain.transfer;
 
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.Status;

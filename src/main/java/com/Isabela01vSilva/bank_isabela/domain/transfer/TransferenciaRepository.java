@@ -1,4 +1,4 @@
-package com.Isabela01vSilva.bank_isabela.domain;
+package com.Isabela01vSilva.bank_isabela.domain.transfer;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

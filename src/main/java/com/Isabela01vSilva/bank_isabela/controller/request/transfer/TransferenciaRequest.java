@@ -1,4 +1,4 @@
-package com.Isabela01vSilva.bank_isabela.controller.request.conta;
+package com.Isabela01vSilva.bank_isabela.controller.request.transfer;
 
 import com.Isabela01vSilva.bank_isabela.service.client.dto.Status;
 

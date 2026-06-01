@@ -2,7 +2,7 @@ package com.Isabela01vSilva.bank_isabela.service.client;
 
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.domain.conta.ContaRepository;
-import com.Isabela01vSilva.bank_isabela.service.TransferenciaService;
+import com.Isabela01vSilva.bank_isabela.service.TransferService;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.CallbackDTO;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.PayloadDTO;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.Status;
@@ -24,7 +24,7 @@ public class BankListenerService {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    private TransferenciaService transferenciaService;
+    private TransferService transferenciaService;
 
     @Autowired
     private ContaRepository contaRepository;
@@ -49,7 +49,7 @@ public class BankListenerService {
             Conta contaDestino = contaRepository.findByNumero(payloadDTO.getNumeroContaDestino())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta destino não encontrada"));
 
-            transferenciaService.transferir(contaOrigem, contaDestino, payloadDTO.getValor());
+            transferenciaService.executarOperacoesFinanceiras(contaOrigem, contaDestino, payloadDTO.getValor());
 
             scheduleClientService.enviarCallback(new CallbackDTO(appointmentId, Status.CONCLUIDO));
 
