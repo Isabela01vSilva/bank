@@ -4,6 +4,5 @@ public enum TipoOperacao {
     SAQUE,
     DEPOSITO,
     TRANSFERENCIA,
-    PIX,
     ATUALIZACAO_STTS_CONTA
 }
