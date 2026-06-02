@@ -29,12 +29,13 @@ public class Conta {
     private String numeroAgencia;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
     private TipoConta tipoConta;
 
     @Enumerated(EnumType.STRING)
     private StatusConta statusConta;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "idCliente")
     private Customer cliente;
 

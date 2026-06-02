@@ -8,7 +8,7 @@
 
 ### **Campos**
 
-* Nome Completo (Nome e Sobrenome)
+* Nome Completo
 * CPF
 * Data de nascimento
 * E-mail
@@ -17,22 +17,21 @@
 
 ### **Regras de negócio**
 
-* Nome Completo obrigatório.
-* CPF único.
-* E-mail único.
-* Data de nascimento obrigatória.
-* Telefone obrigatório.
-* O telefone é considerado único através da combinação DDD \+ número.
-* Tipo de Conta obrigatório.
-* No nome do cliente, não permitir caracteres numéricos ou especiais.
-* O CPF deve conter apenas números e ser válido.
-* O e-mail deve ser válido, seguindo o padrão de email.
-* O telefone deve conter apenas números e ser válido.
-* O cliente pode escolher entre conta poupança, conta corrente ou ambas.
-* O sistema deve validar o formato do CPF, e-mail e telefone durante o cadastro.
-* O sistema deve exibir mensagens de erro claras e específicas para cada tipo de validação que falhar.
-* O sistema deve calcular a idade do cliente com base na data de nascimento e impedir o cadastro de clientes menores de 18 anos.
-* O nome completo do cliente deve ser armazenado como a combinação do nome e sobrenome, e exibido dessa forma em todas as consultas relacionadas ao cliente.
+* Nome Completo obrigatório. ✅
+* CPF único e obrigatorio. ✅
+* E-mail único e obrigatorio. ✅
+* Data de nascimento obrigatória. ✅
+* Telefone único e obrigatório. ✅
+* O telefone é considerado único através da combinação DDD \+ número. ✅
+* Tipo de Conta obrigatório. ✅
+* No nome do cliente, não permitir caracteres numéricos ou especiais.✅
+* O CPF deve conter apenas números e ser válido. ✅
+* O e-mail deve ser válido, seguindo o padrão de email. ✅
+* O telefone deve conter apenas números e ser válido. ✅
+* O cliente pode escolher entre conta poupança, conta corrente ou ambas. ✅
+* O sistema deve validar o formato do CPF, e-mail e telefone durante o cadastro. ✅
+* O sistema deve exibir mensagens de erro claras e específicas para cada tipo de validação que falhar. ✅
+* O sistema deve calcular a idade do cliente com base na data de nascimento e impedir o cadastro de clientes menores de 18 anos. ✅
 
 ## **RF002 \- Consultar Cliente**
 

@@ -143,4 +143,32 @@ public class ContaService {
         // Retorna o saldo da conta e o número da conta.
         return "Saldo R$" + conta.getSaldo() + " da conta:" + conta.getNumero();
     }
+
+    public List<Conta> cadastrarMultiplas(List<CriarContaDTO> contas) {
+
+        List<Conta> novasContas = contas.stream().map(dados -> {
+            Conta novaConta = new Conta();
+            novaConta.setStatusConta(StatusConta.ATIVADA);
+            novaConta.setDataCriacao(LocalDate.now());
+            novaConta.setNumero(novaConta.gerarNumeroConta());
+            novaConta.setTipoConta(dados.tipoConta());
+            novaConta.setCliente(dados.cliente());
+
+
+            String numeroConta;
+            do {
+                numeroConta = novaConta.gerarNumeroConta();
+            } while (contaRepository.existsByNumero(numeroConta));
+
+            // novaConta.setNumeroAgencia(dados.numeroAgencia());
+            novaConta.setSaldo(0.00);
+
+            return novaConta;
+        }).toList();
+
+
+
+
+        return contaRepository.saveAll(novasContas);
+    }
 }

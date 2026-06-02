@@ -91,6 +91,33 @@ public class Formatters {
 
         return phone;
     }
+
+    /**
+     * Valida nome completo: deve ter pelo menos 2 palavras, sem números ou caracteres especiais.
+     * Permite apenas letras, espaços, hífens e apóstrofos.
+     * Ex.: "João Silva" é válido, "João" é inválido, "João123" é inválido
+     */
+    public static boolean isValidFullName(String fullName) {
+        if (fullName == null || fullName.trim().isEmpty()) {
+            return false;
+        }
+
+        String trimmed = fullName.trim();
+
+        // Verifica se contém números
+        if (trimmed.matches(".*\\d.*")) {
+            return false;
+        }
+
+        // Permite apenas letras, espaços, hífens e apóstrofos
+        if (!trimmed.matches("[a-zA-ZÀ-ÿ\\s'\\-]+")) {
+            return false;
+        }
+
+        // Verifica se tem pelo menos 2 palavras
+        String[] words = trimmed.split("\\s+");
+        return words.length >= 2;
+    }
 }
 
 

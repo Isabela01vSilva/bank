@@ -26,7 +26,7 @@ public class Customer {
     @Column(nullable = false)
     private String fullName;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalDate birthDate;
 
     @Column(nullable = false, unique = true)

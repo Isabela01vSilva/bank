@@ -4,17 +4,21 @@ import com.Isabela01vSilva.bank_isabela.commons.Formatters;
 import com.Isabela01vSilva.bank_isabela.controller.request.CustomerAccountRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.customer.CustomerRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.ClienteContaResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.ClienteContasResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.customer.CustomerResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.conta.ContaResponse;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.service.CustomerService;
 import com.Isabela01vSilva.bank_isabela.service.dto.ClienteContaDTO;
+import com.Isabela01vSilva.bank_isabela.service.dto.ClienteContasDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("clientes")
@@ -24,13 +28,13 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<ClienteContaResponse> createCustomer(@Valid @RequestBody CustomerAccountRequest data) {
-        ClienteContaDTO createCustomer = customerService.register(data);
+    public ResponseEntity<ClienteContasResponse> createCustomer(@Valid @RequestBody CustomerAccountRequest data) {
+        ClienteContasDTO createCustomer = customerService.register(data);
 
-        Conta conta = createCustomer.conta();
+        List<ContaResponse> contas = createCustomer.conta().stream().map(c -> new ContaResponse(c.getNumero(), c.getNumeroAgencia(), c.getTipoConta(), c.getStatusConta(), c.getSaldo(), c.getDataCriacao())).toList();
         Customer cliente = createCustomer.customer();
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ClienteContaResponse(new CustomerResponse(cliente.getId(), cliente.getFullName(), cliente.getBirthDate(), cliente.getCpf(), cliente.getEmail(), cliente.getPhoneNumber()), new ContaResponse(conta.getNumero(), conta.getNumeroAgencia(), conta.getTipoConta(), conta.getStatusConta(), conta.getSaldo(), conta.getDataCriacao())));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ClienteContasResponse(new CustomerResponse(cliente.getId(), cliente.getFullName(), cliente.getBirthDate(), cliente.getCpf(), cliente.getEmail(), cliente.getPhoneNumber()), contas));
     }
 
     @GetMapping("/{id}")
