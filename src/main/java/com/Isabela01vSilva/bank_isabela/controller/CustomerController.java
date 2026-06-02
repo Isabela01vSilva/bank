@@ -21,28 +21,29 @@ import org.springframework.web.bind.annotation.*;
 public class CustomerController {
 
     @Autowired
-    private CustomerService clienteService;
+    private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<ClienteContaResponse> cadastrarCliente(@Valid @RequestBody CustomerAccountRequest dados) {
-        ClienteContaDTO novoClienteConta = clienteService.register(dados);
+    public ResponseEntity<ClienteContaResponse> createCustomer(@Valid @RequestBody CustomerAccountRequest data) {
+        ClienteContaDTO createCustomer = customerService.register(data);
 
-        Conta conta = novoClienteConta.conta();
-        Customer cliente = novoClienteConta.customer();
+        Conta conta = createCustomer.conta();
+        Customer cliente = createCustomer.customer();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new ClienteContaResponse(new CustomerResponse(cliente.getId(), cliente.getFullName(), cliente.getBirthDate(), cliente.getCpf(), cliente.getEmail(), cliente.getPhoneNumber()), new ContaResponse(conta.getNumero(), conta.getNumeroAgencia(), conta.getTipoConta(), conta.getStatusConta(), conta.getSaldo(), conta.getDataCriacao())));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerResponse> buscarClientePorId(@PathVariable Long id) {
-        Customer buscarCliente = clienteService.getCustomerById(id);
-        return ResponseEntity.ok(new CustomerResponse(buscarCliente.getId(), buscarCliente.getFullName(), buscarCliente.getBirthDate(), Formatters.formatCPF(buscarCliente.getCpf()), Formatters.formatEmail(buscarCliente.getEmail()), Formatters.formatPhone(buscarCliente.getPhoneNumber())));
+    public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable Long id) {
+        Customer getCustomer = customerService.getCustomerById(id);
+
+        return ResponseEntity.ok(new CustomerResponse(getCustomer.getId(), getCustomer.getFullName(), getCustomer.getBirthDate(), Formatters.formatCPF(getCustomer.getCpf()), Formatters.formatEmail(getCustomer.getEmail()), Formatters.formatPhone(getCustomer.getPhoneNumber())));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponse> atualizarCliente(@Valid @PathVariable Long id, @RequestBody CustomerRequest dados) {
-        Customer atualizar = clienteService.updateCustomer(id, dados);
-        return ResponseEntity.ok(new CustomerResponse(atualizar.getId(), atualizar.getFullName(), atualizar.getBirthDate(), Formatters.formatCPF(atualizar.getCpf()), Formatters.formatEmail(atualizar.getEmail()), Formatters.formatPhone(atualizar.getPhoneNumber())));
-    }
+    public ResponseEntity<CustomerResponse> updateCustomer(@Valid @PathVariable Long id, @RequestBody CustomerRequest data) {
+        Customer updatedCustomer = customerService.updateCustomer(id, data);
 
+        return ResponseEntity.ok(new CustomerResponse(updatedCustomer.getId(), updatedCustomer.getFullName(), updatedCustomer.getBirthDate(), Formatters.formatCPF(updatedCustomer.getCpf()), Formatters.formatEmail(updatedCustomer.getEmail()), Formatters.formatPhone(updatedCustomer.getPhoneNumber())));
+    }
 }
