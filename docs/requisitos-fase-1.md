@@ -26,6 +26,16 @@ Fase 1 \- Sistema Bancário \+ Controle de Gastos
 * Telefone obrigatório.  
 * O telefone é considerado único através da combinação DDD \+ número.   
 * Tipo de Conta obrigatório.
+* No nome do cliente, não permitir caracteres numéricos ou especiais.  
+* No sobrenome do cliente, não permitir caracteres numéricos ou especiais.  
+* O CPF deve conter apenas números e ser válido.  
+* O e-mail deve ser válido, seguindo o padrão de email.  
+* O telefone deve conter apenas números e ser válido.    
+* O cliente pode escolher entre conta poupança, conta corrente ou ambas.  
+* O sistema deve validar o formato do CPF, e-mail e telefone durante o cadastro.  
+* O sistema deve exibir mensagens de erro claras e específicas para cada tipo de validação que falhar.
+* O sistema deve calcular a idade do cliente com base na data de nascimento e impedir o cadastro de clientes menores de 18 anos.
+* O nome completo do cliente deve ser armazenado como a combinação do nome e sobrenome, e exibido dessa forma em todas as consultas relacionadas ao cliente.
 
 ## **RF002 \- Consultar Cliente**
 
@@ -48,14 +58,14 @@ Fase 1 \- Sistema Bancário \+ Controle de Gastos
 ### **Campos permitidos**
 
 * E-mail  
-* Telefone  
+* Telefone 
+* Nome
 * Sobrenome
 
 ### **Regras de negócio**
 
 Não permitir alteração de:
 
-* Nome  
 * CPF  
 * Data de nascimento  
 * Tipo de Conta
@@ -98,6 +108,8 @@ Não permitir alteração de:
 
 ### **Exibir**
 
+* Nome e Sobrenome do cliente
+* CPF do cliente
 * Agência  
 * Número da conta  
 * Tipo da conta  
@@ -114,7 +126,13 @@ Não permitir alteração de:
 * Não permitir desativação de conta com saldo.  
 * Apenas contas ativas podem ser movimentadas.  
 * A desativação de uma conta não afeta outras contas do cliente.  
-* Mas ele pode cadastrar abrir uma conta nova, se ele nao tiver corrente ou poupança
+* Mas ele pode cadastrar abrir uma conta nova, se ele nao tiver corrente ou poupança, ou seja, ele pode ter as duas, mas nao pode ter mais de uma de cada tipo.
+* O sistema deve enviar uma notificação ao cliente quando uma conta for desativada, informando o motivo da desativação e os passos necessários para reativar a conta, se aplicável.
+* O sistema deve registrar a data e hora da desativação da conta, bem como o motivo, para fins de histórico do cliente.
+* o sistema deve permitir que o cliente reative uma conta desativada.
+* O sistema deve validar o status da conta antes de permitir qualquer movimentação, garantindo que apenas contas ativas possam ser movimentadas.
+* O sistema deve exibir uma mensagem de erro clara e específica se o cliente tentar desativar uma conta que possui saldo, informando que a conta deve estar com saldo zero para ser desativada.
+* O sistema não permite o cliente visualizar o historico de movimentações de uma conta desativada, mas permite visualizar o histórico de movimentações de contas ativas.
 
 ---
 
@@ -130,19 +148,17 @@ Este será o principal diferencial da aplicação.
 * Total de entradas do mês.  
 * Total de saídas do mês.  
 * Total economizado no mês.  
-* Total economizado na conta.
+* Total economizado da conta.
 
 ## **RF009 \- Indicador Financeiro**
 
 ### **Exibir**
 
-* Valor total de entradas do mês atual.  
-* Comparação percentual com o mês anterior.  
-* Valor total de saídas do mês atual.  
-* Comparação percentual com o mês anterior.  
-* Valor economizado no mês.
+* Valor total de entradas do mês atual. Comparação percentual com o mês anterior.  
+* Valor total de saídas do mês atual. Comparação percentual com o mês anterior.  
+* Valor economizado no mês. Comparação percentual com o mês anterior.
 
-## **RF013 \- Evolução Financeira**
+## **RF010 \- Evolução Financeira**
 
 ### **Exibir**
 
@@ -164,7 +180,7 @@ Caso a conta possua mais de 12 meses de existência:
 
 * Exibir apenas os últimos 12 meses.
 
-## **RF014 \- Últimas Movimentações**
+## **RF011 \- Últimas Movimentações**
 
 ### **Exibir**
 
@@ -179,21 +195,38 @@ Caso a conta possua mais de 12 meses de existência:
 
 # **Módulo 4 \- Movimentações**
 
-## **RF016 \- Sacar Dinheiro**
+## **RF012 \- Gerar boleto para Saque**
 
 ### **Regras de negócio**
 
-* Saldo suficiente.  
-* Valor maior que zero.  
-* Registrar a movimentação no histórico.
+* Possui status.
+* O sistema deve registrar a data, hora, valor e tipo da movimentação para fins de histórico e auditoria.
+* O sistema deve atualizar o saldo da conta imediatamente após a realização do saque.
+* O sistema deve permitir que o client visualize o histórico de saques realizados, incluindo informações como data, valor e status da operação.
+* O sistema deve permitir a geração de um boleto de saque para valores iguais ou superiores a R$ 50,00, possibilitando que o client realize a retirada do valor em uma agência.
+* O boleto de saque somente poderá ser gerado caso o client possua saldo suficiente no momento da solicitação.
+* Após a geração do boleto, o valor correspondente deverá ficar bloqueado na conta do cliente, não podendo ser utilizado em outras movimentações até que o boleto seja pago, cancelado ou expire.
 
-## **RF017 \- Gerar Boleto para Depósito**
+### **Status**
+
+* PENDENTE
+* PAGO
+* VENCIDO
+* CANCELADO
+
+## **RF013 \- Gerar Boleto para Depósito**
 
 ### **Regras de negócio**
 
 * Possuir valor.  
 * Possuir data de vencimento.  
 * Possui status.
+* O sistema deve registrar a data, hora, valor e tipo da movimentação para fins de histórico e auditoria.
+* O sistema deve atualizar o saldo da conta imediatamente após a realização do depósito.
+* O sistema deve permitir que o client visualize o histórico de depósitos realizados, incluindo informações como data, valor e status da operação.
+* O sistema deve permitir a geração de um boleto de depósito para valores iguais ou superiores a R$ 50,00, possibilitando que o client realize o depósito em uma agência ou por meio de transferência bancária.
+* O boleto pode ser gerado mesmo sem saldo suficiente, pois o client pode gerar o boleto e depois realizar o pagamento para que o valor seja creditado na conta.
+* O boleto de depósito deve conter um código de barras ou QR code para facilitar o pagamento em agências ou por meio de aplicativos de pagamento, garantindo a praticidade e segurança na realização do depósito
 
 ### **Status**
 
@@ -208,161 +241,3 @@ Quando o boleto for marcado como pago:
 
 * Creditar valor na conta.  
 * Registrar a movimentação no histórico.
-
----
-
-# **Módulo 5 \- Transações**
-
-## **RF008 \- Realizar Transferência Imediata**
-
-**Descrição:** Transferir dinheiro entre contas imediatamente.
-
-### **Regras**
-
-* Conta origem deve possuir saldo.  
-* Conta destino deve existir.  
-* Valor deve ser maior que zero.  
-* Registrar entrada e saída.  
-* Ele pode transferir dinheiro das suas duas contas caso possua e queira, é opcional.   
-* Ele pode transferir dinheiro entre suas próprias contas 
-
----
-
-## **RF009 \- Agendar Transferência**
-
-**Descrição:** Permitir agendar transferências.
-
-### **Regras**
-
-* Data futura obrigatória.  
-* Valor obrigatório.  
-* Conta origem deve possuir saldo na execução.
-
-### **Status possíveis**
-
-* AGENDADA  
-* PROCESSANDO  
-* REALIZADA  
-* CANCELADA  
-* FALHOU
-
----
-
-## **RF010 \- Cancelar Transferência Agendada**
-
-**Descrição:** Permitir cancelar uma transferência antes da execução.
-
-### **Regras**
-
-* Apenas transferências agendadas podem ser canceladas.
-
----
-
-## **RF011 \- Editar Transferência Agendada**
-
-**Descrição:** Permitir alterar uma transferência antes do processamento.
-
-### **Campos editáveis**
-
-* Valor  
-* Data  
-* Conta destino
-
-### **Regras**
-
-* Apenas transferências agendadas.
-
----
-
-## **RF012 \- Processamento Automático**
-
-**Descrição:** O sistema deve processar transferências agendadas.
-
-### **Regra**
-
-* Executar de 1 em 1 hora.
-
-**Implementação futura**
-
-* Spring Scheduler.
-
-Exemplo:
-
-@Scheduled(cron \= "0 0 \* \* \* \*")  
----
-
-## **RF013 \- Validar Saldo**
-
-**Descrição:** Antes de executar uma transferência.
-
-### **Regras**
-
-* Saldo suficiente.  
-* Caso contrário:
-
-Status:
-
-* FALHOU
-
-Motivo:
-
-* SALDO INSUFICIENTE
-
-# **Módulo 6 \- Histórico**
-
-## **RF014 \- Histórico de Transações**
-
-**Descrição:** Consultar movimentações da conta.
-
-### **Exibir**
-
-* Data  
-* Tipo  
-* Valor  
-* Status  
-* Conta origem  
-* Conta destino
-
-## **RF015 \- Filtrar Histórico**
-
-### **Filtros**
-
-* Data inicial  
-* Data final  
-* Tipo de movimentação  
-* Valor mínimo  
-* Valor máximo  
-* Status
-
-## **RF016 \- Histórico por Status**
-
-Visualizar:
-
-* Realizadas  
-* Agendadas  
-* Canceladas  
-* Falhas
-
----
-
-* Sobre a conta: Ter um dashboard com a analise da conta, aonde mostra os dados de quanto entrou na conta no mes ou ano, quanto saiu no mes ou ano o quanto poupei desde que abri a conta, na verdade o quanto  tenho poupado  e nao gastei   
-* cartão de credito: quero ter uma analise de quanto gastei ental coisa como, quanto gastei por exemplo usando uber   
-* conta: no dashboard quero um fluxo mensal, de um ano ou desde que abri a conta mas se tiver mais do que um ano exibe apenas um ano   
-* Cona: historico de transferencia   
-* Cartão de credito quero poder transferir dinheiro do cartão de credito;   
-* Quero ter tipos de conta, conta poupança e conta corrente  
-* quero poder sacar dinheiro   
-* quero poder gerar um boleto para depositar na conta   
-* quero pode depositar mas nao tenho ideia de como   
-* quero poder realiza uma transação   
-* quero que as transações sejam feitas de 1h em 1h,   
-* quero poder editar uma transação se tiver tempo,   
-* caso eu nao teha saldo suficiente quero que a transação seja barrada   
-* quero poder excluir uma transação agendada   
-* quero poder agendar uma transação   
-* e posso fazer uma transação imediata   
-* ao criar um cliente automaticamente cria uma conta \+ agencia   
-* quero poder filtrar as transações, por tipo entrada, saida, valor min e maximo, periodo da transação.   
-* quero poder ver o historico das transações   
-* quero ver o historicos das transações realizadas, agendadas, canceladas  
-  
