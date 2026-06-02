@@ -45,7 +45,7 @@ public class HistoricoService {
         // Busca os históricos relacionados a um cliente pelo id
         List<Historico> historico = historicoRepository.findByClienteId(id);
         return historico.stream().map(historico1 -> new HistoricoResponse(
-                historico1.getId(), historico1.getCliente().getNome(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransacao()
+                historico1.getId(), historico1.getCliente().getFullName(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransacao()
         )).toList(); // Converte os históricos para uma lista de HistoricoResponse e retorna
     }
 
@@ -53,7 +53,7 @@ public class HistoricoService {
         // Busca os históricos relacionados a um conta pelo id
         List<Historico> historico = historicoRepository.findByContaId(id);
         return historico.stream().map(historico1 -> new HistoricoResponse(
-                historico1.getId(), historico1.getCliente().getNome(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransacao()
+                historico1.getId(), historico1.getCliente().getFullName(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransacao()
         )).toList(); // Converte os históricos para uma lista de HistoricoResponse e retorna
     }
 
@@ -79,7 +79,7 @@ public class HistoricoService {
         return historicos.stream()
                 .map(historico -> new HistoricoResponse(
                         historico.getId(),
-                        historico.getCliente().getNome(),
+                        historico.getCliente().getFullName(),
                         historico.getValor(),
                         historico.getDescricao(),
                         historico.getDataTransacao()
@@ -95,12 +95,13 @@ public class HistoricoService {
                 .filter(historicos -> !historicos.getTipoOperacao().equals(TipoOperacao.ATUALIZACAO_STTS_CONTA)) // Filtra para excluir operações de atualização de status da conta
                 .map(historicos -> new HistoricoResponse(
                         historicos.getId(),
-                        historicos.getCliente().getNome(),
+                        historicos.getCliente().getFullName(),
                         historicos.getValor(),
                         historicos.getDescricao(),
                         historicos.getDataTransacao()
                 )).toList(); // Converte e retorna os históricos filtrados
     }
+
 
     public String calculoGastosPorPeriodo(HistoricoEntreDatasResquest gastosRequest) {
         List<Historico> historico = historicoRepository.findByContaIdAndDataTransacaoBetween(
@@ -110,7 +111,7 @@ public class HistoricoService {
         ); // Busca os históricos da conta no intervalo de datas especificado
 
         List<Double> numeros = historico.stream()
-                .filter(h -> h.getTipoOperacao().equals(TipoOperacao.SAQUE) || h.getTipoOperacao().equals(TipoOperacao.PIX)) // Filtra apenas saques ou operações de PIX
+                .filter(h -> h.getTipoOperacao().equals(TipoOperacao.SAQUE) || h.getTipoOperacao().equals(TipoOperacao.TRANSFERENCIA)) // Filtra apenas saques ou operações de PIX
                 .map(Historico::getValor) // Mapeia os valores das operações
                 .toList(); // Converte para uma lista de valores
 
