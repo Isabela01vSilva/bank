@@ -1,4 +1,4 @@
-Fase 1 \- Sistema Bancário \+ Controle de Gastos 
+Sistema Bancário + Controle de Gastos 
 
 # **Módulo 1 \- Cliente**
 
