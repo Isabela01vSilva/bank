@@ -4,7 +4,7 @@
 
 ## **RF001 \- Cadastrar Cliente**
 
-**Descrição:** Permitir o cadastro de um novo cliente.
+**Descrição:** Permitir o cadastro de um novo cliente.✅
 
 ### **Campos**
 
@@ -33,19 +33,17 @@
 * O sistema deve exibir mensagens de erro claras e específicas para cada tipo de validação que falhar. ✅
 * O sistema deve calcular a idade do cliente com base na data de nascimento e impedir o cadastro de clientes menores de 18 anos. ✅
 
-## **RF002 \- Consultar Cliente**
+## **RF002 \- Consultar Cliente** 
 
 **Descrição:** Permitir consultar os dados do cliente.
 
 ### **Exibir**
 
-* Nome
-* Sobrenome
-* CPF
-* E-mail
-* Telefone
-* Data de nascimento
-* Data de criação do cadastro
+* Nome Completo ✅
+* CPF ✅
+* E-mail ✅
+* Telefone ✅
+* Data de nascimento ✅
 
 ## **RF003 \- Atualizar Cliente**
 
@@ -53,18 +51,17 @@
 
 ### **Campos permitidos**
 
-* E-mail
-* Telefone
-* Nome
-* Sobrenome
+* E-mail ✅
+* Telefone ✅
+* Nome ✅
+* Sobrenome ✅
 
 ### **Regras de negócio**
 
 Não permitir alteração de:
 
-* CPF
-* Data de nascimento
-* Tipo de Conta
+* CPF ✅
+* Data de nascimento ✅
 
 ---
 

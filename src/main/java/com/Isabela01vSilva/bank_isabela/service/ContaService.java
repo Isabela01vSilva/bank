@@ -76,6 +76,16 @@ public class ContaService {
         return contaRepository.save(conta);
     }
 
+    /**
+     * Valida que o tipo de conta não seja alterado (campo imutável).
+     * Lança exceção se houver tentativa de alteração.
+     */
+    public void validateTipoContaImmutable(Conta conta, CriarContaDTO novosDados) {
+        if (novosDados.tipoConta() != null && !novosDados.tipoConta().equals(conta.getTipoConta())) {
+            throw new IllegalArgumentException("Tipo de conta não pode ser alterado");
+        }
+    }
+
     //
 
     @Transactional
@@ -165,9 +175,6 @@ public class ContaService {
 
             return novaConta;
         }).toList();
-
-
-
 
         return contaRepository.saveAll(novasContas);
     }

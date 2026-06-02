@@ -8,7 +8,6 @@ import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.domain.mapper.CustomerMappers;
 import com.Isabela01vSilva.bank_isabela.commons.Formatters;
-import com.Isabela01vSilva.bank_isabela.service.dto.ClienteContaDTO;
 import com.Isabela01vSilva.bank_isabela.service.dto.ClienteContasDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,9 +85,30 @@ public class CustomerService {
         Customer cliente = customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
 
+        // Valida campos imutáveis antes de atualizar
+        validateImmutableFields(cliente, dados);
+
         cliente.updateInfoCustomer(dados);
         customerRepository.save(cliente);
 
         return cliente;
+    }
+
+    /**
+     * Valida que campos imutáveis não sejam alterados: CPF e data de nascimento.
+     */
+    private void validateImmutableFields(Customer cliente, CustomerRequest dados) {
+        // CPF não pode ser alterado
+        if (dados.cpf() != null) {
+            String cpfNormalizado = Formatters.normalize(dados.cpf());
+            if (!cpfNormalizado.equals(cliente.getCpf())) {
+                throw new IllegalArgumentException("CPF não pode ser alterado");
+            }
+        }
+
+        // Data de nascimento não pode ser alterada
+        if (dados.birthDate() != null && !dados.birthDate().equals(cliente.getBirthDate())) {
+            throw new IllegalArgumentException("Data de nascimento não pode ser alterada");
+        }
     }
 }
