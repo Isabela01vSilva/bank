@@ -19,6 +19,28 @@ public class Formatters {
         return phone;
     }
 
+    /**
+     * Normaliza um email: remove espaços extras e converte para minúsculas.
+     * Ex.: " Exemplo@Domínio.COM " -> "exemplo@domínio.com"
+     */
+    public static String normalizeEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            return email;
+        }
+
+        // Remove espaços em branco (inclui espaços internos acidentais) e converte para lower-case
+        email = email.trim().replaceAll("\\s+", "");
+        return email.toLowerCase();
+    }
+
+    /**
+     * Formata um email aplicando a normalização. Retorna o email normalizado.
+     * Atualmente a formatação é apenas normalizar (trim e minúsculas).
+     */
+    public static String formatEmail(String email) {
+        return normalizeEmail(email);
+    }
+
     public static String formatCPF(String cpf) {
         if (cpf == null || cpf.isEmpty()) {
             return cpf;

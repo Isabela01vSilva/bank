@@ -36,13 +36,13 @@ public class CustomerController {
     @GetMapping("/{id}")
     public ResponseEntity<CustomerResponse> buscarClientePorId(@PathVariable Long id) {
         Customer buscarCliente = clienteService.getCustomerById(id);
-        return ResponseEntity.ok(new CustomerResponse(buscarCliente.getId(), buscarCliente.getFullName(), buscarCliente.getBirthDate(), Formatters.formatCPF(buscarCliente.getCpf()), buscarCliente.getEmail(), Formatters.formatPhone(buscarCliente.getPhoneNumber())));
+        return ResponseEntity.ok(new CustomerResponse(buscarCliente.getId(), buscarCliente.getFullName(), buscarCliente.getBirthDate(), Formatters.formatCPF(buscarCliente.getCpf()), Formatters.formatEmail(buscarCliente.getEmail()), Formatters.formatPhone(buscarCliente.getPhoneNumber())));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CustomerResponse> atualizarCliente(@Valid @PathVariable Long id, @RequestBody CustomerRequest dados) {
         Customer atualizar = clienteService.updateCustomer(id, dados);
-        return ResponseEntity.ok(new CustomerResponse(atualizar.getId(), atualizar.getFullName(), atualizar.getBirthDate(), Formatters.formatCPF(atualizar.getCpf()), atualizar.getEmail(), Formatters.formatPhone(atualizar.getPhoneNumber())));
+        return ResponseEntity.ok(new CustomerResponse(atualizar.getId(), atualizar.getFullName(), atualizar.getBirthDate(), Formatters.formatCPF(atualizar.getCpf()), Formatters.formatEmail(atualizar.getEmail()), Formatters.formatPhone(atualizar.getPhoneNumber())));
     }
 
 }

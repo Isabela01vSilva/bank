@@ -10,7 +10,7 @@ public class CustomerMappers {
         customer.setFullName(data.fullName());
         customer.setBirthDate(data.birthDate());
         customer.setCpf(Formatters.normalize(data.cpf()));
-        customer.setEmail(data.email());
+        customer.setEmail(Formatters.normalizeEmail(data.email()));
         customer.setPhoneNumber(Formatters.normalizePhone(data.phoneNumber()));
         return customer;
     }
