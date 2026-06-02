@@ -37,9 +37,6 @@ public class ClienteService {
         return  new ClienteContaDTO(contaCriada, clienteCriado);
     }
 
-    public List<Cliente> exibirTodosOsClients() {
-        return clienteRepository.findAll();
-    }
 
     public Cliente exibirClientePorId(Long id) {
         return clienteRepository.findById(id)

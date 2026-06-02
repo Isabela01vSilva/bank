@@ -34,12 +34,6 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ClienteContaResponse(new ClienteResponse(cliente.getId(), cliente.getNome(), cliente.getCpf(), cliente.getEmail(), cliente.getTelefone()), new ContaResponse(conta.getNumero(), conta.getNumeroAgencia(), conta.getTipoConta(), conta.getStatusConta(), conta.getSaldo(), conta.getDataCriacao())));
     }
 
-    @GetMapping
-    public ResponseEntity<List<ClienteResponse>> listarTodosOsClientes() {
-        List<Cliente> listar = clienteService.exibirTodosOsClients();
-        return ResponseEntity.ok(listar.stream().map(cliente -> new ClienteResponse(cliente.getId(), cliente.getNome(), cliente.getCpf(), cliente.getEmail(), cliente.getTelefone())).toList());
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<ClienteResponse> buscarClientePorId(@PathVariable Long id) {
         Cliente buscarCliente = clienteService.exibirClientePorId(id);
