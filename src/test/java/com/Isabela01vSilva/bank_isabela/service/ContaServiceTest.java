@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.conta.CriarContaDTO;
-import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
+import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
 import com.Isabela01vSilva.bank_isabela.domain.conta.ContaRepository;
 import com.Isabela01vSilva.bank_isabela.domain.conta.StatusConta;
@@ -35,9 +35,9 @@ public class ContaServiceTest {
     @BeforeEach
     void setUp() {
 
-        Cliente clienteMock = new Cliente();
+        Customer clienteMock = new Customer();
         clienteMock.setId(1L);
-        clienteMock.setNome("Nome do Cliente");
+        clienteMock.setFullName("Nome do Cliente");
 
         criarContaDTO = new CriarContaDTO("123", TipoConta.CORRENTE, clienteMock);
         contaMock = new Conta();

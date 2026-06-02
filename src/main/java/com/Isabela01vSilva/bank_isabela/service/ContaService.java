@@ -38,7 +38,7 @@ public class ContaService {
             numeroConta = novaConta.gerarNumeroConta();
         } while (contaRepository.existsByNumero(numeroConta));
 
-        novaConta.setNumeroAgencia(dados.numeroAgencia());
+        // novaConta.setNumeroAgencia(dados.numeroAgencia());
         novaConta.setSaldo(0.00);
 
         return contaRepository.save(novaConta);

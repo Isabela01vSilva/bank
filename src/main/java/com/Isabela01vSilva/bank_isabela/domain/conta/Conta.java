@@ -1,14 +1,9 @@
 package com.Isabela01vSilva.bank_isabela.domain.conta;
 
-import com.Isabela01vSilva.bank_isabela.domain.cliente.Cliente;
+import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,7 +25,7 @@ public class Conta {
     @Column(unique = true)
     private String numero;
 
-    @Column(length = 3, nullable = false)
+    @Column(length = 3)
     private String numeroAgencia;
 
     @Enumerated(EnumType.STRING)
@@ -41,7 +36,7 @@ public class Conta {
 
     @OneToOne
     @JoinColumn(name = "idCliente")
-    private Cliente cliente;
+    private Customer cliente;
 
     private Double saldo;
     private LocalDate dataCriacao;
@@ -141,11 +136,11 @@ public class Conta {
         this.statusConta = statusConta;
     }
 
-    public Cliente getCliente() {
+    public Customer getCliente() {
         return cliente;
     }
 
-    public void setCliente(Cliente cliente) {
+    public void setCliente(Customer cliente) {
         this.cliente = cliente;
     }
 
