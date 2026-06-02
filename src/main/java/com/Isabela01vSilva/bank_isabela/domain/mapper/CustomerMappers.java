@@ -1,0 +1,17 @@
+package com.Isabela01vSilva.bank_isabela.domain.mapper;
+
+import com.Isabela01vSilva.bank_isabela.commons.Formatters;
+import com.Isabela01vSilva.bank_isabela.controller.request.CustomerAccountRequest;
+import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
+
+public class CustomerMappers {
+    public static Customer fromRequestToCustomer(CustomerAccountRequest data) {
+        Customer customer = new Customer();
+        customer.setFullName(data.fullName());
+        customer.setBirthDate(data.birthDate());
+        customer.setCpf(Formatters.normalize(data.cpf()));
+        customer.setEmail(data.email());
+        customer.setPhoneNumber(Formatters.normalizePhone(data.phoneNumber()));
+        return customer;
+    }
+}

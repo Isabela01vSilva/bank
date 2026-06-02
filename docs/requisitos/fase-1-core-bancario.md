@@ -8,8 +8,7 @@
 
 ### **Campos**
 
-* Nome
-* Sobrenome
+* Nome Completo (Nome e Sobrenome)
 * CPF
 * Data de nascimento
 * E-mail
@@ -18,8 +17,7 @@
 
 ### **Regras de negócio**
 
-* Nome obrigatório.
-* Sobrenome obrigatório.
+* Nome Completo obrigatório.
 * CPF único.
 * E-mail único.
 * Data de nascimento obrigatória.
@@ -27,7 +25,6 @@
 * O telefone é considerado único através da combinação DDD \+ número.
 * Tipo de Conta obrigatório.
 * No nome do cliente, não permitir caracteres numéricos ou especiais.
-* No sobrenome do cliente, não permitir caracteres numéricos ou especiais.
 * O CPF deve conter apenas números e ser válido.
 * O e-mail deve ser válido, seguindo o padrão de email.
 * O telefone deve conter apenas números e ser válido.
