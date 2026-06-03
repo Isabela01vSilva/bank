@@ -127,7 +127,7 @@ Não permitir alteração de:
 **Descrição:** Permitir ATIVAR ou ENCERRAR uma conta.
 
 ### *** Campos obrigatórios informados pelo cliente***
-* CPF
+
 * Número da conta
 * Número da agência
 * Novo status da conta (ATIVA ou ENCERRADA)

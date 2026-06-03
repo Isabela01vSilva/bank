@@ -49,6 +49,12 @@ public class Account {
     @Column(name = "data_criacao", nullable = false)
     private LocalDate creationDate;
 
+    @Column(name = "data_alteracao_status")
+    private LocalDate statusChangeDate;
+
+    @Column(name = "motivo_alteracao_status")
+    private String statusChangeReason;
+
     public void withdraw(Double amount) {
         if (amount > this.balance) {
             throw new IllegalArgumentException("Saldo insuficiente");
@@ -74,10 +80,6 @@ public class Account {
     }
 
     public void updateAccountStatus(AccountStatus statusCont) {
-        if (AccountStatus.ENCERRADA.equals(statusCont)){
-            this.accountStatus = AccountStatus.ENCERRADA;
-        } else {
-            this.accountStatus = AccountStatus.ATIVADA;
-        }
+        this.accountStatus = statusCont;
     }
 }

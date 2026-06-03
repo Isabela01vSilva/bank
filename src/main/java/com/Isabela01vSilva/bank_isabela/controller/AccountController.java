@@ -1,14 +1,14 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.account.*;
-import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.MessageResponse;
-import com.Isabela01vSilva.bank_isabela.domain.account.Account;
+import com.Isabela01vSilva.bank_isabela.controller.response.account.UpdateAccountStatusResponse;
 import com.Isabela01vSilva.bank_isabela.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -19,17 +19,10 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<AccountResponse> updateAccountStatus(@PathVariable Long id,
-                                                               @RequestBody UpdateAccountStatusRequest updateStatusRequest) {
-        Account account = accountService.updateAccountStatus(id, updateStatusRequest);
-        return ResponseEntity.ok(new AccountResponse(
-                account.getAccountNumber(),
-                account.getAccountNumber(),
-                account.getAccountType(),
-                account.getAccountStatus(),
-                account.getBalance(),
-                account.getCreationDate()));
+    @PatchMapping("/atualizarStatus")
+    public ResponseEntity<UpdateAccountStatusResponse> updateAccountStatus(@RequestBody UpdateAccountStatusRequest request) {
+        UpdateAccountStatusResponse response = accountService.updateAccountStatus(request);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/depositar")

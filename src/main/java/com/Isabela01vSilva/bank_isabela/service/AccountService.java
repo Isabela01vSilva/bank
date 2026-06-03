@@ -4,16 +4,21 @@ import com.Isabela01vSilva.bank_isabela.commons.Formatters;
 import com.Isabela01vSilva.bank_isabela.controller.request.account.*;
 import com.Isabela01vSilva.bank_isabela.controller.request.historico.CadastroHistoricoRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.account.UpdateAccountStatusResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
+import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferenciaRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.OperationType;
 import com.Isabela01vSilva.bank_isabela.domain.mapper.AccountMappers;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -24,6 +29,9 @@ public class AccountService {
 
     @Autowired
     private HistoricoService historicoService;
+
+    @Autowired
+    private TransferenciaRepository transferenciaRepository;
 
     @Transactional
     public List<Account> createMultipleAccounts(List<CreateAccountDTO> accounts) {
@@ -110,11 +118,12 @@ public class AccountService {
         if (!accountNumber.matches("\\d{5}-\\d") || !agencyNumber.matches("\\d{4}")) {
             throw new IllegalArgumentException("Número da conta deve estar no formato 12345-6 e agência no formato 1234");
         }
-        
-       List<Account> accounts = accountRepository.findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
+
+       Optional<Account> accounts = accountRepository.findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
         if (accounts.isEmpty()) {
             throw new EntityNotFoundException("Nenhuma conta encontrada por: " + accountNumber + " e agência: " + agencyNumber);
         }
+
         return accounts.stream()
                 .map(account -> new AccountWithCustomerResponse(
                         account.getCustomer().getFullName(),
@@ -140,28 +149,35 @@ public class AccountService {
     }
 
     @Transactional
-    public Account updateAccountStatus(Long id, UpdateAccountStatusRequest updateAccountStatusRequest) {
+    public UpdateAccountStatusResponse updateAccountStatus(UpdateAccountStatusRequest request) {
 
-        //Busca contas
-        Account account = accountRepository.getReferenceById(id);
+        Optional<Account> accounts = accountRepository.findByAccountNumberAndAgencyNumber(
+                request.accountNumber(), request.agencyNumber());
 
-        //Atualiza o stts da conta
-        account.updateAccountStatus(updateAccountStatusRequest.statusConta());
+        if (accounts.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada");
+        }
 
-        //Registra a atualização
-        historicoService.cadastrar(new CadastroHistoricoRequest(
-                account,
-                account.getCustomer(),
-                OperationType.ATUALIZACAO_STTS_CONTA,
-                "Atualizando stts conta para " + updateAccountStatusRequest.statusConta(),
-                null
-        ));
+        Account account = accounts.get();
 
-        //Salva a conta após alteração e retorna a conta atualizada
-        return accountRepository.save(account);
+        // Atualiza status, registra data e motivo da alteração
+        account.updateAccountStatus(request.accountStatus());
+        account.setStatusChangeDate(java.time.LocalDate.now());
+        account.setStatusChangeReason(request.statusChangeReason());
+
+        Account saved = accountRepository.save(account);
+
+        return new UpdateAccountStatusResponse(
+                saved.getAccountNumber(),
+                saved.getAgencyNumber(),
+                saved.getAccountType(),
+                saved.getAccountStatus(),
+                saved.getBalance(),
+                saved.getCreationDate(),
+                saved.getStatusChangeDate(),
+                saved.getStatusChangeReason()
+        );
     }
-
-
 
 
 
