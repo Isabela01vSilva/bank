@@ -33,35 +33,47 @@ public class AccountService {
     @Autowired
     private TransferenciaRepository transferenciaRepository;
 
+    /**
+     * Cria múltiplas contas a partir de uma lista de DTOs.
+     * Cada conta terá número gerado automaticamente.
+     */
     @Transactional
     public List<Account> createMultipleAccounts(List<CreateAccountDTO> accounts) {
-
         List<Account> newAccounts = accounts.stream()
-                .map(accountRequest -> AccountMappers.fromRequestToAccount(accountRequest, generateAccountNumber())).toList();
+                .map(accountRequest -> AccountMappers.fromRequestToAccount(accountRequest, generateAccountNumber()))
+                .toList();
 
         return accountRepository.saveAll(newAccounts);
     }
 
+    /**
+     * Gera um número de conta único no sistema (verifica existência no repositório).
+     */
     public String generateAccountNumber() {
-        do {
+        while (true) {
             String accountNumber = generateRandomAccountNumber();
             if (!accountRepository.existsByAccountNumber(accountNumber)) {
                 return accountNumber;
             }
-        } while (true);
-
+        }
     }
 
+    /**
+     * Gera um número de conta aleatório no formato 12345-6 (5 dígitos + dígito verificador).
+     */
     public String generateRandomAccountNumber() {
         Random random = new Random();
-        String number = "";
+        StringBuilder number = new StringBuilder();
         for (int i = 0; i < 5; i++) {
-            number += random.nextInt(10);
+            number.append(random.nextInt(10));
         }
-        int digitoVerificador = calculateCheckDigit(number);
+        int digitoVerificador = calculateCheckDigit(number.toString());
         return number + "-" + digitoVerificador;
     }
 
+    /**
+     * Calcula dígito verificador simples (soma ponderada mod 11) para o número da conta.
+     */
     public int calculateCheckDigit(String number) {
         int sum = 0;
         // Calcula a soma ponderada
@@ -70,15 +82,13 @@ public class AccountService {
         }
         // Calcula o resto da divisão por 11
         int digit = sum % 11;
-        // Se o resultado for 10 ou 11, o dígito se torna 0
-        return (digit == 10 || digit == 11) ? 0 : digit;
+        // Se o resultado for 10, o dígito se torna 0
+        return (digit == 10) ? 0 : digit;
     }
-
 
     /**
      * Busca todas as contas vinculadas a um cliente pelo seu CPF.
-     * @param cpf O CPF do cliente (pode estar formatado ou não)
-     * @return Lista de contas com informações do cliente
+     * Aceita CPF formatado ou não; realiza normalização antes da busca.
      */
     public List<AccountWithCustomerResponse> searchAccountsByCpf(String cpf) {
         if (cpf == null || cpf.isEmpty()) {
@@ -106,6 +116,10 @@ public class AccountService {
                 .toList();
     }
 
+    /**
+     * Busca uma conta pelo número da conta e número da agência.
+     * Retorna uma lista com a conta encontrada (mantido formato de retorno consistente).
+     */
     public List<AccountWithCustomerResponse> searchAccountsByAccountNumberAndAgencyNumber(String accountNumber, String agencyNumber){
         if(accountNumber == null || agencyNumber == null){
             throw new IllegalArgumentException("Número da conta e agência não podem ser nulos");
@@ -115,27 +129,27 @@ public class AccountService {
             throw new EntityNotFoundException("Nenhuma conta encontrada por: " + accountNumber + " e agência: " + agencyNumber);
         }
 
-        if (!accountNumber.matches("\\d{5}-\\d") || !agencyNumber.matches("\\d{4}")) {
-            throw new IllegalArgumentException("Número da conta deve estar no formato 12345-6 e agência no formato 1234");
+        // Aceita formato conta 12345-6 e agência no formato 1234-1 (porém aceita também 1234)
+        if (!accountNumber.matches("\\d{5}-\\d") || !(agencyNumber.matches("\\d{4}-\\d") || agencyNumber.matches("\\d{4}"))) {
+            throw new IllegalArgumentException("Número da conta deve estar no formato 12345-6 e agência no formato 1234 ou 1234-1");
         }
 
-       Optional<Account> accounts = accountRepository.findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
-        if (accounts.isEmpty()) {
+        Optional<Account> optionalAccount = accountRepository.findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
+        if (optionalAccount.isEmpty()) {
             throw new EntityNotFoundException("Nenhuma conta encontrada por: " + accountNumber + " e agência: " + agencyNumber);
         }
 
-        return accounts.stream()
-                .map(account -> new AccountWithCustomerResponse(
-                        account.getCustomer().getFullName(),
-                        account.getCustomer().getCpf(),
-                        account.getAgencyNumber(),
-                        account.getAccountNumber(),
-                        account.getAccountType(),
-                        account.getAccountStatus(),
-                        account.getBalance(),
-                        account.getCreationDate()
-                ))
-                .toList();
+        Account account = optionalAccount.get();
+        return List.of(new AccountWithCustomerResponse(
+                account.getCustomer().getFullName(),
+                account.getCustomer().getCpf(),
+                account.getAgencyNumber(),
+                account.getAccountNumber(),
+                account.getAccountType(),
+                account.getAccountStatus(),
+                account.getBalance(),
+                account.getCreationDate()
+        ));
     }
 
     /**
@@ -148,17 +162,23 @@ public class AccountService {
         }
     }
 
+    /**
+     * Atualiza o status da conta (ATIVAR ou ENCERRAR) aplicando as regras de negócio:
+     * - Não permite encerrar conta com saldo
+     * - Não permite encerrar conta com transferências agendadas pendentes
+     * - Registra data/motivo da alteração
+     */
     @Transactional
     public UpdateAccountStatusResponse updateAccountStatus(UpdateAccountStatusRequest request) {
 
-        Optional<Account> accounts = accountRepository.findByAccountNumberAndAgencyNumber(
+        Optional<Account> optional = accountRepository.findByAccountNumberAndAgencyNumber(
                 request.accountNumber(), request.agencyNumber());
 
-        if (accounts.isEmpty()) {
+        if (optional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada");
         }
 
-        Account account = accounts.get();
+        Account account = optional.get();
 
         // Atualiza status, registra data e motivo da alteração
         account.updateAccountStatus(request.accountStatus());
@@ -180,8 +200,11 @@ public class AccountService {
     }
 
 
-
-    //Movimentações
+    // ===== Movimentações =====
+    /**
+     * Realiza depósito em conta (buscando por id da conta).
+     * Registra histórico da operação.
+     */
     @Transactional
     public String deposit(DepositRequest deposit) {
 
@@ -189,10 +212,10 @@ public class AccountService {
         Account account = accountRepository.findById(deposit.id())
                 .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
 
-        // Verifica o stts da conta antes de realizar qualquer operação
+        // Verifica o status da conta antes de realizar qualquer operação
         account.accountStatus();
 
-        // Realiza deposito na conta
+        // Realiza depósito na conta
         account.deposit(deposit.ammount());
 
         // Registra o histórico da operação de depósito.
@@ -201,7 +224,7 @@ public class AccountService {
                         account,
                         account.getCustomer(),
                         OperationType.DEPOSITO,
-                        "Operação de deposito realizada",
+                        "Operação de depósito realizada",
                         deposit.ammount()
                 )
         );
@@ -210,6 +233,9 @@ public class AccountService {
         return "Valor depositado: R$" + deposit.ammount();
     }
 
+    /**
+     * Realiza saque em conta (buscando por id da conta) e registra histórico.
+     */
     @Transactional
     public String withdrawal(WithdrawalRequest saque) {
 
@@ -217,13 +243,13 @@ public class AccountService {
         Account account = accountRepository.findById(saque.id())
                 .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
 
-        // Verifica o stts da conta antes de realizar qualquer operação
+        // Verifica o status da conta antes de realizar qualquer operação
         account.accountStatus();
 
         // Realiza saque da conta
         account.withdraw(saque.amount());
 
-        // Registra o histórico da operação de depósito.
+        // Registra o histórico da operação de saque.
         historicoService.cadastrar(
                 new CadastroHistoricoRequest(
                         account,
@@ -234,10 +260,13 @@ public class AccountService {
                 )
         );
 
-        // Retorna uma mensagem indicando o valor depositado.
+        // Retorna uma mensagem indicando o valor sacado.
         return "Valor sacado: R$" + saque.amount();
     }
 
+    /**
+     * Consulta saldo da conta pelo id.
+     */
     public String getBalance(Long id) {
 
         // Busca a conta com o ID fornecido.
