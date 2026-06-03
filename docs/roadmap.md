@@ -21,10 +21,11 @@ Legenda:
 ## Conta
 
 - [✅] Criação automática de conta
-- [ ] Consultar Conta
+- [✅] Consultar Conta
 - [ ] Tipo de Conta (Poupança e Corrente)
-- [ ] Atualizar Status Tipo de Conta 
+- [ ] Ativar ou Encerrar Conta 
 - [ ] Abertura de Segunda Conta
+- [ ] Reativar Cliente
 
 ## Movimentações
 

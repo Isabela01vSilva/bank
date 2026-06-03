@@ -81,6 +81,7 @@ Não permitir alteração de:
 * O status da conta inicia ativa. ✅
 
 ---
+
 ## **RF005 \- Consultar Conta**
 
 **Descrição:** Permitir consultar os dados da conta do cliente.
@@ -97,9 +98,9 @@ Não permitir alteração de:
 * Data de criação
 
 * Posso consultar conta por CPF, se pesquisar por CPF exibe todas as contas vinculadas ao cliente. ✅
-* Posso consultar conta por número da conta e agencia, se pesquisar por número da conta e agencia exibe a conta específica.
-* O sistema deve permitir a consulta de contas ativas e inativas, mas deve destacar claramente o status da conta para evitar confusão.
-* O sistema deve exibir uma mensagem de erro clara e específica se o cliente tentar consultar uma conta que não existe, informando que a conta não foi encontrada e sugerindo verificar os dados de consulta.
+* Posso consultar conta por número da conta e agencia, se pesquisar por número da conta e agencia exibe a conta específica.✅
+* O sistema deve permitir a consulta de contas ativas e inativas, mas deve destacar claramente o status da conta para evitar confusão.✅
+* O sistema deve exibir uma mensagem de erro clara e específica se o cliente tentar consultar uma conta que não existe, informando que a conta não foi encontrada e sugerindo verificar os dados de consulta.✅
 
 ---
 
@@ -112,8 +113,8 @@ Não permitir alteração de:
 
 ### **Regras de negócio**
 
-* O cliente pode possuir apenas conta corrente. ✅
-* O cliente pode possuir apenas conta poupança. ✅
+* O cliente pode possuir uma conta corrente. ✅
+* O cliente pode possuir uma conta poupança. ✅
 * O cliente pode possuir ambas. ✅
 * Cada conta possui saldo independente. ✅
 * Cada conta possui transferências independentes. 
@@ -121,21 +122,34 @@ Não permitir alteração de:
 
 ---
 
-## **RF007 \- Atualizar Status Tipo de Conta**
+## **RF007 \- Ativar ou Encerrar Conta**
 
 **Descrição:** Permitir ATIVAR ou ENCERRAR uma conta.
 
-### Auditoria
+### *** Campos obrigatórios informados pelo cliente***
+* CPF
+* Número da conta
+* Número da agência
+* Novo status da conta (ATIVA ou ENCERRADA)
+* Motivo da alteração de status (opcional, mas recomendado para fins de histórico)
 
+### **Exibir**
+
+* Número da conta
+* Número da agência
+* Tipo da conta
+* Status da conta
+* Saldo atual
+* Data de criação
 * Data da alteração.
-* Hora da alteração.
-* Status anterior.
-* Novo status.
-* Motivo da alteração.
+* Mensagem de confirmação de alteração de status.
 
 ### **Regras de negócio**
 
 * Não permitir desativação de conta com saldo.
+* Não permitir desativação de conta com transferências agendadas pendentes.
+* A desativação de uma conta deve alterar seu status para ENCERRADA, mas os dados da conta devem permanecer no sistema para fins de histórico e consulta futura.
+* Ao encerrar todas as conta de um cliente, o status do cliente deve alterar para REATIVAR, permitindo que ele possa abrir novas contas no futuro.
 * A desativação de uma conta não afeta outras contas do cliente.
 * O sistema deve registrar a data e hora da desativação da conta, e o motivo, para fins de histórico do cliente.
 * O sistema deve permitir que o cliente reative uma conta encerrada.
@@ -168,6 +182,42 @@ Não permitir alteração de:
 
 ---
 
+## **RF009 - Reativar Cliente**
+
+**Descrição:** Permitir que um cliente sem contas ativas continue acessando seus históricos e possa solicitar a abertura ou reativação de contas.
+
+### **Campos obrigatórios informados pelo cliente**
+
+* CPF
+
+### **Exibir**
+
+* Nome completo
+* CPF
+* Status do cliente
+* Histórico de contas
+* Histórico de movimentações
+* Opções disponíveis para reativação
+
+### **Regras de negócio**
+
+* O cliente permanece cadastrado no sistema independentemente da existência de contas ativas.
+* Um cliente que não possua contas ativas pode consultar seus dados cadastrais.
+* Um cliente que não possua contas ativas pode consultar extratos e históricos de movimentações anteriores.
+* Um cliente que não possua contas ativas pode consultar contas encerradas vinculadas ao seu CPF.
+* Um cliente que não possua contas ativas não pode realizar depósitos.
+* Um cliente que não possua contas ativas não pode realizar saques.
+* Um cliente que não possua contas ativas não pode realizar transferências.
+* Um cliente que não possua contas ativas não pode realizar agendamentos de transferências.
+* Um cliente que não possua contas ativas não pode executar qualquer movimentação financeira.
+* O sistema deve permitir que um cliente sem contas ativas solicite a abertura de uma nova conta.
+* O sistema deve permitir que um cliente sem contas ativas solicite a reativação de uma conta encerrada.
+* Ao possuir pelo menos uma conta ativa, o cliente volta a ter acesso às funcionalidades bancárias permitidas pelo sistema.
+* A capacidade de realizar operações financeiras deve ser determinada pela existência de pelo menos uma conta ativa vinculada ao cliente.
+* O sistema deve considerar um cliente apto para movimentações financeiras somente quando houver pelo menos uma conta com status ATIVA vinculada ao seu CPF.
+
+---
+
 
 
 
@@ -187,3 +237,12 @@ Não permitir alteração de:
 * Contas encerradas não podem receber depósitos.
 
 ---
+
+---
+### Campos a Serem Exibidos
+
+* Data da alteração.
+* Hora da alteração.
+* Status anterior.
+* Novo status.
+* Motivo da alteração.
