@@ -5,10 +5,10 @@ import com.Isabela01vSilva.bank_isabela.controller.request.CustomerAccountReques
 import com.Isabela01vSilva.bank_isabela.controller.request.customer.CustomerRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.ClienteContasResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.customer.CustomerResponse;
-import com.Isabela01vSilva.bank_isabela.controller.response.conta.ContaResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountResponse;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.service.CustomerService;
-import com.Isabela01vSilva.bank_isabela.service.dto.ClienteContasDTO;
+import com.Isabela01vSilva.bank_isabela.service.dto.AccountCustomerDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,9 +26,16 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<ClienteContasResponse> createCustomer(@Valid @RequestBody CustomerAccountRequest data) {
-        ClienteContasDTO createCustomer = customerService.register(data);
+        AccountCustomerDTO createCustomer = customerService.register(data);
 
-        List<ContaResponse> contas = createCustomer.conta().stream().map(c -> new ContaResponse(c.getNumero(), c.getNumeroAgencia(), c.getTipoConta(), c.getStatusConta(), c.getSaldo(), c.getDataCriacao())).toList();
+        List<AccountResponse> contas = createCustomer.conta().stream().map(c -> new AccountResponse(
+                c.getAccountNumber(),
+                c.getAgencyNumber(),
+                c.getAccountType(),
+                c.getAccountStatus(),
+                c.getBalance(),
+                c.getCreationDate())
+        ).toList();
         Customer cliente = createCustomer.customer();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new ClienteContasResponse(new CustomerResponse(cliente.getId(), cliente.getFullName(), cliente.getBirthDate(), cliente.getCpf(), cliente.getEmail(), cliente.getPhoneNumber()), contas));

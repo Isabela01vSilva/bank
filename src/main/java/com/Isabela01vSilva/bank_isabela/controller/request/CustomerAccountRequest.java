@@ -1,6 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.controller.request;
 
-import com.Isabela01vSilva.bank_isabela.domain.conta.TipoConta;
+import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -28,6 +28,6 @@ public record CustomerAccountRequest(
         String phoneNumber,
 
         @NotNull(message = "Tipo de conta é obrigatório")
-        List<TipoConta> accountTypes
+        List<AccountType> accountTypes
 ) {
 }

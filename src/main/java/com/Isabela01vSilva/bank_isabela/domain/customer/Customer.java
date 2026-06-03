@@ -12,31 +12,31 @@ import java.time.LocalDate;
 
 @Setter
 @Getter
-@Table(name = "clientes")
-@Entity
+@Table(name = "cliente")
+@Entity(name = "Cliente")
 @NoArgsConstructor
 @AllArgsConstructor
 
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idCliente")
+    @Column(name = "id_cliente")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "nome_completo", nullable = false)
     private String fullName;
 
-    @Column(nullable = false)
+    @Column(name = "data_nascimento", nullable = false)
     private LocalDate birthDate;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "cpf", nullable = false, unique = true)
     private String cpf;
 
     @Email
-    @Column(nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "telefone", nullable = false, unique = true)
     private String phoneNumber;
 
     public void updateInfoCustomer(CustomerRequest data) {

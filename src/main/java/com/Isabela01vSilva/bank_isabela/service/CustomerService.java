@@ -2,13 +2,13 @@ package com.Isabela01vSilva.bank_isabela.service;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.CustomerAccountRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.customer.CustomerRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.conta.CriarContaDTO;
+import com.Isabela01vSilva.bank_isabela.controller.request.account.CreateAccountDTO;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
-import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
+import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.mapper.CustomerMappers;
 import com.Isabela01vSilva.bank_isabela.commons.Formatters;
-import com.Isabela01vSilva.bank_isabela.service.dto.ClienteContasDTO;
+import com.Isabela01vSilva.bank_isabela.service.dto.AccountCustomerDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,21 +25,21 @@ public class CustomerService {
     private CustomerRepository customerRepository;
 
     @Autowired
-    private ContaService contaService;
+    private AccountService contaService;
 
     @Transactional
-    public ClienteContasDTO register(CustomerAccountRequest data) {
+    public AccountCustomerDTO register(CustomerAccountRequest data) {
         validateCustomerCreation(data);
 
         Customer createdCustomer  =  customerRepository.save(CustomerMappers.fromRequestToCustomer(data));
 
-        List<CriarContaDTO> contas = data.accountTypes().stream().map(tipo -> {
-            return new CriarContaDTO(tipo, createdCustomer);
+        List<CreateAccountDTO> contas = data.accountTypes().stream().map(tipo -> {
+            return new CreateAccountDTO(tipo, createdCustomer);
         }).toList();
 
-        List<Conta> contasCriadas = contaService.cadastrarMultiplas(contas);
+        List<Account> contasCriadas = contaService.createMultipleAccounts(contas);
 
-        return  new ClienteContasDTO(contasCriadas, createdCustomer);
+        return  new AccountCustomerDTO(contasCriadas, createdCustomer);
     }
 
     private void validateCustomerCreation(CustomerAccountRequest data) {
