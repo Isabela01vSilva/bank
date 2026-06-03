@@ -15,4 +15,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Query("SELECT a FROM Conta a WHERE a.customer.cpf = :cpf")
     List<Account> findByCustomerCpf(@Param("cpf") String cpf);
+
+    @Query("SELECT a FROM Conta a WHERE a.accountNumber = :accountNumber AND a.agencyNumber = :agencyNumber")
+    List<Account> findByAccountNumberAndAgencyNumber(@Param("accountNumber") String accountNumber, @Param("agencyNumber") String agencyNumber);
 }

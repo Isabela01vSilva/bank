@@ -98,6 +98,37 @@ public class AccountService {
                 .toList();
     }
 
+    public List<AccountWithCustomerResponse> searchAccountsByAccountNumberAndAgencyNumber(String accountNumber, String agencyNumber){
+        if(accountNumber == null || agencyNumber == null){
+            throw new IllegalArgumentException("Número da conta e agência não podem ser nulos");
+        }
+
+        if(accountNumber.isEmpty() || agencyNumber.isEmpty()){
+            throw new EntityNotFoundException("Nenhuma conta encontrada por: " + accountNumber + " e agência: " + agencyNumber);
+        }
+
+        if (!accountNumber.matches("\\d{5}-\\d") || !agencyNumber.matches("\\d{4}")) {
+            throw new IllegalArgumentException("Número da conta deve estar no formato 12345-6 e agência no formato 1234");
+        }
+        
+       List<Account> accounts = accountRepository.findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
+        if (accounts.isEmpty()) {
+            throw new EntityNotFoundException("Nenhuma conta encontrada por: " + accountNumber + " e agência: " + agencyNumber);
+        }
+        return accounts.stream()
+                .map(account -> new AccountWithCustomerResponse(
+                        account.getCustomer().getFullName(),
+                        account.getCustomer().getCpf(),
+                        account.getAgencyNumber(),
+                        account.getAccountNumber(),
+                        account.getAccountType(),
+                        account.getAccountStatus(),
+                        account.getBalance(),
+                        account.getCreationDate()
+                ))
+                .toList();
+    }
+
     /**
      * Valida que o tipo de conta não seja alterado (campo imutável).
      * Lança exceção se houver tentativa de alteração.

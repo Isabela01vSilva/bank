@@ -19,8 +19,6 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-
-
     @PatchMapping("/{id}/status")
     public ResponseEntity<AccountResponse> updateAccountStatus(@PathVariable Long id,
                                                                @RequestBody UpdateAccountStatusRequest updateStatusRequest) {
@@ -36,30 +34,37 @@ public class AccountController {
 
     @PostMapping("/depositar")
     public ResponseEntity<MessageResponse> deposit(@RequestBody DepositRequest depositRequest) {
-        String message  = accountService.deposit(depositRequest);
-        return ResponseEntity.ok(new MessageResponse(message ));
+        String message = accountService.deposit(depositRequest);
+        return ResponseEntity.ok(new MessageResponse(message));
     }
 
     @PostMapping("/saque")
     public ResponseEntity<MessageResponse> withdraw(@RequestBody WithdrawalRequest withdrawalRequest) {
-        String message  = accountService.withdrawal(withdrawalRequest);
-        return ResponseEntity.ok(new MessageResponse(message ));
+        String message = accountService.withdrawal(withdrawalRequest);
+        return ResponseEntity.ok(new MessageResponse(message));
     }
 
     @GetMapping("/{id}/saldo")
     public ResponseEntity<MessageResponse> getBalance(@PathVariable Long id) {
-        String message  = accountService.getBalance(id);
-        return ResponseEntity.ok(new MessageResponse(message ));
+        String message = accountService.getBalance(id);
+        return ResponseEntity.ok(new MessageResponse(message));
     }
 
     /**
      * Busca todas as contas de um cliente pelo CPF.
+     *
      * @param cpf O CPF do cliente (pode estar formatado ou não)
      * @return Lista de contas com informações do cliente
      */
     @GetMapping("/buscar/cpf")
     public ResponseEntity<List<AccountWithCustomerResponse>> searchByCpf(@RequestParam String cpf) {
         List<AccountWithCustomerResponse> accounts = accountService.searchAccountsByCpf(cpf);
+        return ResponseEntity.ok(accounts);
+    }
+
+    @GetMapping("/buscar/conta")
+    public ResponseEntity<List<AccountWithCustomerResponse>> searchByAccuntNumberAndAgencyNumber(@RequestParam String accountNumber, @RequestParam String agencyNumber) {
+        List<AccountWithCustomerResponse> accounts = accountService.searchAccountsByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
         return ResponseEntity.ok(accounts);
     }
 }
