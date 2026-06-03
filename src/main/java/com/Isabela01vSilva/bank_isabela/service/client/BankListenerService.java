@@ -1,7 +1,7 @@
 package com.Isabela01vSilva.bank_isabela.service.client;
 
-import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
-import com.Isabela01vSilva.bank_isabela.domain.conta.ContaRepository;
+import com.Isabela01vSilva.bank_isabela.domain.account.Account;
+import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
 import com.Isabela01vSilva.bank_isabela.service.TransferService;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.CallbackDTO;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.PayloadDTO;
@@ -27,7 +27,7 @@ public class BankListenerService {
     private TransferService transferenciaService;
 
     @Autowired
-    private ContaRepository contaRepository;
+    private AccountRepository contaRepository;
 
     @Autowired
     private WebClient webClient;
@@ -43,10 +43,10 @@ public class BankListenerService {
         try {
             PayloadDTO payloadDTO = objectMapper.readValue(message.getPayload(), PayloadDTO.class);
 
-            Conta contaOrigem = contaRepository.findByNumero(payloadDTO.getNumeroContaOrigem())
+            Account contaOrigem = contaRepository.findByAccountNumber(payloadDTO.getNumeroContaOrigem())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta origem não encontrada"));
 
-            Conta contaDestino = contaRepository.findByNumero(payloadDTO.getNumeroContaDestino())
+            Account contaDestino = contaRepository.findByAccountNumber(payloadDTO.getNumeroContaDestino())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta destino não encontrada"));
 
             transferenciaService.executarOperacoesFinanceiras(contaOrigem, contaDestino, payloadDTO.getValor());

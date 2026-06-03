@@ -1,7 +1,7 @@
 package com.Isabela01vSilva.bank_isabela.domain.historico;
 
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
-import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
+import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -22,14 +22,14 @@ public class Historico {
 
     @ManyToOne
     @JoinColumn(name = "idConta")
-    private Conta conta;
+    private Account conta;
 
     @ManyToOne
     @JoinColumn(name = "idCliente")
     private Customer cliente;
 
     @Enumerated(EnumType.STRING)
-    private TipoOperacao tipoOperacao;
+    private OperationType tipoOperacao;
 
     private Double valor;
     private String descricao;
@@ -43,11 +43,11 @@ public class Historico {
         this.id = id;
     }
 
-    public Conta getConta() {
+    public Account getConta() {
         return conta;
     }
 
-    public void setConta(Conta conta) {
+    public void setConta(Account conta) {
         this.conta = conta;
     }
 
@@ -59,11 +59,11 @@ public class Historico {
         this.cliente = cliente;
     }
 
-    public TipoOperacao getTipoOperacao() {
+    public OperationType getTipoOperacao() {
         return tipoOperacao;
     }
 
-    public void setTipoOperacao(TipoOperacao tipoOperacao) {
+    public void setTipoOperacao(OperationType tipoOperacao) {
         this.tipoOperacao = tipoOperacao;
     }
 

@@ -6,7 +6,7 @@ import com.Isabela01vSilva.bank_isabela.controller.response.historico.HistoricoR
 import com.Isabela01vSilva.bank_isabela.controller.response.historico.HistoricoSttsContaResponse;
 import com.Isabela01vSilva.bank_isabela.domain.historico.Historico;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoricoRepository;
-import com.Isabela01vSilva.bank_isabela.domain.historico.TipoOperacao;
+import com.Isabela01vSilva.bank_isabela.domain.historico.OperationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +63,7 @@ public class HistoricoService {
         List<Historico> historico = historicoRepository.findByContaId(id);
 
         return historico.stream()
-                .filter(historicos -> historicos.getTipoOperacao().equals(TipoOperacao.ATUALIZACAO_STTS_CONTA)) // Filtra apenas os históricos com operação de atualização de status de conta
+                .filter(historicos -> historicos.getTipoOperacao().equals(OperationType.ATUALIZACAO_STTS_CONTA)) // Filtra apenas os históricos com operação de atualização de status de conta
                 .map(historicos -> new HistoricoSttsContaResponse(
                         historicos.getId(),
                         historicos.getTipoOperacao(),
@@ -92,7 +92,7 @@ public class HistoricoService {
         List<Historico> historico = historicoRepository.findByContaIdAndDataTransacaoBetween(datasResquest.id(), datasResquest.dataInicio(), datasResquest.dataFim());
 
         return historico.stream()
-                .filter(historicos -> !historicos.getTipoOperacao().equals(TipoOperacao.ATUALIZACAO_STTS_CONTA)) // Filtra para excluir operações de atualização de status da conta
+                .filter(historicos -> !historicos.getTipoOperacao().equals(OperationType.ATUALIZACAO_STTS_CONTA)) // Filtra para excluir operações de atualização de status da conta
                 .map(historicos -> new HistoricoResponse(
                         historicos.getId(),
                         historicos.getCliente().getFullName(),
@@ -111,7 +111,7 @@ public class HistoricoService {
         ); // Busca os históricos da conta no intervalo de datas especificado
 
         List<Double> numeros = historico.stream()
-                .filter(h -> h.getTipoOperacao().equals(TipoOperacao.SAQUE) || h.getTipoOperacao().equals(TipoOperacao.TRANSFERENCIA)) // Filtra apenas saques ou operações de PIX
+                .filter(h -> h.getTipoOperacao().equals(OperationType.SAQUE) || h.getTipoOperacao().equals(OperationType.TRANSFERENCIA)) // Filtra apenas saques ou operações de PIX
                 .map(Historico::getValor) // Mapeia os valores das operações
                 .toList(); // Converte para uma lista de valores
 

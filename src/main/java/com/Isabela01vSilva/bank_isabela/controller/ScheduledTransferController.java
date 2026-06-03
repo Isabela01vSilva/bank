@@ -1,7 +1,7 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferenciaRequest;
-import com.Isabela01vSilva.bank_isabela.controller.response.conta.MensagemResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.account.MessageResponse;
 import com.Isabela01vSilva.bank_isabela.service.TransferService;
 import com.Isabela01vSilva.bank_isabela.service.client.ScheduleClientService;
 import com.Isabela01vSilva.bank_isabela.service.data.request.CreateAppointmentScheduleRequest;
@@ -23,9 +23,9 @@ public class ScheduledTransferController {
     private ScheduleClientService scheduleClient;
 
     @PostMapping("/realizar")
-    public ResponseEntity<MensagemResponse> realizarTransferenciaAg(@RequestBody TransferenciaRequest transferenciaRequest) {
+    public ResponseEntity<MessageResponse> realizarTransferenciaAg(@RequestBody TransferenciaRequest transferenciaRequest) {
         service.agendarTransferencia(transferenciaRequest);
-        return ResponseEntity.ok(new MensagemResponse("Transferencia agendada com sucesso!"));
+        return ResponseEntity.ok(new MessageResponse("Transferencia agendada com sucesso!"));
     }
 
     @PostMapping("/agendar")
