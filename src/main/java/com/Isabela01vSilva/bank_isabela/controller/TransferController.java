@@ -1,9 +1,7 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferenciaRequest;
-import com.Isabela01vSilva.bank_isabela.controller.response.conta.MensagemResponse;
-import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
+import com.Isabela01vSilva.bank_isabela.controller.response.account.MessageResponse;
 import com.Isabela01vSilva.bank_isabela.service.TransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +18,8 @@ public class TransferController {
     private TransferService service;
 
     @PostMapping("/realizar")
-    public ResponseEntity<MensagemResponse> realizarTransferencia(@RequestBody TransferRequest transferenciaRequest) {
+    public ResponseEntity<MessageResponse> realizarTransferencia(@RequestBody TransferRequest transferenciaRequest) {
         service.transferir(transferenciaRequest);
-        return ResponseEntity.ok(new MensagemResponse("Transferencia realizada com sucesso!"));
+        return ResponseEntity.ok(new MessageResponse("Transferencia realizada com sucesso!"));
     }
 }

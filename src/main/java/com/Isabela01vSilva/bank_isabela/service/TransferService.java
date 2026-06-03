@@ -3,11 +3,11 @@ package com.Isabela01vSilva.bank_isabela.service;
 import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferenciaRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.historico.CadastroHistoricoRequest;
-import com.Isabela01vSilva.bank_isabela.domain.historico.TipoOperacao;
+import com.Isabela01vSilva.bank_isabela.domain.historico.OperationType;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.Transferencia;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferenciaRepository;
-import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
-import com.Isabela01vSilva.bank_isabela.domain.conta.ContaRepository;
+import com.Isabela01vSilva.bank_isabela.domain.account.Account;
+import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
 import com.Isabela01vSilva.bank_isabela.service.client.ScheduleClientService;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.*;
 import com.Isabela01vSilva.bank_isabela.service.data.request.CreateAppointmentScheduleRequest;
@@ -22,7 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class TransferService {
 
     @Autowired
-    private ContaRepository contaRepository;
+    private AccountRepository contaRepository;
 
     @Autowired
     private HistoricoService historicoService;
@@ -36,8 +36,8 @@ public class TransferService {
     //Fluxo Principal de agendamento
     @Transactional
     public void agendarTransferencia(TransferenciaRequest request){
-        Conta contaOrigem = buscarContas(request.numeroContaOrigem());
-        Conta contaDestino = buscarContas(request.numeroContaDestino());
+        Account contaOrigem = buscarContas(request.numeroContaOrigem());
+        Account contaDestino = buscarContas(request.numeroContaDestino());
 
         validarContaAtiva(contaOrigem);
         validarContaAtiva(contaDestino);
@@ -75,8 +75,8 @@ public class TransferService {
 
     //Agendamento
     private SchedulingDTO  criarAgendamento(CreateAppointmentScheduleRequest request,
-                                            Conta contaOrigem,
-                                            Conta contaDestino){
+                                            Account contaOrigem,
+                                            Account contaDestino){
         try {
             SchedulingDTO dtoAgendamento = scheduleClientService.createAppointment(request);
 
@@ -101,21 +101,21 @@ public class TransferService {
     }
 
     //Validações
-    private Conta buscarContas(String numeroConta){
-        return contaRepository.findByNumero(numeroConta)
+    private Account buscarContas(String numeroConta){
+        return contaRepository.findByAccountNumber(numeroConta)
                 .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
     }
 
-    private void validarContaAtiva(Conta conta){
-        if (!"ATIVADA".equalsIgnoreCase(conta.getStatusConta() != null ? conta.getStatusConta().toString() : "")) {
+    private void validarContaAtiva(Account conta){
+        if (!"ATIVADA".equalsIgnoreCase(conta.getAccountStatus() != null ? conta.getAccountStatus().toString() : "")) {
             throw new IllegalArgumentException(
-                    String.format("Conta %s não está ativada", conta.getNumero())
+                    String.format("Conta %s não está ativada", conta.getAccountNumber())
             );
         }
     }
 
-    private boolean validarSaldoSuficiente(Conta conta, Double valor, CreateAppointmentScheduleRequest create){
-        if(valor.compareTo(conta.getSaldo()) > 0){
+    private boolean validarSaldoSuficiente(Account conta, Double valor, CreateAppointmentScheduleRequest create){
+        if(valor.compareTo(conta.getBalance()) > 0){
             falhaTransferencia(create);
             return false;
         }
@@ -136,10 +136,10 @@ public class TransferService {
 
     public boolean transferir(TransferRequest request) {
         try {
-            Conta contaOrigem = contaRepository.findByNumero(request.numeroContaOrigem())
+            Account contaOrigem = contaRepository.findByAccountNumber(request.numeroContaOrigem())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta origem não encontrada"));
 
-            Conta contaDestino = contaRepository.findByNumero(request.numeroContaDestino())
+            Account contaDestino = contaRepository.findByAccountNumber(request.numeroContaDestino())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta destino não encontrada"));
 
             executarOperacoesFinanceiras(contaOrigem, contaDestino, request.valor());
@@ -152,13 +152,13 @@ public class TransferService {
 
 
     @Transactional
-    public void executarOperacoesFinanceiras(Conta contaOrigem, Conta contaDestino, Double valor){
-        if (contaOrigem.getSaldo() < valor) {
+    public void executarOperacoesFinanceiras(Account contaOrigem, Account contaDestino, Double valor){
+        if (contaOrigem.getBalance() < valor) {
             throw new RuntimeException("Saldo insuficiente");
         }
 
-        contaOrigem.sacar(valor);
-        contaDestino.depositar(valor);
+        contaOrigem.withdraw(valor);
+        contaDestino.deposit(valor);
 
         contaRepository.save(contaOrigem);
         contaRepository.save(contaDestino);
@@ -167,13 +167,13 @@ public class TransferService {
     }
 
     //Histórico
-    private void registrarHistorico(Conta contaOrigem, Conta contaDestino, Double valor){
+    private void registrarHistorico(Account contaOrigem, Account contaDestino, Double valor){
         historicoService.cadastrar(
                 new CadastroHistoricoRequest(
                         contaOrigem,
-                        contaOrigem.getCliente(),
-                        TipoOperacao.TRANSFERENCIA,
-                        "TRANSFERENCIA enviado para a conta: " + contaDestino.getNumero(),
+                        contaOrigem.getCustomer(),
+                        OperationType.TRANSFERENCIA,
+                        "TRANSFERENCIA enviado para a conta: " + contaDestino.getAccountNumber(),
                         valor
                 )
         );
@@ -181,9 +181,9 @@ public class TransferService {
        historicoService.cadastrar(
                 new CadastroHistoricoRequest(
                         contaDestino,
-                        contaDestino.getCliente(),
-                        TipoOperacao.TRANSFERENCIA,
-                        "TRANSFERENCIA recebida da conta: " + contaOrigem.getNumero(),
+                        contaDestino.getCustomer(),
+                        OperationType.TRANSFERENCIA,
+                        "TRANSFERENCIA recebida da conta: " + contaOrigem.getAccountNumber(),
                         valor
                 )
         );

@@ -1,6 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.domain.transfer;
 
-import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
+import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.Status;
 import jakarta.persistence.*;
 
@@ -16,11 +16,11 @@ public class Transferencia {
 
     @ManyToOne
     @JoinColumn(name = "conta_origem_id", nullable = false)
-    private Conta contaOrigem;
+    private Account contaOrigem;
 
     @ManyToOne
     @JoinColumn(name = "conta_destino_id", nullable = false)
-    private Conta contaDestino;
+    private Account contaDestino;
 
     @Column(nullable = false)
     private Double valor;
@@ -50,19 +50,19 @@ public class Transferencia {
         this.id = id;
     }
 
-    public Conta getContaOrigem() {
+    public Account getContaOrigem() {
         return contaOrigem;
     }
 
-    public void setContaOrigem(Conta contaOrigem) {
+    public void setContaOrigem(Account contaOrigem) {
         this.contaOrigem = contaOrigem;
     }
 
-    public Conta getContaDestino() {
+    public Account getContaDestino() {
         return contaDestino;
     }
 
-    public void setContaDestino(Conta contaDestino) {
+    public void setContaDestino(Account contaDestino) {
         this.contaDestino = contaDestino;
     }
 
