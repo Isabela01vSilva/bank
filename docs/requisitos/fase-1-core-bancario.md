@@ -53,8 +53,7 @@
 
 * E-mail ✅
 * Telefone ✅
-* Nome ✅
-* Sobrenome ✅
+* Nome Completo ✅
 
 ### **Regras de negócio**
 
@@ -73,31 +72,18 @@ Não permitir alteração de:
 
 ### **Regras de negócio**
 
-* Gerar número da conta automaticamente.
-* Gerar agência automaticamente.
-* Associar conta ao cliente.
-* Saldo inicial igual a R$ 0,00.
-* A conta inicia ativa.
+* O cliente precisa informar o tipo de conta (poupança, corrente ou ambas) no momento do cadastro para que a conta seja criada automaticamente. CAMPO OBRIGATORIO✅
+* Gerar número da conta automaticamente. ✅
+* Número da conta deve ser único. ✅
+* Número de agência fixo: 0001. ✅
+* Conta é criada apenas quando o cliente é cadastrado. ou seja, não é possivel criar uma conta sem um cliente associado. ✅
+* Saldo inicial igual a R$ 0,00. ✅
+* O status da conta inicia ativa. ✅
 
-## **RF005 \- Tipo de Conta**
+---
+## **RF005 \- Consultar Conta**
 
-**Descrição:** O sistema deve permitir os seguintes tipos:
-
-* Conta Corrente
-* Conta Poupança
-
-### **Regras de negócio**
-
-* O cliente pode possuir apenas conta corrente.
-* O cliente pode possuir apenas conta poupança.
-* O cliente pode possuir ambas.
-* Cada conta possui saldo independente.
-* Cada conta possui transferências independentes.
-* O cliente pode usar ambas as duas contas para realizar transferência.
-
-## **RF006 \- Consultar Conta**
-
-**Descrição:** Permitir consultar os dados da conta.
+**Descrição:** Permitir consultar os dados da conta do cliente.
 
 ### **Exibir**
 
@@ -110,21 +96,89 @@ Não permitir alteração de:
 * Saldo atual
 * Data de criação
 
-## **RF007 \- Atualizar Status da Conta**
+* Posso consultar conta por CPF, se pesquisar por CPF exibe todas as contas vinculadas ao cliente. ✅
+* Posso consultar conta por número da conta e agencia, se pesquisar por número da conta e agencia exibe a conta específica.
+* O sistema deve permitir a consulta de contas ativas e inativas, mas deve destacar claramente o status da conta para evitar confusão.
+* O sistema deve exibir uma mensagem de erro clara e específica se o cliente tentar consultar uma conta que não existe, informando que a conta não foi encontrada e sugerindo verificar os dados de consulta.
 
-**Descrição:** Permitir ativar ou desativar uma conta.
+---
+
+## **RF006 \- Tipo de Conta**
+
+**Descrição:** O sistema deve permitir os seguintes tipos:
+
+* Conta Corrente
+* Conta Poupança
+
+### **Regras de negócio**
+
+* O cliente pode possuir apenas conta corrente. ✅
+* O cliente pode possuir apenas conta poupança. ✅
+* O cliente pode possuir ambas. ✅
+* Cada conta possui saldo independente. ✅
+* Cada conta possui transferências independentes. 
+* O cliente pode usar ambas as duas contas para realizar transferência.
+
+---
+
+## **RF007 \- Atualizar Status Tipo de Conta**
+
+**Descrição:** Permitir ATIVAR ou ENCERRAR uma conta.
+
+### Auditoria
+
+* Data da alteração.
+* Hora da alteração.
+* Status anterior.
+* Novo status.
+* Motivo da alteração.
 
 ### **Regras de negócio**
 
 * Não permitir desativação de conta com saldo.
-* Apenas contas ativas podem ser movimentadas.
 * A desativação de uma conta não afeta outras contas do cliente.
-* Mas ele pode cadastrar abrir uma conta nova, se ele nao tiver corrente ou poupança, ou seja, ele pode ter as duas, mas nao pode ter mais de uma de cada tipo.
-* O sistema deve enviar uma notificação ao cliente quando uma conta for desativada, informando o motivo da desativação e os passos necessários para reativar a conta, se aplicável.
-* O sistema deve registrar a data e hora da desativação da conta, bem como o motivo, para fins de histórico do cliente.
-* o sistema deve permitir que o cliente reative uma conta desativada.
-* O sistema deve validar o status da conta antes de permitir qualquer movimentação, garantindo que apenas contas ativas possam ser movimentadas.
-* O sistema deve exibir uma mensagem de erro clara e específica se o cliente tentar desativar uma conta que possui saldo, informando que a conta deve estar com saldo zero para ser desativada.
-* O sistema não permite o cliente visualizar o historico de movimentações de uma conta desativada, mas permite visualizar o histórico de movimentações de contas ativas.
+* O sistema deve registrar a data e hora da desativação da conta, e o motivo, para fins de histórico do cliente.
+* O sistema deve permitir que o cliente reative uma conta encerrada.
+* Não é permitido alterar o tipo da conta após sua criação.
+* Uma conta corrente não pode ser convertida em conta poupança.
+* Uma conta poupança não pode ser convertida em conta corrente.
+* Apenas o status da conta (ATIVA ou ENCERRADA) pode ser alterado.
+* Não é permitido encerrar uma conta que possua transferências agendadas pendentes.
+
+---
+
+## **RF008 - Abertura de Segunda Conta**
+
+**Descrição:** Permitir que um cliente abra uma segunda conta bancária, desde que respeite as regras de tipos de conta permitidos.
+
+### **Campos obrigatórios informados pelo cliente**
+
+* CPF
+* Tipo da conta
+
+### **Regras**
+
+* A nova conta deve seguir as mesmas regras de criação definidas no RF004.
+* O sistema deve impedir a abertura de uma nova conta caso o cliente já possua uma conta do tipo solicitado.
+* O sistema deve exibir uma mensagem informando que o cliente já possui uma conta do tipo solicitado quando a solicitação for rejeitada.
+* O saldo inicial da nova conta deve ser R$ 0,00.
+* A nova conta deve ser criada com status ATIVA.
+* O número da conta deve ser gerado automaticamente e ser único no sistema.
+* A data de abertura deve corresponder à data de criação da conta.
+
+---
+
+## **RF009 - Validação de Conta Ativa para Movimentações**
+
+**Descrição:** Garantir que apenas contas ativas possam realizar movimentações financeiras.
+
+### **Regras**
+
+* O sistema deve validar o status da conta antes de permitir qualquer movimentação.
+* Apenas contas com status ATIVA podem realizar depósitos.
+* Apenas contas com status ATIVA podem realizar saques.
+* Apenas contas com status ATIVA podem realizar transferências.
+* O sistema deve exibir uma mensagem de erro ao tentar movimentar uma conta inativa.
+* Contas encerradas não podem receber depósitos.
 
 ---

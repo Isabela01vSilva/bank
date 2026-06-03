@@ -1,7 +1,9 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
+import com.Isabela01vSilva.bank_isabela.commons.Formatters;
 import com.Isabela01vSilva.bank_isabela.controller.request.account.*;
 import com.Isabela01vSilva.bank_isabela.controller.request.historico.CadastroHistoricoRequest;
+import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.OperationType;
@@ -64,6 +66,38 @@ public class AccountService {
         return (digit == 10 || digit == 11) ? 0 : digit;
     }
 
+
+    /**
+     * Busca todas as contas vinculadas a um cliente pelo seu CPF.
+     * @param cpf O CPF do cliente (pode estar formatado ou não)
+     * @return Lista de contas com informações do cliente
+     */
+    public List<AccountWithCustomerResponse> searchAccountsByCpf(String cpf) {
+        if (cpf == null || cpf.isEmpty()) {
+            throw new IllegalArgumentException("CPF não pode ser vazio");
+        }
+
+        String normalizedCpf = Formatters.normalize(cpf);
+        List<Account> accounts = accountRepository.findByCustomerCpf(normalizedCpf);
+
+        if (accounts.isEmpty()) {
+            throw new EntityNotFoundException("Nenhuma conta encontrada para o CPF: " + cpf);
+        }
+
+        return accounts.stream()
+                .map(account -> new AccountWithCustomerResponse(
+                        account.getCustomer().getFullName(),
+                        account.getCustomer().getCpf(),
+                        account.getAgencyNumber(),
+                        account.getAccountNumber(),
+                        account.getAccountType(),
+                        account.getAccountStatus(),
+                        account.getBalance(),
+                        account.getCreationDate()
+                ))
+                .toList();
+    }
+
     /**
      * Valida que o tipo de conta não seja alterado (campo imutável).
      * Lança exceção se houver tentativa de alteração.
@@ -97,7 +131,7 @@ public class AccountService {
     }
 
 
-    //pesquiso uma conta por cpf ou por conta + agencia
+
 
 
     //Movimentações
