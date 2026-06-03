@@ -3,12 +3,12 @@ package com.Isabela01vSilva.bank_isabela.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.conta.CriarContaDTO;
+import com.Isabela01vSilva.bank_isabela.controller.request.account.CreateAccountDTO;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
-import com.Isabela01vSilva.bank_isabela.domain.conta.Conta;
-import com.Isabela01vSilva.bank_isabela.domain.conta.ContaRepository;
-import com.Isabela01vSilva.bank_isabela.domain.conta.StatusConta;
-import com.Isabela01vSilva.bank_isabela.domain.conta.TipoConta;
+import com.Isabela01vSilva.bank_isabela.domain.account.Account;
+import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
+import com.Isabela01vSilva.bank_isabela.domain.account.AccountStatus;
+import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,12 +25,12 @@ public class ContaServiceTest {
 
 
     @Mock
-    private ContaRepository contaRepository;
+    private AccountRepository contaRepository;
 
     @InjectMocks
-    private ContaService contaService;
-    private CriarContaDTO criarContaDTO;
-    private Conta contaMock;
+    private AccountService contaService;
+    private CreateAccountDTO criarContaDTO;
+    private Account contaMock;
 
     @BeforeEach
     void setUp() {
@@ -39,31 +39,31 @@ public class ContaServiceTest {
         clienteMock.setId(1L);
         clienteMock.setFullName("Nome do Cliente");
 
-        criarContaDTO = new CriarContaDTO("123", TipoConta.CORRENTE, clienteMock);
-        contaMock = new Conta();
+        criarContaDTO = new CreateAccountDTO("123", AccountType.CORRENTE, clienteMock);
+        contaMock = new Account();
         contaMock.setId(1L);
-        contaMock.setNumero("12345-6");
-        contaMock.setStatusConta(StatusConta.ATIVADA);
+        contaMock.setAccountNumber("12345-6");
+        contaMock.setAccountStatus(AccountStatus.ATIVADA);
         contaMock.setDataCriacao(LocalDate.now());
     }
 
     @Test
     void deveCadastrarConta() {
-        when(contaRepository.existsByNumero(anyString())).thenReturn(true, false);
-        when(contaRepository.save(any(Conta.class))).thenReturn(contaMock);
+        when(contaRepository.existsByAccountNumber(anyString())).thenReturn(true, false);
+        when(contaRepository.save(any(Account.class))).thenReturn(contaMock);
 
-        Conta contaCriada = contaService.cadastrar(criarContaDTO);
+        Account contaCriada = contaService.cadastrar(criarContaDTO);
 
         assertNotNull(contaCriada);
-        verify(contaRepository, atLeastOnce()).existsByNumero(anyString());
-        verify(contaRepository).save(any(Conta.class));
+        verify(contaRepository, atLeastOnce()).existsByAccountNumber(anyString());
+        verify(contaRepository).save(any(Account.class));
     }
 
     @Test
     void deveRetornarContaPorId() {
         when(contaRepository.findById(1L)).thenReturn(Optional.of(contaMock));
 
-        Conta contaEncontrada = contaService.exibirContaPorId(1L);
+        Account contaEncontrada = contaService.exibirContaPorId(1L);
 
         assertNotNull(contaEncontrada);
         assertEquals(1L, contaEncontrada.getId());

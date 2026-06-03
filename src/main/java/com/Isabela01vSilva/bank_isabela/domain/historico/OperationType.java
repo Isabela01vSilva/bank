@@ -1,6 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.domain.historico;
 
-public enum TipoOperacao {
+public enum OperationType {
     SAQUE,
     DEPOSITO,
     TRANSFERENCIA,
