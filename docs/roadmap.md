@@ -14,18 +14,17 @@ Legenda:
 
 ## Cliente
 
-- [ ] Cadastro de clientes
-- [ ] Consulta de clientes
-- [ ] Atualização de clientes
+- [✅] Cadastro de clientes
+- [✅] Consulta de clientes
+- [✅] Atualização de clientes
 
 ## Conta
 
-- [ ] Criação automática de conta
-- [ ] Conta Corrente
-- [ ] Conta Poupança
-- [ ] Consulta de conta
-- [ ] Ativação de conta
-- [ ] Desativação de conta
+- [✅] Criação automática de conta
+- [ ] Consultar Conta
+- [ ] Tipo de Conta (Poupança e Corrente)
+- [ ] Atualizar Status Tipo de Conta 
+- [ ] Abertura de Segunda Conta
 
 ## Movimentações
 

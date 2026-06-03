@@ -168,6 +168,11 @@ Não permitir alteração de:
 
 ---
 
+
+
+
+---
+
 ## **RF009 - Validação de Conta Ativa para Movimentações**
 
 **Descrição:** Garantir que apenas contas ativas possam realizar movimentações financeiras.
