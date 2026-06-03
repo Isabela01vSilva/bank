@@ -38,20 +38,43 @@ public class CustomerController {
         ).toList();
         Customer cliente = createCustomer.customer();
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ClienteContasResponse(new CustomerResponse(cliente.getId(), cliente.getFullName(), cliente.getBirthDate(), cliente.getCpf(), cliente.getEmail(), cliente.getPhoneNumber()), contas));
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new ClienteContasResponse(
+                        new CustomerResponse(
+                                cliente.getId(),
+                                cliente.getFullName(),
+                                cliente.getBirthDate(),
+                                cliente.getCpf(),
+                                cliente.getEmail(),
+                                cliente.getPhoneNumber()),
+                        contas));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable Long id) {
         Customer getCustomer = customerService.getCustomerById(id);
 
-        return ResponseEntity.ok(new CustomerResponse(getCustomer.getId(), getCustomer.getFullName(), getCustomer.getBirthDate(), Formatters.formatCPF(getCustomer.getCpf()), Formatters.formatEmail(getCustomer.getEmail()), Formatters.formatPhone(getCustomer.getPhoneNumber())));
+        return ResponseEntity.ok(
+                new CustomerResponse(
+                        getCustomer.getId(),
+                        getCustomer.getFullName(),
+                        getCustomer.getBirthDate(),
+                        Formatters.formatCPF(getCustomer.getCpf()),
+                        Formatters.formatEmail(getCustomer.getEmail()),
+                        Formatters.formatPhone(getCustomer.getPhoneNumber())));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CustomerResponse> updateCustomer(@Valid @PathVariable Long id, @RequestBody CustomerRequest data) {
         Customer updatedCustomer = customerService.updateCustomer(id, data);
 
-        return ResponseEntity.ok(new CustomerResponse(updatedCustomer.getId(), updatedCustomer.getFullName(), updatedCustomer.getBirthDate(), Formatters.formatCPF(updatedCustomer.getCpf()), Formatters.formatEmail(updatedCustomer.getEmail()), Formatters.formatPhone(updatedCustomer.getPhoneNumber())));
+        return ResponseEntity.ok(
+                new CustomerResponse(
+                        updatedCustomer.getId(),
+                        updatedCustomer.getFullName(),
+                        updatedCustomer.getBirthDate(),
+                        Formatters.formatCPF(updatedCustomer.getCpf()),
+                        Formatters.formatEmail(updatedCustomer.getEmail()),
+                        Formatters.formatPhone(updatedCustomer.getPhoneNumber())));
     }
 }

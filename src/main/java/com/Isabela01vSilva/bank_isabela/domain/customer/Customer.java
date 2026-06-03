@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDate;
 
 @Setter
@@ -16,7 +15,6 @@ import java.time.LocalDate;
 @Entity(name = "Cliente")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,10 +38,11 @@ public class Customer {
     private String phoneNumber;
 
     public void updateInfoCustomer(CustomerRequest data) {
+        // Atualiza somente campos não-nulos da requisição
         if (data.fullName() != null) {
             this.fullName = data.fullName();
         }
-        if(data.birthDate() != null) {
+        if (data.birthDate() != null) {
             this.birthDate = data.birthDate();
         }
         if (data.cpf() != null) {
