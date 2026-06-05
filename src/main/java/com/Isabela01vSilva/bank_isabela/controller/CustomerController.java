@@ -3,6 +3,7 @@ package com.Isabela01vSilva.bank_isabela.controller;
 import com.Isabela01vSilva.bank_isabela.commons.Formatters;
 import com.Isabela01vSilva.bank_isabela.controller.request.CustomerAccountRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.customer.CustomerRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.customer.UpdateCustomerRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.ClienteContasResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.customer.CustomerResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountResponse;
@@ -70,7 +71,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponse> updateCustomer(@Valid @PathVariable Long id, @RequestBody CustomerRequest data) {
+    public ResponseEntity<CustomerResponse> updateCustomer(@PathVariable Long id, @Valid @RequestBody UpdateCustomerRequest data) {
         Customer updatedCustomer = customerService.updateCustomer(id, data);
 
         return ResponseEntity.ok(

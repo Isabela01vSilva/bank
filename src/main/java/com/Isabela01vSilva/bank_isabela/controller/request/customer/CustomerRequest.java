@@ -1,5 +1,7 @@
 package com.Isabela01vSilva.bank_isabela.controller.request.customer;
 
+import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerStatus;
+
 import java.time.LocalDate;
 
 public record CustomerRequest(
@@ -7,6 +9,7 @@ public record CustomerRequest(
         LocalDate birthDate,
         String cpf,
         String email,
-        String phoneNumber
+        String phoneNumber,
+        CustomerStatus customerStatus
 ) {
 }

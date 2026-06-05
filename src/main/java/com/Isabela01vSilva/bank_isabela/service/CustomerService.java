@@ -3,6 +3,7 @@ package com.Isabela01vSilva.bank_isabela.service;
 import com.Isabela01vSilva.bank_isabela.controller.request.CustomerAccountRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.customer.CustomerRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.account.CreateAccountDTO;
+import com.Isabela01vSilva.bank_isabela.controller.request.customer.UpdateCustomerRequest;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
@@ -108,38 +109,21 @@ public class CustomerService {
 
     /**
      * Atualiza os dados permitidos do cliente.
-     * Campos imutáveis (CPF e data de nascimento) são validados e não podem ser alterados.
+     *  Apenas nome, e-mail e telefone podem ser alterados.
      */
     @Transactional
-    public Customer updateCustomer(Long id, CustomerRequest dados) {
-        Customer cliente = customerRepository.findById(id)
+    public Customer updateCustomer(Long id, UpdateCustomerRequest data) {
+        Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
 
         // Valida campos imutáveis antes de atualizar
-        validateImmutableFields(cliente, dados);
+        // validateImmutableFields(customer, data);
 
         // Atualiza somente os campos permitidos
-        cliente.updateInfoCustomer(dados);
-        customerRepository.save(cliente);
+        customer.updateInfoCustomer(data);
+        //customerRepository.save(customer);
 
-        return cliente;
+        return customer;
     }
 
-    /**
-     * Valida que campos imutáveis não sejam alterados: CPF e data de nascimento.
-     */
-    private void validateImmutableFields(Customer cliente, CustomerRequest dados) {
-        // CPF não pode ser alterado
-        if (dados.cpf() != null) {
-            String cpfNormalizado = Formatters.normalize(dados.cpf());
-            if (!cpfNormalizado.equals(cliente.getCpf())) {
-                throw new IllegalArgumentException("CPF não pode ser alterado");
-            }
-        }
-
-        // Data de nascimento não pode ser alterada
-        if (dados.birthDate() != null && !dados.birthDate().equals(cliente.getBirthDate())) {
-            throw new IllegalArgumentException("Data de nascimento não pode ser alterada");
-        }
-    }
 }

@@ -1,6 +1,7 @@
 package com.Isabela01vSilva.bank_isabela.domain.customer;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.customer.CustomerRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.customer.UpdateCustomerRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -41,16 +42,10 @@ public class Customer {
     @Column(name = "status_cliente", nullable = false)
     private CustomerStatus customerStatus;
 
-    public void updateInfoCustomer(CustomerRequest data) {
+    public void updateInfoCustomer(UpdateCustomerRequest data) {
         // Atualiza somente campos não-nulos da requisição
         if (data.fullName() != null) {
             this.fullName = data.fullName();
-        }
-        if (data.birthDate() != null) {
-            this.birthDate = data.birthDate();
-        }
-        if (data.cpf() != null) {
-            this.cpf = data.cpf();
         }
         if (data.email() != null) {
             this.email = data.email();

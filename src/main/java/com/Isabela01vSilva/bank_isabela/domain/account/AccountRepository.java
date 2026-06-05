@@ -1,5 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.domain.account;
 
+import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,5 +20,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("SELECT a FROM Conta a WHERE a.accountNumber = :accountNumber AND a.agencyNumber = :agencyNumber")
     Optional<Account> findByAccountNumberAndAgencyNumber(@Param("accountNumber") String accountNumber, @Param("agencyNumber") String agencyNumber);
 
-    List<Account> findByCustomerId(Long customerId);
+    boolean existsByCustomerAndAccountStatus(Customer customer,  AccountStatus accountStatus);
+
 }

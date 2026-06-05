@@ -7,6 +7,10 @@ import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithC
 import com.Isabela01vSilva.bank_isabela.controller.response.account.UpdateAccountStatusResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
+import com.Isabela01vSilva.bank_isabela.domain.account.AccountStatus;
+import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
+import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
+import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerStatus;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferenciaRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.OperationType;
 import com.Isabela01vSilva.bank_isabela.domain.mapper.AccountMappers;
@@ -21,10 +25,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class AccountService {
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Autowired
     private AccountRepository accountRepository;
@@ -150,7 +156,6 @@ public class AccountService {
                 )
         ).orElseThrow(() -> new EntityNotFoundException("Nenhuma conta encontrada por: " + accountNumber + " e agência: " + agencyNumber));
 
-
     }
 
     /**
@@ -181,12 +186,30 @@ public class AccountService {
 
         Account account = optional.get();
 
+        if (account.getAccountStatus() == request.accountStatus()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "A conta já possui este status");
+        }
+
         // Atualiza status, registra data e motivo da alteração
         account.setAccountStatus(request.accountStatus());
         account.setStatusChangeDate(LocalDate.now());
         account.setStatusChangeReason(request.statusChangeReason());
 
         Account saved = accountRepository.save(account);
+
+        Customer customer = saved.getCustomer();
+
+        boolean hasActiveAccount = accountRepository.existsByCustomerAndAccountStatus(customer, AccountStatus.ATIVO);
+
+        if (hasActiveAccount) {
+            customer.setCustomerStatus(CustomerStatus.ATIVO);
+
+        } else {
+            customer.setCustomerStatus(CustomerStatus.INATIVO);
+        }
+
+        customerRepository.save(customer);
+
 
         return new UpdateAccountStatusResponse(
                 saved.getAccountNumber(),

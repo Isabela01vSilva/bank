@@ -14,6 +14,7 @@
 * E-mail
 * Telefone
 * Tipo de Conta (Poupança e/ou Corrente)
+* Status do cliente (ATIVO ou INATIVO)
 
 ### **Regras de negócio**
 
@@ -32,6 +33,8 @@
 * O sistema deve validar o formato do CPF, e-mail e telefone durante o cadastro. ✅
 * O sistema deve exibir mensagens de erro claras e específicas para cada tipo de validação que falhar. ✅
 * O sistema deve calcular a idade do cliente com base na data de nascimento e impedir o cadastro de clientes menores de 18 anos. ✅
+* O status do cliente inicia como ATIVO. ✅
+* O campo "Status do cliente" é controlado pelo sistema e não pode ser alterado diretamente pelo cliente. ✅
 
 ## **RF002 \- Consultar Cliente** 
 
@@ -61,6 +64,7 @@ Não permitir alteração de:
 
 * CPF ✅
 * Data de nascimento ✅
+* Status do cliente ✅
 
 ---
 
