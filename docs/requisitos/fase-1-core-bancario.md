@@ -24,7 +24,7 @@
 * Telefone único e obrigatório. ✅
 * O telefone é considerado único pela combinação DDD + número. ✅
 * Data de nascimento obrigatória. ✅
-* Tipo de Conta obrigatório, sendo permitido apenas (CORRENTE e/ou POUPANCA). ✅
+* Tipo de Conta obrigatório. ✅
 * Não permitir caracteres numéricos ou especiais no nome. ✅
 * O CPF deve conter apenas números e ser válido. ✅
 * O e-mail deve seguir um formato válido. ✅
@@ -126,8 +126,6 @@
 * O cliente pode possuir uma conta poupança. ✅
 * O cliente pode possuir ambas. ✅
 * Cada conta possui saldo independente. ✅
-* Cada conta possui transferências independentes.
-* Ambas podem ser utilizadas para movimentações financeiras.
 * O tipo da conta não pode ser alterado após a criação. ✅
 * Conta Corrente não pode ser convertida em Poupança. ✅
 * Conta Poupança não pode ser convertida em Corrente. ✅
@@ -164,9 +162,7 @@
 
 #### Encerramento
 
-* Não permitir encerramento de conta com saldo.
-* Não permitir encerramento de conta com transferências agendadas pendentes.
-* O histórico da conta deve ser preservado.
+* Não permitir encerramento de conta com saldo diferente de R$ 0,00.
 * O encerramento de uma conta não afeta outras contas do cliente. ✅
 * Registrar data, hora e motivo do encerramento. ✅
 
@@ -178,11 +174,6 @@
     * Número da agência; ✅
     * Histórico;
     * Dados da conta. ✅
-
-#### Impacto no Cliente
-
-* Quando todas as contas do cliente estiverem encerradas, o cliente deve passar para o status **INATIVO**.
-* Quando existir pelo menos uma conta ativa, o cliente deve permanecer ou voltar para o status **ATIVO**.
 
 ---
 
@@ -229,14 +220,6 @@ O cliente está **INATIVO** quando não possui nenhuma conta ativa.
 * Consultar extratos.
 * Consultar histórico de movimentações.
 
-### Restrições do Cliente INATIVO
-
-* Não realizar depósitos.
-* Não realizar saques.
-* Não realizar transferências.
-* Não realizar agendamentos de transferências.
-* Não executar qualquer movimentação financeira.
-
 ### Retorno para ATIVO
 
 O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma conta ativa, seja por:
@@ -246,53 +229,100 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ---
 
+# Módulo 3 - Movimentações
 
+## RF010 - Validação de Conta para Movimentações
 
+**Descrição:** Garantir que apenas contas aptas possam realizar movimentações financeiras.
 
+### Regras de Negócio
 
----
-
-## **RF009 - Validação de Conta Ativa para Movimentações**
-
-**Descrição:** Garantir que apenas contas ativas possam realizar movimentações financeiras.
-
-### **Regras**
-
-* O sistema deve validar o status da conta antes de permitir qualquer movimentação.
-* Apenas contas com status ATIVA podem realizar depósitos.
-* Apenas contas com status ATIVA podem realizar saques.
-* Apenas contas com status ATIVA podem realizar transferências.
-* O sistema deve exibir uma mensagem de erro ao tentar movimentar uma conta inativa.
-* Contas encerradas não podem receber depósitos.
+* O sistema deve validar o status da conta antes de qualquer movimentação.
+* Apenas contas com status **ATIVA** podem realizar movimentações financeiras.
+* Contas com status **ENCERRADA** não podem:
+    * Receber depósitos;
+    * Realizar saques;
+    * Realizar transferências; 
+    * Receber transferências;
+* O sistema deve exibir uma mensagem clara ao tentar movimentar uma conta encerrada.
 
 ---
 
+## RF011 - Saque
+
+**Descrição:** Permitir a realização de saques.
+
+### Campos Obrigatórios
+
+* Número da agencia 
+* Número da conta
+* Valor
+
+### Exibir
+
+* Mensagem com "Valor de R$00.00 de saque da conta: 00000-0 agencia: 0000, saldo atual: "
+
+### Regras de Negócio
+
+* Aplicar as validações definidas no RF010.
+* O saque deve possuir um valor.
+* O valor do saque deve ser maior que zero.
+* A conta deve possuir saldo suficiente para realizar o saque.
+* O sistema deve atualizar o saldo da conta quando o saque for efetivamente concluído.
+
 ---
-### Campos a Serem Exibidos
 
-* Data da alteração.
-* Hora da alteração.
-* Status anterior.
-* Novo status.
-* Motivo da alteração.
+## RF012 - Depósito
 
+**Descrição:** Permitir a realização de depósitos.
+
+### Campos Obrigatórios
+
+* Número da agencia
+* Número da conta
+* Valor 
+
+### Exibir
+
+* Mensagem com "Valor de R$00.00 de depósito para a conta: 00000-0 agencia: 0000, saldo atual: "
+
+### Regras de Negócio
+
+* Aplicar as validações definidas no RF010.
+* O depósito deve possuir um valor.
+* O valor do depósito deve ser maior que zero.
 
 ---
 
-## **RF009 - Historico Cliente Inativo - Reativar Cliente**
+## RF013 - Transferência
 
-**Descrição:** Permitir que um cliente sem contas ativas continue acessando seus históricos e possa solicitar a abertura ou reativação de contas.
+**Descrição:** Permitir a realização de transferências entre contas bancárias.
 
-### **Campos obrigatórios informados pelo cliente**
+### Campos Obrigatórios
 
-* CPF
+* Número da agencia Origem
+* Número da conta Origem
+* Valor
+* Número da agencia Destino
+* Número da conta Destino
 
-### **Exibir**
+### Exibir
 
-* Nome completo
-* CPF
-* Status do cliente
-* Histórico de contas
-* Histórico de movimentações
-* Opções disponíveis para reativação
+* Mensagem com "Valor de R$00.00 de transferido da conta: 00000-0 agencia: 0000, para a conta: 00000-0 agencia: 0000, saldo atual: "
 
+### Regras de Negócio
+
+* Aplicar as validações definidas no RF010.
+* A transferência deve possuir um valor.
+* O valor da transferência deve ser maior que zero.
+* A conta de origem deve possuir saldo suficiente para realizar a transferência.
+* O cliente pode realizar transferências entre suas próprias contas.
+* O cliente pode realizar transferências para contas de outros clientes.
+* O valor transferido pode ser debitado tanto de uma conta corrente quanto de uma conta poupança.
+* O saldo da conta de origem deve ser atualizado imediatamente após a transferência.
+* O saldo da conta de destino deve ser atualizado imediatamente após a transferência.
+* A conta de origem e a conta de destino não podem ser a mesma conta.
+* Cada conta possui realização de transferências independentes.
+* Ambas podem ser utilizadas para movimentações financeiras.
+
+---
