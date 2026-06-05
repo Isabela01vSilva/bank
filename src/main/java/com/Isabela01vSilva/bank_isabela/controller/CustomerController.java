@@ -46,7 +46,8 @@ public class CustomerController {
                                 cliente.getBirthDate(),
                                 cliente.getCpf(),
                                 cliente.getEmail(),
-                                cliente.getPhoneNumber()),
+                                cliente.getPhoneNumber(),
+                                cliente.getCustomerStatus()),
                         contas));
     }
 
@@ -61,7 +62,11 @@ public class CustomerController {
                         getCustomer.getBirthDate(),
                         Formatters.formatCPF(getCustomer.getCpf()),
                         Formatters.formatEmail(getCustomer.getEmail()),
-                        Formatters.formatPhone(getCustomer.getPhoneNumber())));
+                        Formatters.formatPhone(getCustomer.getPhoneNumber()),
+                        getCustomer.getCustomerStatus()
+                )
+        );
+
     }
 
     @PutMapping("/{id}")
@@ -75,6 +80,7 @@ public class CustomerController {
                         updatedCustomer.getBirthDate(),
                         Formatters.formatCPF(updatedCustomer.getCpf()),
                         Formatters.formatEmail(updatedCustomer.getEmail()),
-                        Formatters.formatPhone(updatedCustomer.getPhoneNumber())));
+                        Formatters.formatPhone(updatedCustomer.getPhoneNumber()),
+                        updatedCustomer.getCustomerStatus()));
     }
 }

@@ -11,7 +11,7 @@ public class AccountMappers {
 
         Account account = new Account();
 
-        account.setAccountStatus(AccountStatus.ATIVADA);
+        account.setAccountStatus(AccountStatus.ATIVO);
         account.setCreationDate(LocalDate.now());
         account.setAccountType(dados.tipoConta());
         account.setCustomer(dados.cliente());

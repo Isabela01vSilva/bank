@@ -43,7 +43,7 @@ public class ContaServiceTest {
         contaMock = new Account();
         contaMock.setId(1L);
         contaMock.setAccountNumber("12345-6");
-        contaMock.setAccountStatus(AccountStatus.ATIVADA);
+        contaMock.setAccountStatus(AccountStatus.ATIVO);
         contaMock.setDataCriacao(LocalDate.now());
     }
 

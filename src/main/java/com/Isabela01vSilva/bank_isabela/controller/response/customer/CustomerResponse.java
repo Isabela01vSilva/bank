@@ -1,5 +1,7 @@
 package com.Isabela01vSilva.bank_isabela.controller.response.customer;
 
+import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerStatus;
+
 import java.time.LocalDate;
 
 public record CustomerResponse(Long id,
@@ -7,6 +9,7 @@ public record CustomerResponse(Long id,
                                LocalDate birthDate,
                                String cpf,
                                String email,
-                               String phoneNumber
+                               String phoneNumber,
+                               CustomerStatus customertStatus
                                ) {
 }

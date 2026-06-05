@@ -37,6 +37,10 @@ public class Customer {
     @Column(name = "telefone", nullable = false, unique = true)
     private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_cliente", nullable = false)
+    private CustomerStatus customerStatus;
+
     public void updateInfoCustomer(CustomerRequest data) {
         // Atualiza somente campos não-nulos da requisição
         if (data.fullName() != null) {

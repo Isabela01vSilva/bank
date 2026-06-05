@@ -71,7 +71,7 @@ public class Account {
     }
 
     public void accountStatus() {
-        if (AccountStatus.ENCERRADA.equals(this.accountStatus)) {
+        if (AccountStatus.ENCERRADO.equals(this.accountStatus)) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Conta está desativada"
             );
