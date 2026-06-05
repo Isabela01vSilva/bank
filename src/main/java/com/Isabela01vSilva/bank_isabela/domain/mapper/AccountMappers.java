@@ -13,8 +13,8 @@ public class AccountMappers {
 
         account.setAccountStatus(AccountStatus.ATIVO);
         account.setCreationDate(LocalDate.now());
-        account.setAccountType(dados.tipoConta());
-        account.setCustomer(dados.cliente());
+        account.setAccountType(dados.accountType());
+        account.setCustomer(dados.customer());
         account.setAgencyNumber("0001");
         account.setBalance(0.00);
         account.setAccountNumber(accountNumber);

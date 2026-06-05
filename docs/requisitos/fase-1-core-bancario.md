@@ -123,10 +123,10 @@ Não permitir alteração de:
 * Cada conta possui saldo independente. ✅
 * Cada conta possui transferências independentes. 
 * O cliente pode usar ambas as duas contas para realizar transferência.
-* Não é permitido alterar o tipo da conta após sua criação.
-* Uma conta corrente não pode ser convertida em conta poupança.
-* Uma conta poupança não pode ser convertida em conta corrente.
-* Apenas o status da conta (ATIVA ou ENCERRADA) pode ser alterado.
+* Não é permitido alterar o tipo da conta após sua criação.✅
+* Uma conta corrente não pode ser convertida em conta poupança. ✅
+* Uma conta poupança não pode ser convertida em conta corrente. ✅
+* Apenas o status da conta (ATIVA ou ENCERRADA) pode ser alterado. ✅
 
 ---
 
@@ -171,17 +171,16 @@ Não permitir alteração de:
 ### **Campos obrigatórios informados pelo cliente**
 
 * CPF
-* Tipo da conta
+* Tipo de Conta (Poupança ou Corrente)
 
 ### **Regras**
 
-* A nova conta deve seguir as mesmas regras de criação definidas no RF004.
-* O sistema deve impedir a abertura de uma nova conta caso o cliente já possua uma conta do tipo solicitado.
-* O sistema deve exibir uma mensagem informando que o cliente já possui uma conta do tipo solicitado quando a solicitação for rejeitada.
-* O saldo inicial da nova conta deve ser R$ 0,00.
-* A nova conta deve ser criada com status ATIVA.
-* O número da conta deve ser gerado automaticamente e ser único no sistema.
-* A data de abertura deve corresponder à data de criação da conta.
+* A nova conta deve seguir as mesmas regras de criação definidas no RF004. ✅
+* O sistema deve impedir a abertura de uma nova conta caso o cliente já possua uma conta do tipo solicitado. ✅
+* O sistema deve exibir uma mensagem informando o cliente já possui uma conta do tipo solicitado quando a solicitação for rejeitada. ✅
+* Caso o cliente solicitei a abertura de uma conta que esta encerrada, o sistema deve reabri a conta encerrada e não criar uma nova conta, mantendo o histórico e o número da conta original. ✅
+* O cliente sem cadastro não pode solicitar a abertura de uma segunda conta, já que ele não tem nem CPF cadastrado. ✅
+* Se o cliente já teve uma conta, ela está encerrada e ele solicita a abertura de outra conta nova de outro tipo, o sistema deve criar uma nova conta normalmente e reativar o cliente, já que a regra de negócio só impede a abertura de uma nova conta do mesmo tipo. ✅
 
 ---
 

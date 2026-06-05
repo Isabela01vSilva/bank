@@ -1,11 +1,13 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.account.*;
+import com.Isabela01vSilva.bank_isabela.controller.request.account.SecondAccountRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.MessageResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.UpdateAccountStatusResponse;
 import com.Isabela01vSilva.bank_isabela.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,5 +61,22 @@ public class AccountController {
     public ResponseEntity<AccountWithCustomerResponse> searchByAccuntNumberAndAgencyNumber(@RequestParam String accountNumber, @RequestParam String agencyNumber) {
         AccountWithCustomerResponse account = accountService.searchAccountsByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
         return ResponseEntity.ok(account);
+    }
+
+    @PostMapping("/abrir")
+    public ResponseEntity<AccountWithCustomerResponse> openAccountByCpf(@RequestBody SecondAccountRequest request) {
+        var account = accountService.createAccountForCpf(request.cpf(), request.accountType());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new AccountWithCustomerResponse(
+                        account.getCustomer().getFullName(),
+                        account.getCustomer().getCpf(),
+                        account.getAgencyNumber(),
+                        account.getAccountNumber(),
+                        account.getAccountType(),
+                        account.getAccountStatus(),
+                        account.getBalance(),
+                        account.getCreationDate()
+                ));
     }
 }

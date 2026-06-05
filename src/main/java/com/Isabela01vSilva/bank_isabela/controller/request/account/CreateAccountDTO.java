@@ -4,6 +4,6 @@ import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 
 public record CreateAccountDTO(
-        AccountType tipoConta,
-        Customer cliente
+        AccountType accountType,
+        Customer customer
 ) {}

@@ -14,6 +14,7 @@ import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerStatus;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferenciaRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.OperationType;
 import com.Isabela01vSilva.bank_isabela.domain.mapper.AccountMappers;
+import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -163,9 +164,66 @@ public class AccountService {
      * Lança exceção se houver tentativa de alteração.
      */
     public void validateAccountTypeImmutable(Account conta, CreateAccountDTO novosDados) {
-        if (novosDados.tipoConta() != null && !novosDados.tipoConta().equals(conta.getAccountType())) {
+        if (novosDados.accountType() != null && !novosDados.accountType().equals(conta.getAccountType())) {
             throw new IllegalArgumentException("Tipo de conta não pode ser alterado");
         }
+    }
+
+    /**
+     * Cria mais uma conta para o cliente identificado pelo CPF seguindo as regras do RF008.
+     * - Se já existir conta ATIVA do mesmo tipo -> retorna conflito
+     * - Se existir conta ENCERRADO do mesmo tipo -> reativa a conta existente (mantém número e histórico)
+     * - Caso contrário cria nova conta com saldo 0, agência 0001, status ATIVO e data de criação
+     */
+    @Transactional
+    public com.Isabela01vSilva.bank_isabela.domain.account.Account createAccountForCpf(String cpf, AccountType requestedType) {
+        if (cpf == null || cpf.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CPF não informado");
+        }
+
+        String normalizedCpf = Formatters.normalize(cpf);
+
+        // Busca cliente
+        var optionalCustomer = customerRepository.findByCpf(normalizedCpf);
+        if (optionalCustomer.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado para CPF: " + cpf);
+        }
+        var customer = optionalCustomer.get();
+
+        // Verifica se já existe conta do mesmo tipo
+        List<Account> accountsOfType = accountRepository.findByCustomerCpfAndAccountType(normalizedCpf, requestedType);
+
+        // Se existir conta ATIVA do mesmo tipo -> conflito
+        boolean hasActive = accountsOfType.stream().anyMatch(a -> a.getAccountStatus() == AccountStatus.ATIVO);
+        if (hasActive) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cliente já possui uma conta do tipo solicitado: " + requestedType);
+        }
+
+        // Se existir conta ENCERRADO do mesmo tipo -> reativar a conta existente (mantendo número e histórico)
+        var optionalEncerrada = accountsOfType.stream().filter(a -> a.getAccountStatus() == AccountStatus.ENCERRADO).findFirst();
+        if (optionalEncerrada.isPresent()) {
+            Account toReactivate = optionalEncerrada.get();
+            toReactivate.setAccountStatus(AccountStatus.ATIVO);
+            // Mantém statusChangeDate e statusChangeReason anteriores para auditoria/histórico (RF007 e RF008)
+            Account saved = accountRepository.save(toReactivate);
+
+            // Atualiza status do cliente para ATIVO caso ele tenha sido inativado por falta de contas ativas
+            customer.setCustomerStatus(CustomerStatus.ATIVO);
+            customerRepository.save(customer);
+
+            return saved;
+        }
+
+        // Caso não exista conta do tipo solicitado -> criar nova conta seguindo RF004
+        CreateAccountDTO dto = new CreateAccountDTO(requestedType, customer);
+        Account newAccount = AccountMappers.fromRequestToAccount(dto, generateAccountNumber());
+        Account saved = accountRepository.save(newAccount);
+
+        // Atualiza status do cliente para ATIVO
+        customer.setCustomerStatus(CustomerStatus.ATIVO);
+        customerRepository.save(customer);
+
+        return saved;
     }
 
     /**
