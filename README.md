@@ -93,15 +93,24 @@ O Bank Isabela foi criado como um projeto de portfólio para demonstrar conhecim
 
 ## Roadmap
 
-### ✅ [Fase 1 - Core Bancário](docs/requisitos/fase-1-core-bancario.md) - Em desenvolvimento
+### 🚧 [Fase 1 - Core Bancário](docs/requisitos/fase-1-core-bancario.md) - Em desenvolvimento
 
 - Cadastro de clientes
 - Gestão de contas
 - Depósitos
 - Saques
+- Transferências (básicas)
 - Histórico de movimentações
 
-### 🚧 Fase 2 - Dashboard Financeiro
+###  Fase 1.1 - Qualidade e Padronização
+
+- Tratamento global de exceções
+- Padronização das mensagens de erro
+- Padronização das respostas da API
+- Validações avançadas
+- Melhorias de código
+
+### 📅 Fase 2 - Dashboard Financeiro
 
 - Indicadores financeiros
 - Evolução patrimonial
