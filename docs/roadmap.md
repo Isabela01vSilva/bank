@@ -20,12 +20,12 @@ Legenda:
 
 ## Conta
 
-- [✅] Criação automática de conta
-- [✅] Consultar Conta
-- [ ] Tipo de Conta (Poupança e Corrente)
-- [ ] Ativar ou Encerrar Conta 
-- [ ] Abertura de Segunda Conta
-- [ ] Reativar Cliente
+- [✅] RF004 - Criação automática de conta
+- [✅] RF005 - Consultar Conta
+- [ ] RF006 - Tipos de Contas (Poupança e Corrente)
+- [ ] RF007 - Ativar ou Encerrar Conta
+- [✅] RF008 - Abertura de Nova Conta
+- [ ] RF009 - Regras de Status do Cliente (ATIVO/INATIVO)
 
 ## Movimentações
 
@@ -137,5 +137,4 @@ Legenda:
 - [ ] Metas financeiras
 - [ ] Investimentos
 - [ ] Notificações por e-mail
-- [ ] Exportação de extrato em PDF
-- [ ] Aplicação mobile
+- [ ] Exportação de extrato em PDF ou EXCEL
