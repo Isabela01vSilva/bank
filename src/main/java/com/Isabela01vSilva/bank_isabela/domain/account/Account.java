@@ -17,7 +17,6 @@ import java.time.LocalDate;
 @Entity(name = "Conta")
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class Account {
 
     @Id
@@ -77,9 +76,5 @@ public class Account {
                     HttpStatus.NOT_FOUND, "Conta está desativada"
             );
         }
-    }
-
-    public void updateAccountStatus(AccountStatus statusCont) {
-        this.accountStatus = statusCont;
     }
 }

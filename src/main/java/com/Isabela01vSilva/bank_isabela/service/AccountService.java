@@ -17,9 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class AccountService {
@@ -120,12 +122,12 @@ public class AccountService {
      * Busca uma conta pelo número da conta e número da agência.
      * Retorna uma lista com a conta encontrada (mantido formato de retorno consistente).
      */
-    public List<AccountWithCustomerResponse> searchAccountsByAccountNumberAndAgencyNumber(String accountNumber, String agencyNumber){
-        if(accountNumber == null || agencyNumber == null){
+    public AccountWithCustomerResponse searchAccountsByAccountNumberAndAgencyNumber(String accountNumber, String agencyNumber) {
+        if (accountNumber == null || agencyNumber == null) {
             throw new IllegalArgumentException("Número da conta e agência não podem ser nulos");
         }
 
-        if(accountNumber.isEmpty() || agencyNumber.isEmpty()){
+        if (accountNumber.isEmpty() || agencyNumber.isEmpty()) {
             throw new EntityNotFoundException("Nenhuma conta encontrada por: " + accountNumber + " e agência: " + agencyNumber);
         }
 
@@ -134,22 +136,21 @@ public class AccountService {
             throw new IllegalArgumentException("Número da conta deve estar no formato 12345-6 e agência no formato 1234 ou 1234-1");
         }
 
-        Optional<Account> optionalAccount = accountRepository.findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
-        if (optionalAccount.isEmpty()) {
-            throw new EntityNotFoundException("Nenhuma conta encontrada por: " + accountNumber + " e agência: " + agencyNumber);
-        }
 
-        Account account = optionalAccount.get();
-        return List.of(new AccountWithCustomerResponse(
-                account.getCustomer().getFullName(),
-                account.getCustomer().getCpf(),
-                account.getAgencyNumber(),
-                account.getAccountNumber(),
-                account.getAccountType(),
-                account.getAccountStatus(),
-                account.getBalance(),
-                account.getCreationDate()
-        ));
+        return accountRepository.findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber).map(account ->
+                new AccountWithCustomerResponse(
+                        account.getCustomer().getFullName(),
+                        account.getCustomer().getCpf(),
+                        account.getAgencyNumber(),
+                        account.getAccountNumber(),
+                        account.getAccountType(),
+                        account.getAccountStatus(),
+                        account.getBalance(),
+                        account.getCreationDate()
+                )
+        ).orElseThrow(() -> new EntityNotFoundException("Nenhuma conta encontrada por: " + accountNumber + " e agência: " + agencyNumber));
+
+
     }
 
     /**
@@ -181,8 +182,8 @@ public class AccountService {
         Account account = optional.get();
 
         // Atualiza status, registra data e motivo da alteração
-        account.updateAccountStatus(request.accountStatus());
-        account.setStatusChangeDate(java.time.LocalDate.now());
+        account.setAccountStatus(request.accountStatus());
+        account.setStatusChangeDate(LocalDate.now());
         account.setStatusChangeReason(request.statusChangeReason());
 
         Account saved = accountRepository.save(account);
@@ -201,6 +202,7 @@ public class AccountService {
 
 
     // ===== Movimentações =====
+
     /**
      * Realiza depósito em conta (buscando por id da conta).
      * Registra histórico da operação.

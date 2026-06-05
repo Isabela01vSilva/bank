@@ -56,8 +56,8 @@ public class AccountController {
     }
 
     @GetMapping("/buscar/conta")
-    public ResponseEntity<List<AccountWithCustomerResponse>> searchByAccuntNumberAndAgencyNumber(@RequestParam String accountNumber, @RequestParam String agencyNumber) {
-        List<AccountWithCustomerResponse> accounts = accountService.searchAccountsByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
-        return ResponseEntity.ok(accounts);
+    public ResponseEntity<AccountWithCustomerResponse> searchByAccuntNumberAndAgencyNumber(@RequestParam String accountNumber, @RequestParam String agencyNumber) {
+        AccountWithCustomerResponse account = accountService.searchAccountsByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
+        return ResponseEntity.ok(account);
     }
 }

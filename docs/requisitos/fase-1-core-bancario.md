@@ -119,6 +119,10 @@ Não permitir alteração de:
 * Cada conta possui saldo independente. ✅
 * Cada conta possui transferências independentes. 
 * O cliente pode usar ambas as duas contas para realizar transferência.
+* Não é permitido alterar o tipo da conta após sua criação.
+* Uma conta corrente não pode ser convertida em conta poupança.
+* Uma conta poupança não pode ser convertida em conta corrente.
+* Apenas o status da conta (ATIVA ou ENCERRADA) pode ser alterado.
 
 ---
 
@@ -128,21 +132,21 @@ Não permitir alteração de:
 
 ### *** Campos obrigatórios informados pelo cliente***
 
-* Número da conta
-* Número da agência
-* Novo status da conta (ATIVA ou ENCERRADA)
-* Motivo da alteração de status (opcional, mas recomendado para fins de histórico)
+* Número da conta ✅
+* Número da agência ✅
+* Novo status da conta (ATIVA ou ENCERRADA) ✅
+* Motivo da alteração de status (opcional, mas recomendado para fins de histórico) ✅
 
 ### **Exibir**
 
-* Número da conta
-* Número da agência
-* Tipo da conta
-* Status da conta
-* Saldo atual
-* Data de criação
-* Data da alteração.
-* Mensagem de confirmação de alteração de status.
+* Número da conta ✅
+* Número da agência ✅
+* Tipo da conta ✅
+* Status da conta ✅
+* Saldo atual ✅
+* Data de criação ✅
+* Data da alteração ✅
+* Mensagem de confirmação de alteração de status ✅
 
 ### **Regras de negócio**
 
@@ -150,14 +154,9 @@ Não permitir alteração de:
 * Não permitir desativação de conta com transferências agendadas pendentes.
 * A desativação de uma conta deve alterar seu status para ENCERRADA, mas os dados da conta devem permanecer no sistema para fins de histórico e consulta futura.
 * Ao encerrar todas as conta de um cliente, o status do cliente deve alterar para REATIVAR, permitindo que ele possa abrir novas contas no futuro.
-* A desativação de uma conta não afeta outras contas do cliente.
-* O sistema deve registrar a data e hora da desativação da conta, e o motivo, para fins de histórico do cliente.
-* O sistema deve permitir que o cliente reative uma conta encerrada.
-* Não é permitido alterar o tipo da conta após sua criação.
-* Uma conta corrente não pode ser convertida em conta poupança.
-* Uma conta poupança não pode ser convertida em conta corrente.
-* Apenas o status da conta (ATIVA ou ENCERRADA) pode ser alterado.
-* Não é permitido encerrar uma conta que possua transferências agendadas pendentes.
+* A desativação de uma conta não afeta outras contas do cliente. ✅
+* O sistema deve registrar a data e hora da desativação da conta, e o motivo, para fins de histórico do cliente. ✅
+* O sistema deve permitir que o cliente reative uma conta encerrada. ✅
 
 ---
 
