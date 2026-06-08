@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @Table(name = "historicos")
 @Entity(name = "Historico")
-public class Historico {
+public class History {
 
     @Id
     @Column(name = "id_historico")

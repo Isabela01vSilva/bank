@@ -2,7 +2,7 @@ package com.Isabela01vSilva.bank_isabela.service;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferenciaRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.historico.CadastroHistoricoRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.historico.RegisterHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.Transferencia;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferenciaRepository;
@@ -163,13 +163,12 @@ public class TransferService {
         contaRepository.save(contaOrigem);
         contaRepository.save(contaDestino);
 
-        registrarHistorico(contaOrigem, contaDestino, valor);
     }
 
     //Histórico
-    private void registrarHistorico(Account contaOrigem, Account contaDestino, Double valor){
-        historicoService.cadastrar(
-                new CadastroHistoricoRequest(
+    /*private void registrarHistorico(Account contaOrigem, Account contaDestino, Double valor){
+        historicoService.register(
+                new RegisterHistoryRequest(
                         contaOrigem,
                         contaOrigem.getCustomer(),
                         HistoryType.TRANSFERENCIA,
@@ -178,8 +177,8 @@ public class TransferService {
                 )
         );
 
-       historicoService.cadastrar(
-                new CadastroHistoricoRequest(
+       historicoService.register(
+                new RegisterHistoryRequest(
                         contaDestino,
                         contaDestino.getCustomer(),
                         HistoryType.TRANSFERENCIA,
@@ -187,5 +186,5 @@ public class TransferService {
                         valor
                 )
         );
-    }
+    }*/
 }

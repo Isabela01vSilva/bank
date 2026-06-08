@@ -1,15 +1,8 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.historico.HistoricoEntreDatasResquest;
-import com.Isabela01vSilva.bank_isabela.controller.response.historico.HistoricoResponse;
-import com.Isabela01vSilva.bank_isabela.controller.response.historico.HistoricoSttsContaResponse;
-import com.Isabela01vSilva.bank_isabela.domain.historico.Historico;
 import com.Isabela01vSilva.bank_isabela.service.HistoricoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("historicos")
@@ -18,14 +11,14 @@ public class HistoricoController {
     @Autowired
     private HistoricoService historicoService;
 
-    @GetMapping
+    /*@GetMapping
     public ResponseEntity<List<HistoricoResponse>> listarHistoricos() {
         List<Historico> listar = historicoService.exibirTodosHistoricos();
         return ResponseEntity.ok(listar.stream().map(historico -> new HistoricoResponse(historico.getId(),
                 historico.getCliente().getFullName(), historico.getValor(), historico.getDescricao(), historico.getDataTransacao())).toList());
     }
 
-    @GetMapping("/{id}/cliente")
+    /*@GetMapping("/{id}/cliente")
     public ResponseEntity<List<HistoricoResponse>> exibirHistoricoPorCliente(@PathVariable Long id) {
         List<HistoricoResponse> historico = historicoService.exibirHistoricoPorCliente(id);
         return ResponseEntity.ok(historico);
@@ -74,6 +67,6 @@ public class HistoricoController {
         }
 
         return ResponseEntity.ok(totalGastos);
-    }
+    }*/
 
 }
