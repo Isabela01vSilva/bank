@@ -115,10 +115,10 @@ public class TransferService {
     }
 
     private boolean validarSaldoSuficiente(Account conta, Double valor, CreateAppointmentScheduleRequest create){
-        if(valor.compareTo(conta.getBalance()) > 0){
+        /*if(valor.compareTo(conta.getBalance()) > 0){
             falhaTransferencia(create);
             return false;
-        }
+        }*/
         return true;
     }
 
@@ -153,12 +153,12 @@ public class TransferService {
 
     @Transactional
     public void executarOperacoesFinanceiras(Account contaOrigem, Account contaDestino, Double valor){
-        if (contaOrigem.getBalance() < valor) {
+        /*if (contaOrigem.getBalance() < valor) {
             throw new RuntimeException("Saldo insuficiente");
-        }
+        }*/
 
-        contaOrigem.withdraw(valor);
-        contaDestino.deposit(valor);
+        //contaOrigem.withdraw(valor);
+        //contaDestino.deposit(valor);
 
         contaRepository.save(contaOrigem);
         contaRepository.save(contaDestino);

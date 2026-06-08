@@ -196,7 +196,7 @@ public class AccountService {
 
         // Verificando saldo na conta
         boolean hasBalance = accountsOfType.stream()
-                .anyMatch(account -> account.getBalance() > 0);
+                .anyMatch(account -> account.getBalance().compareTo(BigDecimal.ZERO) > 0);
         if (hasBalance) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cliente possui saldo na conta");
         }
@@ -291,6 +291,37 @@ public class AccountService {
 
 
     // ===== Movimentações =====
+    /**
+     * Realiza saque em conta (buscando por número agência + conta)
+     */
+    @Transactional
+    public String withdrawal(WithdrawalRequest saque) {
+
+        // Busca a conta com o ID fornecido na request
+        Account account = accountRepository.findById(saque.id())
+                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
+
+        // Verifica o status da conta antes de realizar qualquer operação
+        account.accountStatus();
+
+        // Realiza saque da conta
+        //account.withdraw(saque.amount());
+
+        // Registra o histórico da operação de saque.
+        historicoService.cadastrar(
+                new CadastroHistoricoRequest(
+                        account,
+                        account.getCustomer(),
+                        OperationType.SAQUE,
+                        "Operação de saque realizada",
+                        saque.amount()
+                )
+        );
+
+        // Retorna uma mensagem indicando o valor sacado.
+        return "Valor sacado: R$" + saque.amount();
+    }
+
 
     /**
      * Realiza depósito em conta (buscando por id da conta).
@@ -307,7 +338,7 @@ public class AccountService {
         account.accountStatus();
 
         // Realiza depósito na conta
-        account.deposit(deposit.ammount());
+        //account.deposit(deposit.ammount());
 
         // Registra o histórico da operação de depósito.
         historicoService.cadastrar(
@@ -324,36 +355,6 @@ public class AccountService {
         return "Valor depositado: R$" + deposit.ammount();
     }
 
-    /**
-     * Realiza saque em conta (buscando por id da conta) e registra histórico.
-     */
-    @Transactional
-    public String withdrawal(WithdrawalRequest saque) {
-
-        // Busca a conta com o ID fornecido na request
-        Account account = accountRepository.findById(saque.id())
-                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
-
-        // Verifica o status da conta antes de realizar qualquer operação
-        account.accountStatus();
-
-        // Realiza saque da conta
-        account.withdraw(saque.amount());
-
-        // Registra o histórico da operação de saque.
-        historicoService.cadastrar(
-                new CadastroHistoricoRequest(
-                        account,
-                        account.getCustomer(),
-                        OperationType.SAQUE,
-                        "Operação de saque realizada",
-                        saque.amount()
-                )
-        );
-
-        // Retorna uma mensagem indicando o valor sacado.
-        return "Valor sacado: R$" + saque.amount();
-    }
 
     /**
      * Consulta saldo da conta pelo id.

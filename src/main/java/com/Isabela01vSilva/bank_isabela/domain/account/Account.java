@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -43,7 +44,7 @@ public class Account {
     private Customer customer;
 
     @Column(name = "saldo", nullable = false)
-    private Double balance;
+    private BigDecimal balance;
 
     @Column(name = "data_criacao", nullable = false)
     private LocalDate creationDate;
@@ -54,20 +55,20 @@ public class Account {
     @Column(name = "motivo_alteracao_status")
     private String statusChangeReason;
 
-    public void withdraw(Double amount) {
-        if (amount > this.balance) {
+    public void withdraw(BigDecimal amount) {
+        if (amount.compareTo(this.balance) < 0) {
             throw new IllegalArgumentException("Saldo insuficiente");
-        } else if (amount <= 0) {
-            throw new IllegalArgumentException("O amount deve ser maior que R$0.00");
+        } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("O saldo deve ser maior que R$0.00");
         }
-        this.balance -= amount;
+        this.balance = this.balance.subtract(amount);
     }
 
-    public void deposit(Double valor) {
-        if (valor <= 0) {
+    public void deposit(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("O valor deve ser maior que R$0.00");
         }
-        this.balance += valor;
+        this.balance = this.balance.add(amount);
     }
 
     public void accountStatus() {
