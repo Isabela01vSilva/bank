@@ -162,7 +162,7 @@
 
 #### Encerramento
 
-* Não permitir encerramento de conta com saldo diferente de R$ 0,00.
+* Não permitir encerramento de conta com saldo diferente de R$ 0,00. ✅
 * O encerramento de uma conta não afeta outras contas do cliente. ✅
 * Registrar data, hora e motivo do encerramento. ✅
 

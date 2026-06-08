@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -193,6 +194,13 @@ public class AccountService {
         // Verifica se já existe conta do mesmo tipo
         List<Account> accountsOfType = accountRepository.findByCustomerCpfAndAccountType(normalizedCpf, requestedType);
 
+        // Verificando saldo na conta
+        boolean hasBalance = accountsOfType.stream()
+                .anyMatch(account -> account.getBalance() > 0);
+        if (hasBalance) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cliente possui saldo na conta");
+        }
+
         // Se existir conta ATIVA do mesmo tipo -> conflito
         boolean hasActive = accountsOfType.stream().anyMatch(a -> a.getAccountStatus() == AccountStatus.ATIVO);
         if (hasActive) {
@@ -219,7 +227,7 @@ public class AccountService {
         Account newAccount = AccountMappers.fromRequestToAccount(dto, generateAccountNumber());
         Account saved = accountRepository.save(newAccount);
 
-        // Atualiza status do cliente para ATIVO
+        // Atualiza status do cliente para ATIVO, caso crie uma conta nova e a conta antiga estiver encerrada
         customer.setCustomerStatus(CustomerStatus.ATIVO);
         customerRepository.save(customer);
 
