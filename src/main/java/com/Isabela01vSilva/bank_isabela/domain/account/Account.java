@@ -56,16 +56,17 @@ public class Account {
     private String statusChangeReason;
 
     public void withdraw(BigDecimal amount) {
-        if (amount.compareTo(this.balance) < 0) {
+        if (amount.compareTo(this.balance) > 0) {
             throw new IllegalArgumentException("Saldo insuficiente");
-        } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
+        }
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("O saldo deve ser maior que R$0.00");
         }
         this.balance = this.balance.subtract(amount);
     }
 
     public void deposit(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("O valor deve ser maior que R$0.00");
         }
         this.balance = this.balance.add(amount);

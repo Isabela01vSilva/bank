@@ -4,6 +4,7 @@ import com.Isabela01vSilva.bank_isabela.controller.request.account.CreateAccount
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class AccountMappers {
@@ -16,7 +17,7 @@ public class AccountMappers {
         account.setAccountType(dados.accountType());
         account.setCustomer(dados.customer());
         account.setAgencyNumber("0001");
-        account.setBalance(0.00);
+        account.setBalance(BigDecimal.ZERO);
         account.setAccountNumber(accountNumber);
 
         return account;

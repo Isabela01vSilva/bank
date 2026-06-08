@@ -21,30 +21,6 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @PatchMapping("/atualizarStatus")
-    public ResponseEntity<UpdateAccountStatusResponse> updateAccountStatus(@RequestBody UpdateAccountStatusRequest request) {
-        UpdateAccountStatusResponse response = accountService.updateAccountStatus(request);
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/depositar")
-    public ResponseEntity<MessageResponse> deposit(@RequestBody DepositRequest depositRequest) {
-        String message = accountService.deposit(depositRequest);
-        return ResponseEntity.ok(new MessageResponse(message));
-    }
-
-    @PostMapping("/saque")
-    public ResponseEntity<MessageResponse> withdraw(@RequestBody WithdrawalRequest withdrawalRequest) {
-        String message = accountService.withdrawal(withdrawalRequest);
-        return ResponseEntity.ok(new MessageResponse(message));
-    }
-
-    @GetMapping("/{id}/saldo")
-    public ResponseEntity<MessageResponse> getBalance(@PathVariable Long id) {
-        String message = accountService.getBalance(id);
-        return ResponseEntity.ok(new MessageResponse(message));
-    }
-
     /**
      * Busca todas as contas de um cliente pelo CPF.
      *
@@ -63,6 +39,13 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
+    @PatchMapping("/atualizarStatus")
+    public ResponseEntity<UpdateAccountStatusResponse> updateAccountStatus(@RequestBody UpdateAccountStatusRequest request) {
+        UpdateAccountStatusResponse response = accountService.updateAccountStatus(request);
+        return ResponseEntity.ok(response);
+    }
+
+    //Abrir segunda conta
     @PostMapping("/abrir")
     public ResponseEntity<AccountWithCustomerResponse> openAccountByCpf(@RequestBody SecondAccountRequest request) {
         var account = accountService.createAccountForCpf(request.cpf(), request.accountType());
@@ -78,5 +61,23 @@ public class AccountController {
                         account.getBalance(),
                         account.getCreationDate()
                 ));
+    }
+
+    @PostMapping("/saque")
+    public ResponseEntity<MessageResponse> withdraw(@RequestBody AccountTransactionRequest withdrawalRequest) {
+        String message = accountService.withdrawal(withdrawalRequest);
+        return ResponseEntity.ok(new MessageResponse(message));
+    }
+
+    @PostMapping("/depositar")
+    public ResponseEntity<MessageResponse> deposit(@RequestBody AccountTransactionRequest depositRequest) {
+        String message = accountService.deposit(depositRequest);
+        return ResponseEntity.ok(new MessageResponse(message));
+    }
+
+    @GetMapping("/{id}/saldo")
+    public ResponseEntity<MessageResponse> getBalance(@PathVariable Long id) {
+        String message = accountService.getBalance(id);
+        return ResponseEntity.ok(new MessageResponse(message));
     }
 }

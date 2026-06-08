@@ -23,15 +23,15 @@ Legenda:
 - [✅] RF004 - Criação automática de conta
 - [✅] RF005 - Consultar Conta
 - [✅] RF006 - Tipos de Contas (Poupança e Corrente)
-- [ ] RF007 - Ativar ou Encerrar Conta
+- [✅] RF007 - Ativar ou Encerrar Conta
 - [✅] RF008 - Abertura de Nova Conta
 - [✅] RF009 - Regras de Status do Cliente (ATIVO/INATIVO)
 
 ## Movimentações
 
-- [ ] RF010 - Validação de Conta para Movimentações
-- [ ] RF011 - Saque
-- [ ] RF012 - Depósito
+- [✅] RF010 - Validação de Conta para Movimentações
+- [✅] RF011 - Saque
+- [✅] RF012 - Depósito
 - [ ] RF013 - Transferência
 
 ## Histórico

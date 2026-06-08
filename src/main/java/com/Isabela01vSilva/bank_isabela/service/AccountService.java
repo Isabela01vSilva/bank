@@ -291,68 +291,53 @@ public class AccountService {
 
 
     // ===== Movimentações =====
+
     /**
-     * Realiza saque em conta (buscando por número agência + conta)
+     * Realiza SAQUE em conta (buscando por número agência + conta)
      */
     @Transactional
-    public String withdrawal(WithdrawalRequest saque) {
+    public String withdrawal(AccountTransactionRequest request) {
 
         // Busca a conta com o ID fornecido na request
-        Account account = accountRepository.findById(saque.id())
-                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
+        Account account = accountRepository.findByAccountNumberAndAgencyNumber(request.accountNumber(), request.agencyNumber())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Conta não encontrada"));
 
-        // Verifica o status da conta antes de realizar qualquer operação
-        account.accountStatus();
+        if (account.getAccountStatus() == AccountStatus.ENCERRADO) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "A conta está ENCERRADA");
+        }
 
         // Realiza saque da conta
-        //account.withdraw(saque.amount());
-
-        // Registra o histórico da operação de saque.
-        historicoService.cadastrar(
-                new CadastroHistoricoRequest(
-                        account,
-                        account.getCustomer(),
-                        OperationType.SAQUE,
-                        "Operação de saque realizada",
-                        saque.amount()
-                )
-        );
+        account.withdraw(request.amount());
+        accountRepository.save(account);
 
         // Retorna uma mensagem indicando o valor sacado.
-        return "Valor sacado: R$" + saque.amount();
+        return "Valor sacado: R$" + request.amount();
     }
 
-
     /**
-     * Realiza depósito em conta (buscando por id da conta).
-     * Registra histórico da operação.
+     * Realiza DEPOSITO em conta (buscando por número agência + conta)
      */
     @Transactional
-    public String deposit(DepositRequest deposit) {
+    public String deposit(AccountTransactionRequest request) {
 
         // Busca a conta com o ID fornecido na request
-        Account account = accountRepository.findById(deposit.id())
-                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
+        Account account = accountRepository.findByAccountNumberAndAgencyNumber(request.accountNumber(), request.agencyNumber())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Conta não encontrada"));
 
-        // Verifica o status da conta antes de realizar qualquer operação
-        account.accountStatus();
+        if (account.getAccountStatus() == AccountStatus.ENCERRADO) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "A conta está ENCERRADA");
+        }
 
-        // Realiza depósito na conta
-        //account.deposit(deposit.ammount());
+        // Realiza saque da conta
+        account.deposit(request.amount());
+        accountRepository.save(account);
 
-        // Registra o histórico da operação de depósito.
-        historicoService.cadastrar(
-                new CadastroHistoricoRequest(
-                        account,
-                        account.getCustomer(),
-                        OperationType.DEPOSITO,
-                        "Operação de depósito realizada",
-                        deposit.ammount()
-                )
-        );
-
-        // Retorna uma mensagem com o valor depositado.
-        return "Valor depositado: R$" + deposit.ammount();
+        // Retorna uma mensagem indicando o valor sacado.
+        return "Valor depositado: R$" + request.amount();
     }
 
 

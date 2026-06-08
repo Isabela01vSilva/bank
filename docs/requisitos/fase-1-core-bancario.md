@@ -145,7 +145,7 @@
 
 ### Campo Opcional
 
-* Motivo da alteração ✅
+* Motivo da alteração 
 
 ### Exibir
 
@@ -237,14 +237,14 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ### Regras de Negócio
 
-* O sistema deve validar o status da conta antes de qualquer movimentação.
-* Apenas contas com status **ATIVA** podem realizar movimentações financeiras.
+* O sistema deve validar o status da conta antes de qualquer movimentação. ✅
+* Apenas contas com status **ATIVA** podem realizar movimentações financeiras. ✅
 * Contas com status **ENCERRADA** não podem:
-    * Receber depósitos;
-    * Realizar saques;
+    * Receber depósitos; ✅
+    * Realizar saques; ✅
     * Realizar transferências; 
     * Receber transferências;
-* O sistema deve exibir uma mensagem clara ao tentar movimentar uma conta encerrada.
+* O sistema deve exibir uma mensagem clara ao tentar movimentar uma conta encerrada. ✅
 
 ---
 
@@ -254,7 +254,7 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ### Campos Obrigatórios
 
-* Número da agencia 
+* Número da agência 
 * Número da conta
 * Valor
 
@@ -264,11 +264,11 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ### Regras de Negócio
 
-* Aplicar as validações definidas no RF010.
-* O saque deve possuir um valor.
-* O valor do saque deve ser maior que zero.
-* A conta deve possuir saldo suficiente para realizar o saque.
-* O sistema deve atualizar o saldo da conta quando o saque for efetivamente concluído.
+* Aplicar as validações definidas no RF010. ✅
+* O saque deve possuir um valor. ✅
+* O valor do saque deve ser maior que zero. ✅
+* A conta deve possuir saldo suficiente para realizar o saque. ✅
+* O sistema deve atualizar o saldo da conta quando o saque for efetivamente concluído. ✅
 
 ---
 
@@ -278,7 +278,7 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ### Campos Obrigatórios
 
-* Número da agencia
+* Número da agência
 * Número da conta
 * Valor 
 
@@ -288,9 +288,9 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ### Regras de Negócio
 
-* Aplicar as validações definidas no RF010.
-* O depósito deve possuir um valor.
-* O valor do depósito deve ser maior que zero.
+* Aplicar as validações definidas no RF010. ✅
+* O depósito deve possuir um valor. ✅
+* O valor do depósito deve ser maior que zero. ✅
 
 ---
 
