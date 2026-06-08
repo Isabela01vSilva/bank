@@ -4,90 +4,43 @@ import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Table(name = "historicos")
 @Entity(name = "Historico")
-
 public class Historico {
 
     @Id
-    @Column(name = "idHistorico")
+    @Column(name = "id_historico")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "idConta")
-    private Account conta;
+    @JoinColumn(name = "id_conta")
+    private Account account;
 
     @ManyToOne
-    @JoinColumn(name = "idCliente")
-    private Customer cliente;
+    @JoinColumn(name = "id_cliente")
+    private Customer customer;
 
     @Enumerated(EnumType.STRING)
-    private OperationType tipoOperacao;
+    @Column(name = "tipo_operacao")
+    private HistoryType historyType;
 
-    private Double valor;
-    private String descricao;
-    private LocalDate dataTransacao;
+    @Column(name = "valor")
+    private BigDecimal amount;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(name = "descricao")
+    private String description;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(name = "data_transacao")
+    private LocalDateTime transactionDate;
 
-    public Account getConta() {
-        return conta;
-    }
-
-    public void setConta(Account conta) {
-        this.conta = conta;
-    }
-
-    public Customer getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Customer cliente) {
-        this.cliente = cliente;
-    }
-
-    public OperationType getTipoOperacao() {
-        return tipoOperacao;
-    }
-
-    public void setTipoOperacao(OperationType tipoOperacao) {
-        this.tipoOperacao = tipoOperacao;
-    }
-
-    public Double getValor() {
-        return valor;
-    }
-
-    public void setValor(Double valor) {
-        this.valor = valor;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public LocalDate getDataTransacao() {
-        return dataTransacao;
-    }
-
-    public void setDataTransacao(LocalDate dataTransacao) {
-        this.dataTransacao = dataTransacao;
-    }
 }

@@ -1,10 +1,10 @@
 package com.Isabela01vSilva.bank_isabela.controller.response.historico;
 
-import com.Isabela01vSilva.bank_isabela.domain.historico.OperationType;
+import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
 
 public record HistoricoSttsContaResponse(
         Long id,
-        OperationType tipoOperacao,
+        HistoryType tipoOperacao,
         String descricao
 ) {
 }

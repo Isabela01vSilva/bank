@@ -2,7 +2,6 @@ package com.Isabela01vSilva.bank_isabela.service;
 
 import com.Isabela01vSilva.bank_isabela.commons.Formatters;
 import com.Isabela01vSilva.bank_isabela.controller.request.account.*;
-import com.Isabela01vSilva.bank_isabela.controller.request.historico.CadastroHistoricoRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.UpdateAccountStatusResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
@@ -12,7 +11,6 @@ import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerStatus;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferenciaRepository;
-import com.Isabela01vSilva.bank_isabela.domain.historico.OperationType;
 import com.Isabela01vSilva.bank_isabela.domain.mapper.AccountMappers;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import jakarta.persistence.EntityNotFoundException;

@@ -337,6 +337,9 @@ Permitir consultar todos os eventos relacionados ao cliente.
 - Alterações de status.
 - Movimentações financeiras.
 - Data e hora do evento.
+- Número da agência
+- Número da conta
+- Tipo de conta
 
 ---
 
