@@ -4,9 +4,11 @@ import com.Isabela01vSilva.bank_isabela.controller.request.CustomerAccountReques
 import com.Isabela01vSilva.bank_isabela.controller.request.customer.CustomerRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.account.CreateAccountDTO;
 import com.Isabela01vSilva.bank_isabela.controller.request.customer.UpdateCustomerRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.historico.RegisterHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
+import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
 import com.Isabela01vSilva.bank_isabela.domain.mapper.CustomerMappers;
 import com.Isabela01vSilva.bank_isabela.commons.Formatters;
 import com.Isabela01vSilva.bank_isabela.service.dto.AccountCustomerDTO;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CustomerService {
@@ -26,7 +29,10 @@ public class CustomerService {
     private CustomerRepository customerRepository;
 
     @Autowired
-    private AccountService contaService;
+    private AccountService accountService;
+
+    @Autowired
+    private HistoryService historyService;
 
     /**
      * Registra um novo cliente e cria as contas solicitadas.
@@ -50,7 +56,7 @@ public class CustomerService {
                 .toList();
 
         // Cria múltiplas contas e retorna junto com o cliente
-        List<Account> contasCriadas = contaService.createMultipleAccounts(contas);
+        List<Account> contasCriadas = accountService.createMultipleAccounts(contas);
 
         return new AccountCustomerDTO(contasCriadas, createdCustomer);
     }
@@ -109,21 +115,48 @@ public class CustomerService {
 
     /**
      * Atualiza os dados permitidos do cliente.
-     *  Apenas nome, e-mail e telefone podem ser alterados.
+     * Apenas nome, e-mail e telefone podem ser alterados.
      */
     @Transactional
     public Customer updateCustomer(Long id, UpdateCustomerRequest data) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
 
-        // Valida campos imutáveis antes de atualizar
-        // validateImmutableFields(customer, data);
+        // Valor anterior
+        String oldName = customer.getFullName();
+        String oldEmail = customer.getEmail();
+        String oldPhone = customer.getPhoneNumber();
 
-        // Atualiza somente os campos permitidos
+        //Atualiza os dados
         customer.updateInfoCustomer(data);
-        //customerRepository.save(customer);
+
+        //Monta descrição do historico
+        String description = " ";
+
+        if (!oldName.equals(customer.getFullName())) {
+            description += "Name: " + oldName + " -> " + customer.getFullName() + ". ";
+        }
+
+        if (!oldEmail.equals(customer.getEmail())) {
+            description += "Email: " + oldEmail + " -> " + customer.getEmail() + ". ";
+        }
+
+        if (!oldPhone.equals(customer.getPhoneNumber())) {
+            description += "Phone: " + oldPhone + " -> " + customer.getPhoneNumber() + ". ";
+        }
+
+        if (!description.isBlank()) {
+            historyService.register(
+                    new RegisterHistoryRequest(
+                            null,
+                            customer,
+                            HistoryType.CUSTOMER_UPDATED,
+                            description,
+                            null
+                    )
+            );
+        }
 
         return customer;
     }
-
 }

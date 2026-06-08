@@ -2,6 +2,7 @@ package com.Isabela01vSilva.bank_isabela.service;
 
 import com.Isabela01vSilva.bank_isabela.commons.Formatters;
 import com.Isabela01vSilva.bank_isabela.controller.request.account.*;
+import com.Isabela01vSilva.bank_isabela.controller.request.historico.RegisterHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.UpdateAccountStatusResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
@@ -10,6 +11,7 @@ import com.Isabela01vSilva.bank_isabela.domain.account.AccountStatus;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerStatus;
+import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferenciaRepository;
 import com.Isabela01vSilva.bank_isabela.domain.mapper.AccountMappers;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
@@ -36,7 +38,7 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     @Autowired
-    private HistoricoService historicoService;
+    private HistoryService historyService;
 
     @Autowired
     private TransferenciaRepository transferenciaRepository;
@@ -51,7 +53,20 @@ public class AccountService {
                 .map(accountRequest -> AccountMappers.fromRequestToAccount(accountRequest, generateAccountNumber()))
                 .toList();
 
-        return accountRepository.saveAll(newAccounts);
+        List<Account> savedAccounts = accountRepository.saveAll(newAccounts);
+
+        savedAccounts.forEach(account ->
+                historyService.register(
+                        new RegisterHistoryRequest(
+                                account,
+                                account.getCustomer(),
+                                HistoryType.ACCOUNT_CREATED,
+                                "Conta Criada com sucesso!",
+                                null
+                        )
+                )
+        );
+        return savedAccounts;
     }
 
     /**
@@ -217,6 +232,16 @@ public class AccountService {
             customer.setCustomerStatus(CustomerStatus.ATIVO);
             customerRepository.save(customer);
 
+            historyService.register(
+                    new RegisterHistoryRequest(
+                            saved,
+                            saved.getCustomer(),
+                            HistoryType.ACCOUNT_REACTIVATED,
+                            "Conta Reativada com sucesso!",
+                            null
+                    )
+            );
+
             return saved;
         }
 
@@ -228,6 +253,17 @@ public class AccountService {
         // Atualiza status do cliente para ATIVO, caso crie uma conta nova e a conta antiga estiver encerrada
         customer.setCustomerStatus(CustomerStatus.ATIVO);
         customerRepository.save(customer);
+
+        // Historico - Criação de conta
+        historyService.register(
+                new RegisterHistoryRequest(
+                        saved,
+                        saved.getCustomer(),
+                        HistoryType.ACCOUNT_CREATED,
+                        "Conta Criada com sucesso!",
+                        null
+                )
+        );
 
         return saved;
     }
@@ -260,6 +296,31 @@ public class AccountService {
         account.setStatusChangeReason(request.statusChangeReason());
 
         Account saved = accountRepository.save(account);
+
+        if (request.accountStatus() == AccountStatus.ENCERRADO) {
+
+            historyService.register(
+                    new RegisterHistoryRequest(
+                            saved,
+                            saved.getCustomer(),
+                            HistoryType.ACCOUNT_CLOSED,
+                            request.statusChangeReason(),
+                            null
+                    )
+            );
+
+        } else if (request.accountStatus() == AccountStatus.ATIVO) {
+
+            historyService.register(
+                    new RegisterHistoryRequest(
+                            saved,
+                            saved.getCustomer(),
+                            HistoryType.ACCOUNT_REACTIVATED,
+                            request.statusChangeReason(),
+                            null
+                    )
+            );
+        }
 
         Customer customer = saved.getCustomer();
 
@@ -310,6 +371,16 @@ public class AccountService {
         account.withdraw(request.amount());
         accountRepository.save(account);
 
+        historyService.register(
+                new RegisterHistoryRequest(
+                        account,
+                        account.getCustomer(),
+                        HistoryType.WITHDRAWAL,
+                        "Saque realizado com sucesso!",
+                        request.amount()
+                )
+        );
+
         // Retorna uma mensagem indicando o valor sacado.
         return "Valor sacado: R$" + request.amount();
     }
@@ -332,7 +403,18 @@ public class AccountService {
 
         // Realiza saque da conta
         account.deposit(request.amount());
+
         accountRepository.save(account);
+
+        historyService.register(
+                new RegisterHistoryRequest(
+                        account,
+                        account.getCustomer(),
+                        HistoryType.DEPOSIT,
+                        "Depósito realizado com sucesso!",
+                        request.amount()
+                )
+        );
 
         // Retorna uma mensagem indicando o valor sacado.
         return "Valor depositado: R$" + request.amount();

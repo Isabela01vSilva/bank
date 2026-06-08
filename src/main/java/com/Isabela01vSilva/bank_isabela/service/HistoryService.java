@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-public class HistoricoService {
+public class HistoryService {
 
     @Autowired
     private HistoryRepository historicoRepository;

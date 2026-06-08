@@ -1,6 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
-import com.Isabela01vSilva.bank_isabela.service.HistoricoService;
+import com.Isabela01vSilva.bank_isabela.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 public class HistoricoController {
 
     @Autowired
-    private HistoricoService historicoService;
+    private HistoryService historicoService;
 
     /*@GetMapping
     public ResponseEntity<List<HistoricoResponse>> listarHistoricos() {
