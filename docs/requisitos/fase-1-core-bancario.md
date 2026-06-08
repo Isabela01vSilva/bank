@@ -260,7 +260,7 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ### Exibir
 
-* Mensagem com "Valor de R$00.00 de saque da conta: 00000-0 agencia: 0000, saldo atual: "
+* Mensagem com "Valor sacado: R$0.00"
 
 ### Regras de Negócio
 
@@ -284,7 +284,7 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ### Exibir
 
-* Mensagem com "Valor de R$00.00 de depósito para a conta: 00000-0 agencia: 0000, saldo atual: "
+* Mensagem com "Valor depositado: R$0.00"
 
 ### Regras de Negócio
 
@@ -294,16 +294,128 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ---
 
+# Módulo 4 - Histórico
+
+### Regras de negócio
+
+- O histórico deve registrar automaticamente todas as movimentações realizadas na conta.
+- Os registros do histórico não podem ser alterados ou excluídos pelo cliente.
+- O histórico deve apresentar as movimentações em ordem decrescente de data (mais recentes primeiro).
+- O cliente só pode visualizar movimentações das próprias contas.
+- Cada registro deve possuir um identificador único.
+
+---
+
+## RF013 - Visualizar Histórico de Movimentações
+
+### Descrição
+
+Permitir que o cliente consulte todas as movimentações realizadas nas contas.
+
+### Informações exibidas
+
+- Data e hora da movimentação.
+- Tipo da movimentação.
+- Valor.
+- Status da movimentação.
+- Conta Destino.
+
+---
+
+## RF014 - Consultar Histórico do Cliente
+
+### Descrição
+
+Permitir consultar todos os eventos relacionados ao cliente.
+
+### Informações exibidas
+
+- Abertura de contas.
+- Reativação de contas.
+- Inativação de contas.
+- Encerramento de contas.
+- Alterações de status.
+- Movimentações financeiras.
+- Data e hora do evento.
+
+---
+
+## RF015 - Consultar Histórico por Tipo de Conta
+
+### Descrição
+
+Permitir consultar o histórico de movimentações e eventos de uma conta específica por tipo de conta.
+
+### Tipos disponíveis
+
+- Conta Corrente
+- Conta Poupança
+
+### Regras de negócio
+
+- O sistema deve retornar apenas informações do tipo de conta selecionado.
+
+---
+
+## RF016 - Consultar Histórico de Movimentações 
+
+### Descrição 
+
+Permitir que o cliente realize consultas específicas no histórico. 
+
+### Filtros disponíveis 
+
+- Período inicial e final 
+- Tipo de movimentação 
+- Status da movimentação 
+- Valor mínimo 
+- Valor máximo 
+
+### Regras de negócio 
+
+- Os filtros podem ser utilizados de forma individual ou combinada. 
+- Caso nenhum resultado seja encontrado, o sistema deve informar que não existem movimentações para os filtros selecionados. 
+
+--- 
+
+## RF017 - Filtrar Resumo do Histórico 
+
+### Descrição 
+
+Permitir que o cliente visualize indicadores resumidos das movimentações. 
+
+### Informações exibidas 
+- Total de entradas 
+- Total de saídas 
+- Quantidade de movimentações 
+- Maior movimentação realizada 
+- Última movimentação realizada 
+
+### Regras de negócio
+
+- Os valores devem ser calculados com base nos filtros aplicados. 
+- O resumo deve considerar apenas movimentações pertencentes ao cliente autenticado. 
+- O sistema deve atualizar os indicadores sempre que uma nova movimentação for registrada. 
+
+---
+
+
+
+
+
+
+
+---
 ## RF013 - Transferência
 
 **Descrição:** Permitir a realização de transferências entre contas bancárias.
 
 ### Campos Obrigatórios
 
-* Número da agencia Origem
+* Número da agência Origem
 * Número da conta Origem
 * Valor
-* Número da agencia Destino
+* Número da agência Destino
 * Número da conta Destino
 
 ### Exibir

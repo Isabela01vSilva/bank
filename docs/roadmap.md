@@ -36,10 +36,11 @@ Legenda:
 
 ## Histórico
 
-- [ ] Registro de movimentações
-- [ ] Consulta de histórico
-- [ ] Filtros de histórico
-- [ ] Resumo de movimentações
+- [ ] Visualizar Histórico de Movimentações
+- [ ] Consultar Histórico do Cliente
+- [ ] Consultar Histórico por Tipo de Conta
+- [ ] Consultar Histórico de Movimentações
+- [ ] Filtrar Resumo do Histórico
 
 ---
 
