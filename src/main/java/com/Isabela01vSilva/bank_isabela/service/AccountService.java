@@ -25,7 +25,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -174,16 +173,6 @@ public class AccountService {
     }
 
     /**
-     * Valida que o tipo de conta não seja alterado (campo imutável).
-     * Lança exceção se houver tentativa de alteração.
-     */
-    public void validateAccountTypeImmutable(Account conta, CreateAccountDTO novosDados) {
-        if (novosDados.accountType() != null && !novosDados.accountType().equals(conta.getAccountType())) {
-            throw new IllegalArgumentException("Tipo de conta não pode ser alterado");
-        }
-    }
-
-    /**
      * Cria mais uma conta para o cliente identificado pelo CPF seguindo as regras do RF008.
      * - Se já existir conta ATIVA do mesmo tipo -> retorna conflito
      * - Se existir conta ENCERRADO do mesmo tipo -> reativa a conta existente (mantém número e histórico)
@@ -229,8 +218,20 @@ public class AccountService {
             Account saved = accountRepository.save(toReactivate);
 
             // Atualiza status do cliente para ATIVO caso ele tenha sido inativado por falta de contas ativas
-            customer.setCustomerStatus(CustomerStatus.ATIVO);
-            customerRepository.save(customer);
+            if (customer.getCustomerStatus() == CustomerStatus.INATIVO) {
+                customer.setCustomerStatus(CustomerStatus.ATIVO);
+                customerRepository.save(customer);
+
+                historyService.register(
+                        new RegisterHistoryRequest(
+                                saved,
+                                customer,
+                                HistoryType.CUSTOMER_REACTIVATED,
+                                "Cliente reativado por possuir conta ativa",
+                                null
+                        )
+                );
+            }
 
             historyService.register(
                     new RegisterHistoryRequest(
@@ -277,32 +278,25 @@ public class AccountService {
     @Transactional
     public UpdateAccountStatusResponse updateAccountStatus(UpdateAccountStatusRequest request) {
 
-        Optional<Account> optional = accountRepository.findByAccountNumberAndAgencyNumber(
-                request.accountNumber(), request.agencyNumber());
+        Account account = accountRepository.findByAccountNumberAndAgencyNumber(
+                        request.accountNumber(), request.agencyNumber())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada"));
 
-        if (optional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada");
-        }
-
-        Account account = optional.get();
 
         if (account.getAccountStatus() == request.accountStatus()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "A conta já possui este status");
         }
 
-        // Atualiza status, registra data e motivo da alteração
-        account.setAccountStatus(request.accountStatus());
-        account.setStatusChangeDate(LocalDate.now());
-        account.setStatusChangeReason(request.statusChangeReason());
-
-        Account saved = accountRepository.save(account);
-
         if (request.accountStatus() == AccountStatus.ENCERRADO) {
+
+            if (account.getBalance().compareTo(BigDecimal.ZERO) > 0) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Não é possível encerrar conta com saldo");
+            }
 
             historyService.register(
                     new RegisterHistoryRequest(
-                            saved,
-                            saved.getCustomer(),
+                            account,
+                            account.getCustomer(),
                             HistoryType.ACCOUNT_CLOSED,
                             request.statusChangeReason(),
                             null
@@ -313,24 +307,55 @@ public class AccountService {
 
             historyService.register(
                     new RegisterHistoryRequest(
-                            saved,
-                            saved.getCustomer(),
-                            HistoryType.ACCOUNT_REACTIVATED,
+                            account,
+                            account.getCustomer(),
+                            HistoryType.CUSTOMER_REACTIVATED,
                             request.statusChangeReason(),
                             null
                     )
             );
         }
 
+        // Atualiza status, registra data e motivo da alteração
+        account.setAccountStatus(request.accountStatus());
+        account.setStatusChangeDate(LocalDate.now());
+        account.setStatusChangeReason(request.statusChangeReason());
+
+        Account saved = accountRepository.save(account);
+
         Customer customer = saved.getCustomer();
 
         boolean hasActiveAccount = accountRepository.existsByCustomerAndAccountStatus(customer, AccountStatus.ATIVO);
+        CustomerStatus newCustomrStatus = hasActiveAccount ? CustomerStatus.ATIVO : CustomerStatus.INATIVO;
 
-        if (hasActiveAccount) {
-            customer.setCustomerStatus(CustomerStatus.ATIVO);
+        if (customer.getCustomerStatus() != newCustomrStatus) {
 
-        } else {
-            customer.setCustomerStatus(CustomerStatus.INATIVO);
+            customer.setCustomerStatus(newCustomrStatus);
+
+            if (newCustomrStatus == CustomerStatus.ATIVO) {
+
+                historyService.register(
+                        new RegisterHistoryRequest(
+                                null,
+                                customer,
+                                HistoryType.CUSTOMER_REACTIVATED,
+                                "Cliente reativado por possuir conta ativa",
+                                null
+                        )
+                );
+
+            } else {
+
+                historyService.register(
+                        new RegisterHistoryRequest(
+                                null,
+                                customer,
+                                HistoryType.CUSTOMER_INACTIVATED,
+                                "Cliente inativado por não possuir contas ativas",
+                                null
+                        )
+                );
+            }
         }
 
         customerRepository.save(customer);
@@ -419,7 +444,6 @@ public class AccountService {
         // Retorna uma mensagem indicando o valor sacado.
         return "Valor depositado: R$" + request.amount();
     }
-
 
     /**
      * Consulta saldo da conta pelo id.

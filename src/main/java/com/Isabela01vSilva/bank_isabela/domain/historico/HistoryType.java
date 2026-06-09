@@ -5,11 +5,12 @@ public enum HistoryType {
     // Eventos da conta
     ACCOUNT_CREATED,
     ACCOUNT_REACTIVATED,
-    ACCOUNT_INACTIVATED,
     ACCOUNT_CLOSED,
 
     //Evento do cliente
     CUSTOMER_UPDATED,
+    CUSTOMER_REACTIVATED,
+    CUSTOMER_INACTIVATED,
 
     // Movimentações financeiras
     DEPOSIT,

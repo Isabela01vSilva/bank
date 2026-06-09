@@ -6,12 +6,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface HistoryRepository extends JpaRepository<History, Long> {
-
+/*
     List<History> findByClienteId(Long cliente);
 
     List<History> findByContaId(Long conta);
 
-    List<History> findByContaIdAndDataTransacaoBetween(Long id, LocalDate dataInicio, LocalDate dataFim);
+    List<History> findByContaIdAndDataTransacaoBetween(Long id, LocalDate dataInicio, LocalDate dataFim);*/
 
 
 }
