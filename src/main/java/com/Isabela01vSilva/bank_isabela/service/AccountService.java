@@ -2,7 +2,7 @@ package com.Isabela01vSilva.bank_isabela.service;
 
 import com.Isabela01vSilva.bank_isabela.commons.Formatters;
 import com.Isabela01vSilva.bank_isabela.controller.request.account.*;
-import com.Isabela01vSilva.bank_isabela.controller.request.historico.RegisterHistoryRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.history.RegisterHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.UpdateAccountStatusResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
@@ -227,7 +227,7 @@ public class AccountService {
                                 saved,
                                 customer,
                                 HistoryType.CUSTOMER_REACTIVATED,
-                                "Cliente reativado por possuir conta ativa",
+                                "Cliente reativado por possuir conta ativa. ",
                                 null
                         )
                 );
@@ -309,7 +309,7 @@ public class AccountService {
                     new RegisterHistoryRequest(
                             account,
                             account.getCustomer(),
-                            HistoryType.CUSTOMER_REACTIVATED,
+                            HistoryType.ACCOUNT_REACTIVATED,
                             request.statusChangeReason(),
                             null
                     )
