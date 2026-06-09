@@ -1,10 +1,9 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.CustomerAccountRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.customer.CustomerRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.account.CreateAccountDTO;
 import com.Isabela01vSilva.bank_isabela.controller.request.customer.UpdateCustomerRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.historico.RegisterHistoryRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.history.RegisterHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class CustomerService {
