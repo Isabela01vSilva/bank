@@ -1,8 +1,11 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
+import com.Isabela01vSilva.bank_isabela.controller.request.history.AccountTypeHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.history.RegisterHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.history.TransactionHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
+import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import com.Isabela01vSilva.bank_isabela.domain.historico.History;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
@@ -57,6 +60,18 @@ public class HistoryService {
             HistoryType.CUSTOMER_REACTIVATED,
             HistoryType.CUSTOMER_INACTIVATED
     );
+
+    public List<TransactionHistoryResponse> getAccountHistoryByAccountType(AccountTypeHistoryRequest request) {
+        List<History> histories = historyRepository.findByCustomerId(request.id());
+
+        return histories.stream()
+                .filter(history -> history.getAccount().getAccountType().equals(request.accountType()))
+                .map(history -> new TransactionHistoryResponse(
+                        history.getCustomer().getCpf(),
+                        history.getAccount()
+                ))
+                .toList();
+    }
 
     /*
 

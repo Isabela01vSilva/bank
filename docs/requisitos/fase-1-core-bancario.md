@@ -344,14 +344,34 @@ Permitir consultar todos os eventos relacionados ao cliente.
 
 Permitir consultar o histórico de movimentações e eventos de uma conta específica por tipo de conta.
 
-### Tipos disponíveis
+### Tipos disponíveis e Informações exibidas
 
-- Conta Corrente
-- Conta Poupança
+- CPF do Cliente
+- Tipo de Conta: 
+  - Conta Corrente
+  - Conta Poupança
 
 ### Regras de negócio
 
 - O sistema deve retornar apenas informações do tipo de conta selecionado.
+
+---
+
+## RF015 - Consultar Histórico por Tipo de Movimentação
+
+### Descrição
+
+Permitir consultar o histórico de movimentações e eventos de uma conta específica por tipo de movimentação.
+
+### Tipos disponíveis e Informações exibidas
+
+- CPF do Cliente
+- Tipo de movimentação:
+  - Saque
+  - Deposito
+  - Transferencia
+  - Agendamento de transferencia
+
 
 ---
 

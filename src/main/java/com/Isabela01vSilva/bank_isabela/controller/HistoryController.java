@@ -1,6 +1,8 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
+import com.Isabela01vSilva.bank_isabela.controller.request.history.AccountTypeHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.history.TransactionHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -79,4 +81,16 @@ public class HistoryController {
 
         return ResponseEntity.ok(history);
     }
+
+    @GetMapping("/tipoDeConta")
+    public ResponseEntity<List<TransactionHistoryResponse>> getAccountTypeHistory(@RequestBody AccountTypeHistoryRequest request) {
+        List<TransactionHistoryResponse> history = historyService.getAccountHistoryByAccountType(request);
+
+        if (history.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(history);
+    }
+
 }
