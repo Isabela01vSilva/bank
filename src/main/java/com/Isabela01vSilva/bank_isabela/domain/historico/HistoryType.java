@@ -9,7 +9,11 @@ public enum HistoryType {
 
     //Evento do cliente
     CUSTOMER_UPDATED,
+
+    //Registrar CUSTOMER_INACTIVATED somente quando o status do cliente mudar de ATIVO para INATIVO.
     CUSTOMER_REACTIVATED,
+
+    //Registrar CUSTOMER_REACTIVATED somente quando o status do cliente mudar de INATIVO para ATIVO.
     CUSTOMER_INACTIVATED,
 
     // Movimentações financeiras

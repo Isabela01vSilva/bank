@@ -1,15 +1,19 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
+import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("historicos")
-public class HistoricoController {
+public class HistoryController {
 
     @Autowired
-    private HistoryService historicoService;
+    private HistoryService historyService;
 
     /*@GetMapping
     public ResponseEntity<List<HistoricoResponse>> listarHistoricos() {
@@ -52,11 +56,7 @@ public class HistoricoController {
         List<HistoricoResponse> historico = historicoService.exibirExtrato(datas);
 
         if (historico.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
 
-        return ResponseEntity.ok(historico);
-    }
 
     @GetMapping("/gastos")
     public ResponseEntity<String> gastos(@RequestBody HistoricoEntreDatasResquest datas) {
@@ -69,4 +69,14 @@ public class HistoricoController {
         return ResponseEntity.ok(totalGastos);
     }*/
 
+    @GetMapping("/cliente/{customerId}")
+    public ResponseEntity<List<CustomerHistoryResponse>> getCustomerHistory(@PathVariable Long customerId) {
+        List<CustomerHistoryResponse> history = historyService.getCustomerHistory(customerId);
+
+        if (history.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(history);
+    }
 }

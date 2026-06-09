@@ -298,11 +298,11 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ### Regras de negócio
 
-- O histórico deve registrar automaticamente todas as movimentações realizadas na conta.
-- Os registros do histórico não podem ser alterados ou excluídos pelo cliente.
+- O histórico deve registrar automaticamente todas as movimentações realizadas na conta. ✅
+- Os registros do histórico não podem ser alterados ou excluídos pelo cliente. ✅
 - O histórico deve apresentar as movimentações em ordem decrescente de data (mais recentes primeiro).
-- O cliente só pode visualizar movimentações das próprias contas.
-- Cada registro deve possuir um identificador único.
+- O cliente só pode visualizar movimentações das próprias contas. ✅
+- Cada registro deve possuir um identificador único. ✅
 
 ---
 
@@ -322,7 +322,7 @@ Permitir que o cliente consulte todas as movimentações realizadas nas contas.
 
 ---
 
-## RF014 - Consultar Histórico do Cliente
+## RF014 - Consultar Histórico do Cliente ✅
 
 ### Descrição
 
@@ -335,11 +335,6 @@ Permitir consultar todos os eventos relacionados ao cliente.
 - Inativação de contas.
 - Encerramento de contas.
 - Alterações de status.
-- Movimentações financeiras.
-- Data e hora do evento.
-- Número da agência
-- Número da conta
-- Tipo de conta
 
 ---
 

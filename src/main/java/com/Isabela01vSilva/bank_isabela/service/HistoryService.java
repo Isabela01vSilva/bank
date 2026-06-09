@@ -1,18 +1,23 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.historico.RegisterHistoryRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.history.RegisterHistoryRequest;
+import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
+import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.historico.History;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryRepository;
+import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class HistoryService {
 
     @Autowired
-    private HistoryRepository historicoRepository;
+    private HistoryRepository historyRepository;
 
     public History register(RegisterHistoryRequest request) {
 
@@ -28,13 +33,32 @@ public class HistoryService {
         history.setTransactionDate(LocalDateTime.now());
 
         // Salva o histórico no banco de dados e retorna a entidade salva
-        return historicoRepository.save(history);
+        return historyRepository.save(history);
     }
 
-    /*public List<History> exibirTodosHistoricos() {
-        // Retorna todos os históricos
-        return historicoRepository.findAll();
+    public List<CustomerHistoryResponse> getCustomerHistory(Long customerId) {
+        List<History> histories = historyRepository.findByCustomerId(customerId);
+
+        return histories.stream()
+                .filter(history -> CUSTOMER_HISTORY_TYPES.contains(history.getHistoryType()))
+                .map(history -> new CustomerHistoryResponse(
+                        history.getId(),
+                        history.getHistoryType(),
+                        history.getDescription()
+                ))
+                .toList();
     }
+
+    private static final Set<HistoryType> CUSTOMER_HISTORY_TYPES = Set.of(
+            HistoryType.ACCOUNT_CREATED,
+            HistoryType.ACCOUNT_REACTIVATED,
+            HistoryType.ACCOUNT_CLOSED,
+            HistoryType.CUSTOMER_UPDATED,
+            HistoryType.CUSTOMER_REACTIVATED,
+            HistoryType.CUSTOMER_INACTIVATED
+    );
+
+    /*
 
     public List<HistoricoResponse> exibirHistoricoPorCliente(Long id) {
         // Busca os históricos relacionados a um cliente pelo id
