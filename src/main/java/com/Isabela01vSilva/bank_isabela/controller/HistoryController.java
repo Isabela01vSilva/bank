@@ -1,6 +1,7 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.history.AccountTypeHistoryRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.history.TipoMovimentacaoRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.TransactionHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.service.HistoryService;
@@ -85,6 +86,17 @@ public class HistoryController {
     @GetMapping("/tipoDeConta")
     public ResponseEntity<List<TransactionHistoryResponse>> getAccountTypeHistory(@RequestBody AccountTypeHistoryRequest request) {
         List<TransactionHistoryResponse> history = historyService.getAccountHistoryByAccountType(request);
+
+        if (history.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(history);
+    }
+
+    @GetMapping("/conta")
+    public ResponseEntity<List<TransactionHistoryResponse>> getMovimentacao(@PathVariable TipoMovimentacaoRequest request) {
+        List<TransactionHistoryResponse> history = historyService.getAccountHistoryByTipodeMovimentacao(request);
 
         if (history.isEmpty()) {
             return ResponseEntity.noContent().build();
