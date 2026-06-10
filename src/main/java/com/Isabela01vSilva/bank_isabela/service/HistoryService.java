@@ -69,28 +69,25 @@ public class HistoryService {
                 .filter(history -> history.getAccount().getAccountType().equals(request.accountType()))
                 .map(history -> new TransactionHistoryResponse(
                         history.getCustomer().getCpf(),
-                        history.getAccount()
+                        history.getAccount().getAccountNumber(),
+                        history.getAccount().getAgencyNumber(),
+                        history.getAmount(),
+                        history.getDescription()
                 ))
                 .toList();
     }
 
     public List<TransactionHistoryResponse> getAccountHistoryByTipodeMovimentacao(TipoMovimentacaoRequest request) {
-        List<History> histories = historyRepository.findByCustomerId(request.id());
-
-        return histories.stream()
-                .filter(history -> HISTORY_TYPES.contains(history.getHistoryType()))
+        return historyRepository.findByCustomerIdAndHistoryType(request.id(), request.historyType())
+                .stream()
                 .map(history -> new TransactionHistoryResponse(
                         history.getCustomer().getCpf(),
-                        history.getAccount()
-                ))
-                .toList();
+                        history.getAccount().getAccountNumber(),
+                        history.getAccount().getAgencyNumber(),
+                        history.getAmount(),
+                        history.getDescription()
+                )).toList();
     }
-
-    private static final Set<HistoryType> HISTORY_TYPES = Set.of(
-            HistoryType.DEPOSIT,
-            HistoryType.WITHDRAWAL,
-            HistoryType.TRANSFER
-    );
 
     /*
 

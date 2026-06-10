@@ -95,7 +95,7 @@ public class HistoryController {
     }
 
     @GetMapping("/conta")
-    public ResponseEntity<List<TransactionHistoryResponse>> getMovimentacao(@PathVariable TipoMovimentacaoRequest request) {
+    public ResponseEntity<List<TransactionHistoryResponse>> getMovimentacao(@RequestBody TipoMovimentacaoRequest request) {
         List<TransactionHistoryResponse> history = historyService.getAccountHistoryByTipodeMovimentacao(request);
 
         if (history.isEmpty()) {
