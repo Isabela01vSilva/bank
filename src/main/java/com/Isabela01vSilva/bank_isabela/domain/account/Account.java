@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -55,15 +53,6 @@ public class Account {
     @Column(name = "motivo_alteracao_status")
     private String statusChangeReason;
 
-    public void withdraw(BigDecimal amount) {
-        if (amount.compareTo(this.balance) > 0) {
-            throw new IllegalArgumentException("Saldo insuficiente");
-        }
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("O saldo deve ser maior que R$0.00");
-        }
-        this.balance = this.balance.subtract(amount);
-    }
 
     public void deposit(BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
@@ -72,11 +61,4 @@ public class Account {
         this.balance = this.balance.add(amount);
     }
 
-    public void accountStatus() {
-        if (AccountStatus.ENCERRADO.equals(this.accountStatus)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Conta está desativada"
-            );
-        }
-    }
 }

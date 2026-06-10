@@ -2,11 +2,8 @@ package com.Isabela01vSilva.bank_isabela.service;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.history.AccountTypeHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.history.RegisterHistoryRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.history.TipoMovimentacaoRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.TransactionHistoryResponse;
-import com.Isabela01vSilva.bank_isabela.domain.account.Account;
-import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import com.Isabela01vSilva.bank_isabela.domain.historico.History;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
@@ -77,8 +74,9 @@ public class HistoryService {
                 .toList();
     }
 
-    public List<TransactionHistoryResponse> getAccountHistoryByTipodeMovimentacao(TipoMovimentacaoRequest request) {
-        return historyRepository.findByCustomerIdAndHistoryType(request.id(), request.historyType())
+    public List<TransactionHistoryResponse> getAccountHistoryByTipodeMovimentacao(Long id,
+                                                                                  List<HistoryType> historyTypes) {
+        return historyRepository.findByCustomerIdAndHistoryTypeIn(id, historyTypes)
                 .stream()
                 .map(history -> new TransactionHistoryResponse(
                         history.getCustomer().getCpf(),

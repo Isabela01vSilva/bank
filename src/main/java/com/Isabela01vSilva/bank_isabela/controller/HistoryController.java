@@ -4,6 +4,7 @@ import com.Isabela01vSilva.bank_isabela.controller.request.history.AccountTypeHi
 import com.Isabela01vSilva.bank_isabela.controller.request.history.TipoMovimentacaoRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.TransactionHistoryResponse;
+import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
 import com.Isabela01vSilva.bank_isabela.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -94,9 +95,10 @@ public class HistoryController {
         return ResponseEntity.ok(history);
     }
 
-    @GetMapping("/conta")
-    public ResponseEntity<List<TransactionHistoryResponse>> getMovimentacao(@RequestBody TipoMovimentacaoRequest request) {
-        List<TransactionHistoryResponse> history = historyService.getAccountHistoryByTipodeMovimentacao(request);
+    @GetMapping("/conta/{id}")
+    public ResponseEntity<List<TransactionHistoryResponse>> getMovimentacao(@PathVariable Long id,
+                                                                            @RequestParam List<HistoryType> historyTypes) {
+        List<TransactionHistoryResponse> history = historyService.getAccountHistoryByTipodeMovimentacao(id ,historyTypes);
 
         if (history.isEmpty()) {
             return ResponseEntity.noContent().build();

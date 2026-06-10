@@ -19,5 +19,6 @@ public enum HistoryType {
     // Movimentações financeiras
     DEPOSIT,
     WITHDRAWAL,
+    WITHDRAWAL_FAILED,
     TRANSFER
 }

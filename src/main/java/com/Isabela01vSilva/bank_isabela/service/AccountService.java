@@ -379,21 +379,46 @@ public class AccountService {
     /**
      * Realiza SAQUE em conta (buscando por número agência + conta)
      */
-    @Transactional
-    public String withdrawal(AccountTransactionRequest request) {
 
-        // Busca a conta com o ID fornecido na request
+    public String withdrawal(AccountTransactionRequest request) {
         Account account = accountRepository.findByAccountNumberAndAgencyNumber(request.accountNumber(), request.agencyNumber())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Conta não encontrada"));
+        try {
+            validateAndMakeMoneyMovements(request, account);
+        } catch(Exception e){
+            historyService.register(
+                    new RegisterHistoryRequest(
+                            account,
+                            account.getCustomer(),
+                            HistoryType.WITHDRAWAL_FAILED,
+                            e.getMessage(),
+                            request.amount()
+                    )
+            );
 
+            throw e;
+        }
+
+        // Retorna uma mensagem indicando o valor sacado.
+        return "Valor sacado: R$" + request.amount();
+    }
+
+    @Transactional
+    private void validateAndMakeMoneyMovements(AccountTransactionRequest request, Account account) {
+        // Busca a conta com o ID fornecido na request
         if (account.getAccountStatus() == AccountStatus.ENCERRADO) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "A conta está ENCERRADA");
         }
 
+        if(request.amount().compareTo(BigDecimal.ZERO) <= 0 || account.getBalance().compareTo(request.amount()) < 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo Insuficiente");
+        }
+
         // Realiza saque da conta
-        account.withdraw(request.amount());
+        account.setBalance(account.getBalance().subtract(request.amount()));
+        //account.withdraw(request.amount());
         accountRepository.save(account);
 
         historyService.register(
@@ -405,9 +430,6 @@ public class AccountService {
                         request.amount()
                 )
         );
-
-        // Retorna uma mensagem indicando o valor sacado.
-        return "Valor sacado: R$" + request.amount();
     }
 
     /**

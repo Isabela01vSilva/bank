@@ -13,6 +13,6 @@ public interface HistoryRepository extends JpaRepository<History, Long> {
 
     List<History> findByCustomerId(Long customerId);
 
-    List<History> findByCustomerIdAndHistoryType(Long customerId, HistoryType historyType);
+    List<History> findByCustomerIdAndHistoryTypeIn(Long customerId, List<HistoryType> historyType);
 
 }
