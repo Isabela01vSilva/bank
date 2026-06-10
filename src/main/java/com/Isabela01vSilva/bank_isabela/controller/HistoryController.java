@@ -107,4 +107,10 @@ public class HistoryController {
         return ResponseEntity.ok(history);
     }
 
+    @GetMapping("/{id}/cliente")
+    public ResponseEntity<List<TransactionHistoryResponse>> getTodoOHistoricoPorCliente(@PathVariable Long id) {
+        List<TransactionHistoryResponse> history = historyService.exibirHistoricoPorCliente(id);
+        return ResponseEntity.ok(history);
+    }
+
 }

@@ -87,15 +87,22 @@ public class HistoryService {
                 )).toList();
     }
 
-    /*
-
-    public List<HistoricoResponse> exibirHistoricoPorCliente(Long id) {
+    public List<TransactionHistoryResponse> exibirHistoricoPorCliente(Long id) {
         // Busca os históricos relacionados a um cliente pelo id
-        List<History> historico = historicoRepository.findByClienteId(id);
-        return historico.stream().map(historico1 -> new HistoricoResponse(
-                historico1.getId(), historico1.getCliente().getFullName(), historico1.getValor(), historico1.getDescricao(), historico1.getDataTransacao()
-        )).toList(); // Converte os históricos para uma lista de HistoricoResponse e retorna
+        List<History> historico = historyRepository.findByCustomerId(id);
+
+        return historico
+                .stream()
+                .map(history -> new TransactionHistoryResponse(
+                        history.getCustomer().getCpf(),
+                        history.getAccount().getAccountNumber(),
+                        history.getAccount().getAgencyNumber(),
+                        history.getAmount(),
+                        history.getDescription()
+        )).toList();
     }
+
+    /*
 
     public List<HistoricoResponse> exibirHistoricoPorConta(Long id) {
         // Busca os históricos relacionados a um conta pelo id

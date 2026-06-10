@@ -306,7 +306,7 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ---
 
-## RF013 - Visualizar Histórico de Movimentações
+## RF013 - Visualizar Histórico de Movimentações TODO ✅
 
 ### Descrição
 
@@ -338,7 +338,7 @@ Permitir consultar todos os eventos relacionados ao cliente.
 
 ---
 
-## RF015 - Consultar Histórico por Tipo de Conta
+## RF015 - Consultar Histórico por Tipo de Conta ✅
 
 ### Descrição
 
@@ -357,7 +357,7 @@ Permitir consultar o histórico de movimentações e eventos de uma conta espec�
 
 ---
 
-## RF015 - Consultar Histórico por Tipo de Movimentação
+## RF015 - Consultar Histórico por Tipo de Movimentação ✅
 
 ### Descrição
 
@@ -371,7 +371,6 @@ Permitir consultar o histórico de movimentações e eventos de uma conta espec�
   - Deposito
   - Transferencia
   - Agendamento de transferencia
-
 
 ---
 
