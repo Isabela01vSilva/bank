@@ -374,7 +374,7 @@ Permitir consultar o histórico de movimentações e eventos de uma conta espec�
 
 ---
 
-## RF016 - Consultar Histórico de Movimentações 
+## RF016 - Consultar Histórico de Movimentações ✅
 
 ### Descrição 
 
@@ -382,11 +382,7 @@ Permitir que o cliente realize consultas específicas no histórico.
 
 ### Filtros disponíveis 
 
-- Período inicial e final 
-- Tipo de movimentação 
-- Status da movimentação 
-- Valor mínimo 
-- Valor máximo 
+- Período inicial e final
 
 ### Regras de negócio 
 
@@ -395,26 +391,6 @@ Permitir que o cliente realize consultas específicas no histórico.
 
 --- 
 
-## RF017 - Filtrar Resumo do Histórico 
-
-### Descrição 
-
-Permitir que o cliente visualize indicadores resumidos das movimentações. 
-
-### Informações exibidas 
-- Total de entradas 
-- Total de saídas 
-- Quantidade de movimentações 
-- Maior movimentação realizada 
-- Última movimentação realizada 
-
-### Regras de negócio
-
-- Os valores devem ser calculados com base nos filtros aplicados. 
-- O resumo deve considerar apenas movimentações pertencentes ao cliente autenticado. 
-- O sistema deve atualizar os indicadores sempre que uma nova movimentação for registrada. 
-
----
 
 
 
