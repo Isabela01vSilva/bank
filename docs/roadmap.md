@@ -32,15 +32,13 @@ Legenda:
 - [✅] RF010 - Validação de Conta para Movimentações
 - [✅] RF011 - Saque
 - [✅] RF012 - Depósito
-- [ ] RF013 - Transferência
 
 ## Histórico
 
-- [ ] Visualizar Histórico de Movimentações
-- [ ] Consultar Histórico do Cliente
-- [ ] Consultar Histórico por Tipo de Conta
-- [ ] Consultar Histórico de Movimentações
-- [ ] Filtrar Resumo do Histórico
+- [✅] Consultar Histórico do Cliente
+- [✅] Consultar Histórico por Tipo de Conta
+- [✅] Consultar Histórico por Tipo de Movimentação
+- [✅] Consultar Histórico por Período
 
 ---
 # Fase 2 - Transferencia 

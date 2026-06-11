@@ -307,20 +307,7 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ---
 
-## RF013 - Visualizar Histórico de Movimentações do Cliente e de Todas as Suas Contas
-
-### Descrição
-
-Permitir que o cliente consulte todas as movimentações realizadas em suas contas, bem como os eventos relacionados ao seu cadastro.
-
-### Informações exibidas detalhadas:
-
-- Cliente
-- Contas
-
----
-
-## RF014 - Consultar Histórico do Cliente ✅
+## RF013 - Consultar Histórico do Cliente ✅
 
 ### Descrição
 
@@ -336,7 +323,7 @@ Permitir consultar todos os eventos relacionados ao ciclo de vida do cliente.
 
 ---
 
-## RF015 - Consultar Histórico por Tipo de Conta ✅
+## RF014 - Consultar Histórico por Tipo de Conta ✅
 
 ### Descrição
 
@@ -355,7 +342,7 @@ Permitir consultar o histórico de movimentações e eventos de uma conta espec�
 
 ---
 
-## RF016 - Consultar Histórico por Tipo de Movimentação ✅
+## RF015 - Consultar Histórico por Tipo de Movimentação ✅
 
 ### Descrição
 
@@ -377,7 +364,7 @@ Permitir consultar o histórico de movimentações e eventos de uma conta espec�
 
 ---
 
-## RF017 - Consultar Histórico por Período ✅
+## RF016 - Consultar Histórico por Período ✅
 
 ### Descrição 
 
