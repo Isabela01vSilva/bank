@@ -10,13 +10,13 @@ Legenda:
 
 ---
 
-# 🚧 Fase 1 - Core Bancário
+# ✅ Fase 1 - Core Bancário
 
 ## Cliente
 
-- [✅] Cadastro de clientes
-- [✅] Consulta de clientes
-- [✅] Atualização de clientes
+- [✅] RF001 - Cadastro de clientes
+- [✅] RF002 - Consulta de clientes
+- [✅] RF003 -Atualização de clientes
 
 ## Conta
 
@@ -35,23 +35,46 @@ Legenda:
 
 ## Histórico
 
-- [✅] Consultar Histórico do Cliente
-- [✅] Consultar Histórico por Tipo de Conta
-- [✅] Consultar Histórico por Tipo de Movimentação
-- [✅] Consultar Histórico por Período
+- [✅] RF013 - Consultar Histórico do Cliente
+- [✅] RF014 - Consultar Histórico por Tipo de Conta
+- [✅] RF015 - Consultar Histórico por Tipo de Movimentação
+- [✅] RF016 - Consultar Histórico por Período
 
 ---
-# Fase 2 - Transferencia 
+
+# 🚧 Fase 2 - Transferências
 
 ## Transferências
 
-# Fase 3 - Transferencia Agendada 
-
-## Transferências Agendada - Projeto schedule
+- [ ] Transferência entre contas
+- [ ] Validação de saldo
+- [ ] Histórico de transferências
 
 ---
 
-# 📅 Fase 2 - Dashboard Financeiro
+### Fase 2.1 - Qualidade e Padronização
+
+- [ ] Tratamento global de exceções
+- [ ] Padronização das mensagens de erro
+- [ ] Padronização das respostas da API
+- [ ] Validações avançadas
+- [ ] Melhorias de código
+
+---
+
+# 📅 Fase 3 - Agendamentos
+
+## Scheduler
+
+- [ ] Integração com Schedule
+- [ ] Agendamento de transferências
+- [ ] Cancelamento de agendamentos
+- [ ] Edição de agendamentos
+- [ ] Processamento automático
+
+---
+
+# 📅 Fase 4 - Dashboard Financeiro
 
 ## Indicadores
 
@@ -75,7 +98,7 @@ Legenda:
 
 ---
 
-# 📅 Fase 3 - Boletos
+# 📅 Fase 5 - Boletos
 
 ## Boleto de Depósito
 
@@ -89,28 +112,6 @@ Legenda:
 - [ ] Bloqueio de saldo
 - [ ] Cancelamento
 - [ ] Expiração automática
-
----
-
-# 📅 Fase 4 - Transferências
-
-## Transferências
-
-- [ ] Transferência entre contas
-- [ ] Validação de saldo
-- [ ] Histórico de transferências
-
----
-
-# 📅 Fase 5 - Agendamentos
-
-## Scheduler
-
-- [ ] Integração com Schedule
-- [ ] Agendamento de transferências
-- [ ] Cancelamento de agendamentos
-- [ ] Edição de agendamentos
-- [ ] Processamento automático
 
 ---
 

@@ -93,52 +93,11 @@ O Bank Isabela foi criado como um projeto de portfólio para demonstrar conhecim
 
 ## Roadmap
 
-### 🚧 [Fase 1 - Core Bancário](docs/requisitos/fase-1-core-bancario.md) - Em desenvolvimento
+### 🚧 [Fase 2 - Transferencia](docs/requisitos/fase-2-transferenciaso.md) - Em desenvolvimento
 
-- Cadastro de clientes
-- Gestão de contas
-- Depósitos
-- Saques
-- Transferências (básicas)
-- Histórico de movimentações
+Confira o roadmap completo do projeto:
 
-###  Fase 1.1 - Qualidade e Padronização
-
-- Tratamento global de exceções
-- Padronização das mensagens de erro
-- Padronização das respostas da API
-- Validações avançadas
-- Melhorias de código
-
-### 📅 Fase 2 - Dashboard Financeiro
-
-- Indicadores financeiros
-- Evolução patrimonial
-- Controle de gastos
-
-### 📅 Fase 3 - Boletos
-
-- Boletos para depósito
-- Boletos para saque
-- Controle de saldo bloqueado
-
-### 📅 Fase 4 - Transferências
-
-- Transferências entre contas
-- Histórico de transferências
-
-### 📅 Fase 5 - Agendamentos
-
-- Agendamento de transferências
-- Scheduler Implementado
-- Processamento automático
-
-### 📅 Fase 6 - Cartão de Crédito
-
-- Compras
-- Limites
-- Fatura
-- Análise de gastos
+➡️ [Roadmap do Projeto](docs/roadmap.md)
 
 ---
 
