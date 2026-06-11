@@ -1,10 +1,9 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.history.AccountTypeHistoryRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.history.HistoricoEntreDatasResquest;
 import com.Isabela01vSilva.bank_isabela.controller.request.history.RegisterHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.TransactionHistoryResponse;
+import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import com.Isabela01vSilva.bank_isabela.domain.historico.History;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
@@ -60,11 +59,13 @@ public class HistoryService {
             HistoryType.CUSTOMER_INACTIVATED
     );
 
-    public List<TransactionHistoryResponse> getAccountHistoryByAccountType(AccountTypeHistoryRequest request) {
-        List<History> histories = historyRepository.findByCustomerId(request.id());
+    public List<TransactionHistoryResponse> getAccountHistoryByAccountType(Long customerId,
+                                                                           AccountType accountType) {
+        List<History> histories = historyRepository.findByCustomerId(customerId);
 
         return histories.stream()
-                .filter(history -> history.getAccount().getAccountType().equals(request.accountType()))
+                .filter(history -> history.getAccount() != null)
+                .filter(history -> history.getAccount().getAccountType().equals(accountType))
                 .map(history -> new TransactionHistoryResponse(
                         history.getCustomer().getCpf(),
                         history.getAccount().getAccountNumber(),
@@ -75,10 +76,11 @@ public class HistoryService {
                 .toList();
     }
 
-    public List<TransactionHistoryResponse> getAccountHistoryByTipodeMovimentacao(Long id,
-                                                                                  List<HistoryType> historyTypes) {
+    public List<TransactionHistoryResponse> getAccountHistoryByTransactionType(Long id,
+                                                                               List<HistoryType> historyTypes) {
         return historyRepository.findByCustomerIdAndHistoryTypeIn(id, historyTypes)
                 .stream()
+                .filter(history -> history.getAccount() != null)
                 .map(history -> new TransactionHistoryResponse(
                         history.getCustomer().getCpf(),
                         history.getAccount().getAccountNumber(),
@@ -88,27 +90,13 @@ public class HistoryService {
                 )).toList();
     }
 
-    public List<TransactionHistoryResponse> exibirHistoricoPorCliente(Long id) {
-        // Busca os históricos relacionados a um cliente pelo id
-        List<History> historico = historyRepository.findByCustomerId(id);
 
-        return historico
-                .stream()
-                .map(history -> new TransactionHistoryResponse(
-                        history.getCustomer().getCpf(),
-                        history.getAccount().getAccountNumber(),
-                        history.getAccount().getAgencyNumber(),
-                        history.getAmount(),
-                        history.getDescription()
-        )).toList();
-    }
-
-    public List<TransactionHistoryResponse> exibirHistoricoEntreDatas(HistoricoEntreDatasResquest datasResquest) {
+    public List<TransactionHistoryResponse> getHistoryBetweenDates(Long accountId, LocalDateTime startDate, LocalDateTime endDate) {
 
         // Busca os históricos de uma conta entre duas datas
-        List<History> historicos = historyRepository.findByAccountIdAndTransactionDateBetween(datasResquest.id(), datasResquest.dataInicio(), datasResquest.dataFim());
+        List<History> histories = historyRepository.findByAccountIdAndTransactionDateBetween(accountId, startDate, endDate);
 
-        return historicos.stream()
+        return histories.stream()
                 .map(history -> new TransactionHistoryResponse(
                         history.getCustomer().getCpf(),
                         history.getAccount().getAccountNumber(),

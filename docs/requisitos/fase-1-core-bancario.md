@@ -298,27 +298,25 @@ O cliente volta automaticamente para **ATIVO** quando possuir pelo menos uma con
 
 ### Regras de negócio
 
-- O histórico deve registrar automaticamente todas as movimentações realizadas na conta. ✅
-- Os registros do histórico não podem ser alterados ou excluídos pelo cliente. ✅
-- O histórico deve apresentar as movimentações em ordem decrescente de data (mais recentes primeiro).
-- O cliente só pode visualizar movimentações das próprias contas. ✅
-- Cada registro deve possuir um identificador único. ✅
+- O histórico deve registrar automaticamente todas as operações realizadas pelo cliente e pelas contas.
+- Os registros do histórico não podem ser alterados ou excluídos.
+- O histórico deve ser apresentado em ordem decrescente de data e hora (mais recente primeiro).
+- O cliente só pode visualizar informações relacionadas às suas próprias contas.
+- Cada registro deve possuir um identificador único.
+- Todos os registros devem possuir data e hora de ocorrência.
 
 ---
 
-## RF013 - Visualizar Histórico de Movimentações TODO ✅
+## RF013 - Visualizar Histórico de Movimentações do Cliente e de Todas as Suas Contas
 
 ### Descrição
 
-Permitir que o cliente consulte todas as movimentações realizadas nas contas.
+Permitir que o cliente consulte todas as movimentações realizadas em suas contas, bem como os eventos relacionados ao seu cadastro.
 
-### Informações exibidas
+### Informações exibidas detalhadas:
 
-- Data e hora da movimentação.
-- Tipo da movimentação.
-- Valor.
-- Status da movimentação.
-- Conta Destino.
+- Cliente
+- Contas
 
 ---
 
@@ -326,7 +324,7 @@ Permitir que o cliente consulte todas as movimentações realizadas nas contas.
 
 ### Descrição
 
-Permitir consultar todos os eventos relacionados ao cliente.
+Permitir consultar todos os eventos relacionados ao ciclo de vida do cliente.
 
 ### Informações exibidas
 
@@ -334,7 +332,7 @@ Permitir consultar todos os eventos relacionados ao cliente.
 - Reativação de contas.
 - Inativação de contas.
 - Encerramento de contas.
-- Alterações de status.
+- Alterações de Informações do cliente.
 
 ---
 
@@ -344,7 +342,7 @@ Permitir consultar todos os eventos relacionados ao cliente.
 
 Permitir consultar o histórico de movimentações e eventos de uma conta específica por tipo de conta.
 
-### Tipos disponíveis e Informações exibidas
+### informações para pesquisa
 
 - CPF do Cliente
 - Tipo de Conta: 
@@ -357,7 +355,7 @@ Permitir consultar o histórico de movimentações e eventos de uma conta espec�
 
 ---
 
-## RF015 - Consultar Histórico por Tipo de Movimentação ✅
+## RF016 - Consultar Histórico por Tipo de Movimentação ✅
 
 ### Descrição
 
@@ -372,13 +370,18 @@ Permitir consultar o histórico de movimentações e eventos de uma conta espec�
   - Transferencia
   - Agendamento de transferencia
 
+### Regras de negócio
+
+- O sistema deve retornar apenas movimentações pertencentes à conta informada.
+- É permitido informar um ou mais tipos de movimentação.
+
 ---
 
-## RF016 - Consultar Histórico de Movimentações ✅
+## RF017 - Consultar Histórico por Período ✅
 
 ### Descrição 
 
-Permitir que o cliente realize consultas específicas no histórico. 
+Permitir consultar as movimentações de uma conta dentro de um período informado.
 
 ### Filtros disponíveis 
 

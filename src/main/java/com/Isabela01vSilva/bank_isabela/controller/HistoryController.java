@@ -1,16 +1,15 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.history.AccountTypeHistoryRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.history.HistoricoEntreDatasResquest;
-import com.Isabela01vSilva.bank_isabela.controller.request.history.TipoMovimentacaoRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.TransactionHistoryResponse;
+import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
 import com.Isabela01vSilva.bank_isabela.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -31,9 +30,12 @@ public class HistoryController {
         return ResponseEntity.ok(history);
     }
 
-    @GetMapping("/tipoDeConta")
-    public ResponseEntity<List<TransactionHistoryResponse>> getAccountTypeHistory(@RequestBody AccountTypeHistoryRequest request) {
-        List<TransactionHistoryResponse> history = historyService.getAccountHistoryByAccountType(request);
+    @GetMapping("/account-type")
+    public ResponseEntity<List<TransactionHistoryResponse>> getAccountTypeHistory(@RequestParam Long customerId,
+                                                                                  @RequestParam AccountType accountType) {
+        List<TransactionHistoryResponse> history = historyService.getAccountHistoryByAccountType(
+                customerId,
+                accountType);
 
         if (history.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -42,10 +44,10 @@ public class HistoryController {
         return ResponseEntity.ok(history);
     }
 
-    @GetMapping("/conta/{id}")
-    public ResponseEntity<List<TransactionHistoryResponse>> getMovimentacao(@PathVariable Long id,
-                                                                            @RequestParam List<HistoryType> historyTypes) {
-        List<TransactionHistoryResponse> history = historyService.getAccountHistoryByTipodeMovimentacao(id ,historyTypes);
+    @GetMapping("/account/{accountId}")
+    public ResponseEntity<List<TransactionHistoryResponse>> getTransactionHistory(@PathVariable Long accountId,
+                                                                                  @RequestParam List<HistoryType> historyTypes) {
+        List<TransactionHistoryResponse> history = historyService.getAccountHistoryByTransactionType(accountId, historyTypes);
 
         if (history.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -54,20 +56,20 @@ public class HistoryController {
         return ResponseEntity.ok(history);
     }
 
-    @GetMapping("/{id}/cliente")
-    public ResponseEntity<List<TransactionHistoryResponse>> getTodoOHistoricoPorCliente(@PathVariable Long id) {
-        List<TransactionHistoryResponse> history = historyService.exibirHistoricoPorCliente(id);
-        return ResponseEntity.ok(history);
-    }
 
-    @GetMapping("/entreDatas")
-    public ResponseEntity<List<TransactionHistoryResponse>> exibirHistoricoEntreDatas(@RequestBody HistoricoEntreDatasResquest datas) {
-        List<TransactionHistoryResponse> historico = historyService.exibirHistoricoEntreDatas(datas);
+    @GetMapping("/between-dates/{accountId}")
+    public ResponseEntity<List<TransactionHistoryResponse>> getHistoryBetweenDates(@PathVariable Long accountId,
+                                                                                   @RequestParam LocalDateTime startDate,
+                                                                                   @RequestParam LocalDateTime endDate) {
+        List<TransactionHistoryResponse> history = historyService.getHistoryBetweenDates(
+                accountId,
+                startDate,
+                endDate);
 
-        if (historico.isEmpty()) {
+        if (history.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(historico);
+        return ResponseEntity.ok(history);
     }
 }
