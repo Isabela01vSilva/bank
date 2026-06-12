@@ -1,5 +1,7 @@
 package com.Isabela01vSilva.bank_isabela.service.client.dto;
 
+import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferStatus;
+
 import java.time.LocalDate;
 
 public class SchedulingDTO {
@@ -7,9 +9,9 @@ public class SchedulingDTO {
     private Long id;
     private LocalDate executionDate;
     private PayloadDTO payload;
-    private Status status;
+    private TransferStatus status;
 
-    public SchedulingDTO(LocalDate executionDate, PayloadDTO payload, Status status) {
+    public SchedulingDTO(LocalDate executionDate, PayloadDTO payload, TransferStatus status) {
         this.executionDate = executionDate;
         this.payload = payload;
         this.status = status;
@@ -39,11 +41,11 @@ public class SchedulingDTO {
         this.payload = payload;
     }
 
-    public Status getStatus() {
+    public TransferStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(TransferStatus status) {
         this.status = status;
     }
 }

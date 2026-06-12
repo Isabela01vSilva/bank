@@ -1,6 +1,8 @@
 package com.Isabela01vSilva.bank_isabela.service.client.dto;
 
+import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferStatus;
+
 public record StatusDTO(Long id,
-                        Status status,
+                        TransferStatus status,
                         String message) {
 }

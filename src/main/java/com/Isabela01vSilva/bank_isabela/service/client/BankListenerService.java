@@ -5,7 +5,7 @@ import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
 import com.Isabela01vSilva.bank_isabela.service.TransferService;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.CallbackDTO;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.PayloadDTO;
-import com.Isabela01vSilva.bank_isabela.service.client.dto.Status;
+import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.annotation.SqsListener;
@@ -51,11 +51,11 @@ public class BankListenerService {
 
             transferenciaService.executarOperacoesFinanceiras(contaOrigem, contaDestino, payloadDTO.getValor());
 
-            scheduleClientService.enviarCallback(new CallbackDTO(appointmentId, Status.CONCLUIDO));
+            scheduleClientService.enviarCallback(new CallbackDTO(appointmentId, TransferStatus.CONCLUIDO));
 
         } catch (Exception ex) {
             System.err.println("Falha na leitura ou execução da mensagem: " + ex.getMessage());
-            scheduleClientService.enviarCallback(new CallbackDTO(appointmentId, Status.RETENTAR));
+            scheduleClientService.enviarCallback(new CallbackDTO(appointmentId, TransferStatus.RETENTAR));
             throw ex;
         }
     }
