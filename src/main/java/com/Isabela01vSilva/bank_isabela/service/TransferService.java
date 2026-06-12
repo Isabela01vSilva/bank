@@ -1,12 +1,17 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
+import com.Isabela01vSilva.bank_isabela.controller.request.history.RegisterHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferenciaRequest;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountStatus;
+import com.Isabela01vSilva.bank_isabela.domain.historico.History;
+import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryRepository;
+import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.Transfer;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferRepository;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
+import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferStatus;
 import com.Isabela01vSilva.bank_isabela.service.client.ScheduleClientService;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.*;
 import com.Isabela01vSilva.bank_isabela.service.data.request.CreateAppointmentScheduleRequest;
@@ -29,13 +34,39 @@ public class TransferService {
     private TransferRepository transferRepository;
 
     @Autowired
-    private HistoryService historyService;
+    private HistoryRepository historyRepository;
 
     @Autowired
     private ScheduleClientService scheduleClientService;
 
+
+    @Transactional
+    public String transfer(TransferRequest transferRequest) {
+        Account sourceAccount = findAccount(
+                transferRequest.sourceAgencyNumber(),
+                transferRequest.sourceAccountNumber()
+        );
+
+        Account destinationAccount = findAccount(
+                transferRequest.destinationAgencyNumber(),
+                transferRequest.destinationAccountNumber()
+        );
+
+        validateActiveAccount(sourceAccount);
+        validateActiveAccount(destinationAccount);
+
+        validateAccounts(sourceAccount, destinationAccount);
+
+        validateSufficientBalance(sourceAccount, transferRequest.amount());
+        executeTransfer(sourceAccount, destinationAccount, transferRequest.amount());
+
+        registerTransferHistory(sourceAccount, destinationAccount, transferRequest.amount());
+
+        return "Transferência realizada com sucesso!";
+    }
+
     public Account findAccount(String agencyNumber,
-                                String accountNumber) {
+                               String accountNumber) {
         return accountRepository.findByAccountNumberAndAgencyNumber(agencyNumber, accountNumber)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
@@ -55,7 +86,7 @@ public class TransferService {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "O valor deve ser maior que Zero");
         }
 
-        if(amount.compareTo(sourceAccount.getBalance()) > 0){
+        if (amount.compareTo(sourceAccount.getBalance()) > 0) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Saldo insuficiente");
         }
     }
@@ -70,18 +101,83 @@ public class TransferService {
         }
     }
 
-    private Transfer createTransfer(TransferRequest transferRequest) {
+    private Transfer createTransfer(TransferRequest transferRequest,
+                                    Account sourceAccount,
+                                    Account destinationAccount) {
+
         Transfer transfer = new Transfer();
 
-        transfer.setSourceAccount(transferRequest.sourceAccount());
-        transfer.setDestinationAccount(transferRequest.destinationAccount());
+        transfer.setSourceAccount(sourceAccount);
+        transfer.setDestinationAccount(destinationAccount);
         transfer.setAmount(transferRequest.amount());
         transfer.setExecutionDate(transferRequest.executionDate());
-        transfer.setTransferStatus(transferRequest.transferStatus());
+        transfer.setTransferStatus(TransferStatus.AGENDADO);
 
         return transferRepository.save(transfer);
     }
 
+    private void registerTransferHistory(Account sourceAccount,
+                                         Account destinationAccount,
+                                         BigDecimal amount) {
+        History transferOut = new History();
+        transferOut.setAccount(sourceAccount);
+        transferOut.setCustomer(sourceAccount.getCustomer());
+        transferOut.setHistoryType(HistoryType.TRANSFER);
+        transferOut.setAmount(amount);
+        transferOut.setDescription(
+                "Transferência enviada para a conta: "
+                        + destinationAccount.getAgencyNumber()
+                        + destinationAccount.getAccountNumber()
+                        + " no valor de R$ " + amount
+        );
+
+        historyRepository.save(transferOut);
+
+        History transferIn = new History();
+        transferIn.setAccount(destinationAccount);
+        transferIn.setCustomer(destinationAccount.getCustomer());
+        transferIn.setHistoryType(HistoryType.TRANSFER);
+        transferIn.setAmount(amount);
+        transferIn.setDescription(
+                "Transferência recebida da conta: "
+                        + sourceAccount.getAgencyNumber()
+                        + sourceAccount.getAccountNumber()
+                        + " no valor de R$ " + amount
+        );
+
+        historyRepository.save(transferIn);
+    }
+
+    private void executeTransfer(Transfer transfer,
+                                 Account sourceAccount,
+                                 Account destinationAccount,
+                                 BigDecimal amount) {
+
+        try {
+            transfer.setTransferStatus(TransferStatus.PROCESSANDO);
+            transferRepository.save(transfer);
+
+            sourceAccount.setBalance(sourceAccount.getBalance().subtract(amount));
+            destinationAccount.setBalance(destinationAccount.getBalance().add(amount));
+
+            accountRepository.save(sourceAccount);
+            accountRepository.save(destinationAccount);
+
+            transfer.setTransferStatus(TransferStatus.CONCLUIDO);
+            transferRepository.save(transfer);
+        } catch (Exception e) {
+            transfer.setTransferStatus(TransferStatus.FALHA);
+            transferRepository.save(transfer);
+
+            throw e;
+        }
+    }
+
+    private void updateTransferStatus(Transfer transfer,
+                                      TransferStatus transferStatus) {
+        transfer.setTransferStatus(transferStatus);
+        transferRepository.save(transfer);
+    }
 
     //Fluxo Principal de agendamento
     /*@Transactional
@@ -151,8 +247,6 @@ public class TransferService {
     }*/
 
 
-
-
     /*private void falhaTransferencia(CreateAppointmentScheduleRequest create) {
 
         UpdateAppointmentDTO atualizado = new UpdateAppointmentDTO(
@@ -165,57 +259,4 @@ public class TransferService {
     }*/
 
 
-   /*public boolean transferir(TransferRequest request) {
-        try {
-            Account contaOrigem = contaRepository.findByAccountNumber(request.numeroContaOrigem())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta origem não encontrada"));
-
-            Account contaDestino = contaRepository.findByAccountNumber(request.numeroContaDestino())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta destino não encontrada"));
-
-            executarOperacoesFinanceiras(contaOrigem, contaDestino, request.valor());
-            return true; // sucesso
-        } catch (Exception e) {
-            System.err.println("Falha na transferência: " + e.getMessage());
-            return false; // falha
-        }
-    }*/
-
-
-   /* @Transactional
-    public void executarOperacoesFinanceiras(Account contaOrigem, Account contaDestino, Double valor){
-        if (contaOrigem.getBalance() < valor) {
-            throw new RuntimeException("Saldo insuficiente");
-        }
-
-        contaOrigem.withdraw(valor);
-        contaDestino.deposit(valor);
-
-        contaRepository.save(contaOrigem);
-        contaRepository.save(contaDestino);
-
-    }*/
-
-    //Histórico
-    /*private void registrarHistorico(Account contaOrigem, Account contaDestino, Double valor){
-        historicoService.register(
-                new RegisterHistoryRequest(
-                        contaOrigem,
-                        contaOrigem.getCustomer(),
-                        HistoryType.TRANSFERENCIA,
-                        "TRANSFERENCIA enviado para a conta: " + contaDestino.getAccountNumber(),
-                        valor
-                )
-        );
-
-       historicoService.register(
-                new RegisterHistoryRequest(
-                        contaDestino,
-                        contaDestino.getCustomer(),
-                        HistoryType.TRANSFERENCIA,
-                        "TRANSFERENCIA recebida da conta: " + contaOrigem.getAccountNumber(),
-                        valor
-                )
-        );
-    }*/
 }

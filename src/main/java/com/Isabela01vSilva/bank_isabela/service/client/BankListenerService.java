@@ -48,7 +48,11 @@ public class BankListenerService {
 
             Account contaDestino = contaRepository.findByAccountNumber(payloadDTO.getNumeroContaDestino())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta destino não encontrada"));
-
+            AGENDADO,
+                    PROCESSANDO,
+                    CONCLUIDO,
+                    CANCELADO,
+                    FALHA
             transferenciaService.executarOperacoesFinanceiras(contaOrigem, contaDestino, payloadDTO.getValor());
 
             scheduleClientService.enviarCallback(new CallbackDTO(appointmentId, TransferStatus.CONCLUIDO));
