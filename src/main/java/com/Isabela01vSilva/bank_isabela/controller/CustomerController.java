@@ -28,7 +28,7 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<ClienteContasResponse> createCustomer(@Valid @RequestBody CustomerAccountRequest data) {
         AccountCustomerDTO createCustomer = customerService.register(data);
-
+        //mapper aqui
         List<AccountResponse> contas = createCustomer.conta().stream().map(c -> new AccountResponse(
                 c.getAccountNumber(),
                 c.getAgencyNumber(),

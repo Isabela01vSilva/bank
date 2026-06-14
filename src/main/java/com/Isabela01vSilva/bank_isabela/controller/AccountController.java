@@ -48,9 +48,11 @@ public class AccountController {
     //Abrir segunda conta
     @PostMapping("/abrir")
     public ResponseEntity<AccountWithCustomerResponse> openAccountByCpf(@RequestBody SecondAccountRequest request) {
+        //voce vazou a entidade do db para a controller nao se pode fazer isso pq o swagger mapeia todos os dados de tudo que vazar aqui (entao sempre usar responses)
         var account = accountService.createAccountForCpf(request.cpf(), request.accountType());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
+                //fazer um mapper aqui
                 new AccountWithCustomerResponse(
                         account.getCustomer().getFullName(),
                         account.getCustomer().getCpf(),
@@ -74,7 +76,7 @@ public class AccountController {
         String message = accountService.deposit(depositRequest);
         return ResponseEntity.ok(new MessageResponse(message));
     }
-
+    //saldo da conta vai por numero de conta e agencia (nao vazar id da conta pro front NUNCA)
     @GetMapping("/{id}/saldo")
     public ResponseEntity<MessageResponse> getBalance(@PathVariable Long id) {
         String message = accountService.getBalance(id);

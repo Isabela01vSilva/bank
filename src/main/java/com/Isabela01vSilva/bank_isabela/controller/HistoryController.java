@@ -21,7 +21,16 @@ public class HistoryController {
 
     @GetMapping("/cliente/{customerId}")
     public ResponseEntity<List<CustomerHistoryResponse>> getCustomerHistory(@PathVariable Long customerId) {
-        List<CustomerHistoryResponse> history = historyService.getCustomerHistory(customerId);
+        var historyTypes = List.of(
+                HistoryType.ACCOUNT_CREATED,
+                HistoryType.ACCOUNT_REACTIVATED,
+                HistoryType.ACCOUNT_CLOSED,
+                HistoryType.CUSTOMER_UPDATED,
+                HistoryType.CUSTOMER_REACTIVATED,
+                HistoryType.CUSTOMER_INACTIVATED
+        );
+
+        List<CustomerHistoryResponse> history = historyService.getCustomerHistoryByTransactionType(customerId, historyTypes);
 
         if (history.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -45,8 +54,15 @@ public class HistoryController {
     }
 
     @GetMapping("/account/{accountId}")
-    public ResponseEntity<List<TransactionHistoryResponse>> getTransactionHistory(@PathVariable Long accountId,
-                                                                                  @RequestParam List<HistoryType> historyTypes) {
+    public ResponseEntity<List<TransactionHistoryResponse>> getTransactionHistory(@PathVariable Long accountId) {
+
+        var historyTypes = List.of(
+                HistoryType.DEPOSIT,
+                HistoryType.WITHDRAWAL,
+                HistoryType.WITHDRAWAL_FAILED,
+                HistoryType.TRANSFER
+        );
+
         List<TransactionHistoryResponse> history = historyService.getAccountHistoryByTransactionType(accountId, historyTypes);
 
         if (history.isEmpty()) {

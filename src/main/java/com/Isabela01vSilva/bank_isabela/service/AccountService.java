@@ -30,6 +30,7 @@ import java.util.Random;
 @Service
 public class AccountService {
 
+    //
     @Autowired
     private CustomerRepository customerRepository;
 
@@ -123,7 +124,7 @@ public class AccountService {
         if (accounts.isEmpty()) {
             throw new EntityNotFoundException("Nenhuma conta encontrada para o CPF: " + cpf);
         }
-
+        //tem que ter um mapper aqui
         return accounts.stream()
                 .map(account -> new AccountWithCustomerResponse(
                         account.getCustomer().getFullName(),
@@ -178,6 +179,7 @@ public class AccountService {
      * - Se existir conta ENCERRADO do mesmo tipo -> reativa a conta existente (mantém número e histórico)
      * - Caso contrário cria nova conta com saldo 0, agência 0001, status ATIVO e data de criação
      */
+    //tem 2 classes com o nome Account kkkk
     @Transactional
     public com.Isabela01vSilva.bank_isabela.domain.account.Account createAccountForCpf(String cpf, AccountType requestedType) {
         if (cpf == null || cpf.isEmpty()) {
@@ -186,7 +188,7 @@ public class AccountService {
 
         String normalizedCpf = Formatters.normalize(cpf);
 
-        // Busca cliente
+        // Busca cliente usar orElseThrow e criar uma customerService pra abrigar esses metodos aqui
         var optionalCustomer = customerRepository.findByCpf(normalizedCpf);
         if (optionalCustomer.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado para CPF: " + cpf);
@@ -196,20 +198,20 @@ public class AccountService {
         // Verifica se já existe conta do mesmo tipo
         List<Account> accountsOfType = accountRepository.findByCustomerCpfAndAccountType(normalizedCpf, requestedType);
 
-        // Verificando saldo na conta
+        // Verificando saldo na conta extrair para um metodo validateBalance que recebe um account aqui e pode ser reutilizado
         boolean hasBalance = accountsOfType.stream()
                 .anyMatch(account -> account.getBalance().compareTo(BigDecimal.ZERO) > 0);
         if (hasBalance) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cliente possui saldo na conta");
         }
 
-        // Se existir conta ATIVA do mesmo tipo -> conflito
+        // Se existir conta ATIVA do mesmo tipo -> conflito validateAccountNumber() mesma coisa
         boolean hasActive = accountsOfType.stream().anyMatch(a -> a.getAccountStatus() == AccountStatus.ATIVO);
         if (hasActive) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cliente já possui uma conta do tipo solicitado: " + requestedType);
         }
 
-        // Se existir conta ENCERRADO do mesmo tipo -> reativar a conta existente (mantendo número e histórico)
+        // Se existir conta ENCERRADO do mesmo tipo -> reativar a conta existente (mantendo número e histórico) logica aqui ta bem feia , usa iFpRESENtorelse e extrai cada funcionalidade pra uma funcao diferente codigo esta meio ilegivel
         var optionalEncerrada = accountsOfType.stream().filter(a -> a.getAccountStatus() == AccountStatus.ENCERRADO).findFirst();
         if (optionalEncerrada.isPresent()) {
             Account toReactivate = optionalEncerrada.get();
@@ -246,7 +248,7 @@ public class AccountService {
             return saved;
         }
 
-        // Caso não exista conta do tipo solicitado -> criar nova conta seguindo RF004
+        // Caso não exista conta do tipo solicitado -> criar nova conta seguindo RF004 mapear para um metodo (lembra que é um ser humano burro que ta lendo, tem que estar mais legivel posivel sem preisar destrinchar nada do codigo)
         CreateAccountDTO dto = new CreateAccountDTO(requestedType, customer);
         Account newAccount = AccountMappers.fromRequestToAccount(dto, generateAccountNumber());
         Account saved = accountRepository.save(newAccount);
@@ -469,6 +471,7 @@ public class AccountService {
 
     /**
      * Consulta saldo da conta pelo id.
+     * retorna um objeto (se quiser ja formatar pro front cria uma controler bff backforfrontend)
      */
     public String getBalance(Long id) {
 

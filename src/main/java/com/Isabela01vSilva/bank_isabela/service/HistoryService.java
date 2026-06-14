@@ -20,6 +20,7 @@ public class HistoryService {
     @Autowired
     private HistoryRepository historyRepository;
 
+    //nao é legal vazar o History sem um DTO ou Response caso for pra controller
     public History register(RegisterHistoryRequest request) {
 
         // Criação de uma nova instância de Historico
@@ -35,19 +36,6 @@ public class HistoryService {
 
         // Salva o histórico no banco de dados e retorna a entidade salva
         return historyRepository.save(history);
-    }
-
-    public List<CustomerHistoryResponse> getCustomerHistory(Long customerId) {
-        List<History> histories = historyRepository.findByCustomerId(customerId);
-
-        return histories.stream()
-                .filter(history -> CUSTOMER_HISTORY_TYPES.contains(history.getHistoryType()))
-                .map(history -> new CustomerHistoryResponse(
-                        history.getId(),
-                        history.getHistoryType(),
-                        history.getDescription()
-                ))
-                .toList();
     }
 
     private static final Set<HistoryType> CUSTOMER_HISTORY_TYPES = Set.of(
@@ -76,9 +64,21 @@ public class HistoryService {
                 .toList();
     }
 
-    public List<TransactionHistoryResponse> getAccountHistoryByTransactionType(Long id,
+    public List<CustomerHistoryResponse> getCustomerHistoryByTransactionType(Long id,
                                                                                List<HistoryType> historyTypes) {
         return historyRepository.findByCustomerIdAndHistoryTypeIn(id, historyTypes)
+                .stream()
+                .filter(history -> history.getAccount() != null)
+                .map(history -> new CustomerHistoryResponse(
+                        history.getId(),
+                        history.getHistoryType(),
+                        history.getDescription()
+                )).toList();
+    }
+
+    public List<TransactionHistoryResponse> getAccountHistoryByTransactionType(Long id,
+                                                                               List<HistoryType> historyTypes) {
+        return historyRepository.findByAccountIdAndHistoryTypeIn(id, historyTypes)
                 .stream()
                 .filter(history -> history.getAccount() != null)
                 .map(history -> new TransactionHistoryResponse(
