@@ -16,4 +16,16 @@ public class CustomerMappers {
         customer.setCustomerStatus(CustomerStatus.ATIVO);
         return customer;
     }
+
+    public static CustomerResponse fromCustomerToResponse(Customer customer) {
+        return new CustomerResponse(
+                customer.getId(),
+                customer.getFullName(),
+                customer.getBirthDate(),
+                customer.getCpf(),
+                customer.getEmail(),
+                customer.getPhoneNumber(),
+                customer.getCustomerStatus()
+        );
+    }
 }
