@@ -12,7 +12,6 @@ import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerStatus;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
-import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferenciaRepository;
 import com.Isabela01vSilva.bank_isabela.domain.mapper.AccountMappers;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,7 +23,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -40,8 +41,8 @@ public class AccountService {
     @Autowired
     private HistoryService historyService;
 
-    @Autowired
-    private TransferenciaRepository transferenciaRepository;
+    /*@Autowired
+    private TransferenciaRepository transferenciaRepository;*/
 
     /**
      * Cria múltiplas contas a partir de uma lista de DTOs.
@@ -50,23 +51,29 @@ public class AccountService {
     @Transactional
     public List<Account> createMultipleAccounts(List<CreateAccountDTO> accounts) {
         List<Account> newAccounts = accounts.stream()
-                .map(accountRequest -> AccountMappers.fromRequestToAccount(accountRequest, generateAccountNumber()))
+                .map(this::createAccount)
                 .toList();
 
         List<Account> savedAccounts = accountRepository.saveAll(newAccounts);
 
-        savedAccounts.forEach(account ->
-                historyService.register(
-                        new RegisterHistoryRequest(
-                                account,
-                                account.getCustomer(),
-                                HistoryType.ACCOUNT_CREATED,
-                                "Conta Criada com sucesso!",
-                                null
-                        )
+        savedAccounts.forEach(this::registerAccountCreatedHistory);
+        return savedAccounts;
+    }
+
+    private Account createAccount(CreateAccountDTO dto) {
+        return AccountMappers.fromRequestToAccount(dto, generateAccountNumber());
+    }
+
+    private void registerAccountCreatedHistory(Account account) {
+        historyService.register(
+                new RegisterHistoryRequest(
+                        account,
+                        account.getCustomer(),
+                        HistoryType.ACCOUNT_CREATED,
+                        "Conta Criada com sucesso!",
+                        null
                 )
         );
-        return savedAccounts;
     }
 
     /**
@@ -114,29 +121,31 @@ public class AccountService {
      * Aceita CPF formatado ou não; realiza normalização antes da busca.
      */
     public List<AccountWithCustomerResponse> searchAccountsByCpf(String cpf) {
-        if (cpf == null || cpf.isEmpty()) {
-            throw new IllegalArgumentException("CPF não pode ser vazio");
-        }
+        validateCpf(cpf);
 
         String normalizedCpf = Formatters.normalize(cpf);
-        List<Account> accounts = accountRepository.findByCustomerCpf(normalizedCpf);
+
+        List<Account> accounts = findAccountsByCpf(normalizedCpf);
+
+        return accounts.stream()
+                .map(AccountMappers::fromAccountToResponse)
+                .toList();
+    }
+
+    private void validateCpf(String cpf) {
+        if (cpf == null || cpf.isBlank()) {
+            throw new IllegalArgumentException("CPF não pode ser vazio");
+        }
+    }
+
+    private List<Account> findAccountsByCpf(String cpf) {
+        List<Account> accounts = accountRepository.findByCustomerCpf(cpf);
 
         if (accounts.isEmpty()) {
             throw new EntityNotFoundException("Nenhuma conta encontrada para o CPF: " + cpf);
         }
-        //tem que ter um mapper aqui
-        return accounts.stream()
-                .map(account -> new AccountWithCustomerResponse(
-                        account.getCustomer().getFullName(),
-                        account.getCustomer().getCpf(),
-                        account.getAgencyNumber(),
-                        account.getAccountNumber(),
-                        account.getAccountType(),
-                        account.getAccountStatus(),
-                        account.getBalance(),
-                        account.getCreationDate()
-                ))
-                .toList();
+
+        return accounts;
     }
 
     /**
@@ -144,33 +153,31 @@ public class AccountService {
      * Retorna uma lista com a conta encontrada (mantido formato de retorno consistente).
      */
     public AccountWithCustomerResponse searchAccountsByAccountNumberAndAgencyNumber(String accountNumber, String agencyNumber) {
+
+        validateAccountAndAgency(accountNumber, agencyNumber);
+
+        Account account = findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
+
+        return AccountMappers.fromAccountToResponse(account);
+
+    }
+
+    private void validateAccountAndAgency(String accountNumber, String agencyNumber) {
         if (accountNumber == null || agencyNumber == null) {
             throw new IllegalArgumentException("Número da conta e agência não podem ser nulos");
         }
 
         if (accountNumber.isEmpty() || agencyNumber.isEmpty()) {
-            throw new EntityNotFoundException("Nenhuma conta encontrada por: " + accountNumber + " e agência: " + agencyNumber);
+            throw new EntityNotFoundException("Número da conta e agência são obrigatórios");
         }
+
+        boolean validAccount = accountNumber.matches("\\d{5}-\\d");
+        boolean validAgency = agencyNumber.matches("\\d{4}") || agencyNumber.matches("\\d{4}-\\d");
 
         // Aceita formato conta 12345-6 e agência no formato 1234-1 (porém aceita também 1234)
-        if (!accountNumber.matches("\\d{5}-\\d") || !(agencyNumber.matches("\\d{4}-\\d") || agencyNumber.matches("\\d{4}"))) {
+        if (!validAccount || !validAgency) {
             throw new IllegalArgumentException("Número da conta deve estar no formato 12345-6 e agência no formato 1234 ou 1234-1");
         }
-
-
-        return accountRepository.findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber).map(account ->
-                new AccountWithCustomerResponse(
-                        account.getCustomer().getFullName(),
-                        account.getCustomer().getCpf(),
-                        account.getAgencyNumber(),
-                        account.getAccountNumber(),
-                        account.getAccountType(),
-                        account.getAccountStatus(),
-                        account.getBalance(),
-                        account.getCreationDate()
-                )
-        ).orElseThrow(() -> new EntityNotFoundException("Nenhuma conta encontrada por: " + accountNumber + " e agência: " + agencyNumber));
-
     }
 
     /**
@@ -179,96 +186,114 @@ public class AccountService {
      * - Se existir conta ENCERRADO do mesmo tipo -> reativa a conta existente (mantém número e histórico)
      * - Caso contrário cria nova conta com saldo 0, agência 0001, status ATIVO e data de criação
      */
-    //tem 2 classes com o nome Account kkkk
     @Transactional
-    public com.Isabela01vSilva.bank_isabela.domain.account.Account createAccountForCpf(String cpf, AccountType requestedType) {
-        if (cpf == null || cpf.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CPF não informado");
-        }
+    public Account createAccountForCpf(String cpf, AccountType requestedType) {
+        validateCpf(cpf);
 
         String normalizedCpf = Formatters.normalize(cpf);
 
-        // Busca cliente usar orElseThrow e criar uma customerService pra abrigar esses metodos aqui
-        var optionalCustomer = customerRepository.findByCpf(normalizedCpf);
-        if (optionalCustomer.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado para CPF: " + cpf);
-        }
-        var customer = optionalCustomer.get();
+        Customer customer = findCustomerByCpf(normalizedCpf);
 
-        // Verifica se já existe conta do mesmo tipo
-        List<Account> accountsOfType = accountRepository.findByCustomerCpfAndAccountType(normalizedCpf, requestedType);
+        List<Account> accountsOfType = findAccountsByType(normalizedCpf, requestedType);
 
-        // Verificando saldo na conta extrair para um metodo validateBalance que recebe um account aqui e pode ser reutilizado
-        boolean hasBalance = accountsOfType.stream()
-                .anyMatch(account -> account.getBalance().compareTo(BigDecimal.ZERO) > 0);
-        if (hasBalance) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cliente possui saldo na conta");
+        validateAccountsWithoutBalance(accountsOfType);
+
+        validateNoActiveAccount(accountsOfType, requestedType);
+
+        Optional<Account> closedAccount = findClosedAccount(accountsOfType);
+
+        if (closedAccount.isPresent()) {
+            return reactivateAccount(closedAccount.get(), customer);
         }
 
-        // Se existir conta ATIVA do mesmo tipo -> conflito validateAccountNumber() mesma coisa
-        boolean hasActive = accountsOfType.stream().anyMatch(a -> a.getAccountStatus() == AccountStatus.ATIVO);
-        if (hasActive) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cliente já possui uma conta do tipo solicitado: " + requestedType);
-        }
+        return createNewAccount(customer, requestedType);
 
-        // Se existir conta ENCERRADO do mesmo tipo -> reativar a conta existente (mantendo número e histórico) logica aqui ta bem feia , usa iFpRESENtorelse e extrai cada funcionalidade pra uma funcao diferente codigo esta meio ilegivel
-        var optionalEncerrada = accountsOfType.stream().filter(a -> a.getAccountStatus() == AccountStatus.ENCERRADO).findFirst();
-        if (optionalEncerrada.isPresent()) {
-            Account toReactivate = optionalEncerrada.get();
-            toReactivate.setAccountStatus(AccountStatus.ATIVO);
-            // Mantém statusChangeDate e statusChangeReason anteriores para auditoria/histórico (RF007 e RF008)
-            Account saved = accountRepository.save(toReactivate);
+    }
 
-            // Atualiza status do cliente para ATIVO caso ele tenha sido inativado por falta de contas ativas
-            if (customer.getCustomerStatus() == CustomerStatus.INATIVO) {
-                customer.setCustomerStatus(CustomerStatus.ATIVO);
-                customerRepository.save(customer);
+    private Account createNewAccount(Customer customer, AccountType accountType) {
+        CreateAccountDTO dto = new CreateAccountDTO(accountType, customer);
 
-                historyService.register(
-                        new RegisterHistoryRequest(
-                                saved,
-                                customer,
-                                HistoryType.CUSTOMER_REACTIVATED,
-                                "Cliente reativado por possuir conta ativa. ",
-                                null
-                        )
-                );
-            }
+        Account account = AccountMappers.fromRequestToAccount(dto, generateAccountNumber());
+        Account saved = accountRepository.save(account);
 
-            historyService.register(
-                    new RegisterHistoryRequest(
-                            saved,
-                            saved.getCustomer(),
-                            HistoryType.ACCOUNT_REACTIVATED,
-                            "Conta Reativada com sucesso!",
-                            null
-                    )
-            );
+        activateCustomer(customer);
+        registerAccountCreatedHistory(saved);
 
-            return saved;
-        }
+        return saved;
+    }
 
-        // Caso não exista conta do tipo solicitado -> criar nova conta seguindo RF004 mapear para um metodo (lembra que é um ser humano burro que ta lendo, tem que estar mais legivel posivel sem preisar destrinchar nada do codigo)
-        CreateAccountDTO dto = new CreateAccountDTO(requestedType, customer);
-        Account newAccount = AccountMappers.fromRequestToAccount(dto, generateAccountNumber());
-        Account saved = accountRepository.save(newAccount);
-
-        // Atualiza status do cliente para ATIVO, caso crie uma conta nova e a conta antiga estiver encerrada
+    private void activateCustomer(Customer customer) {
         customer.setCustomerStatus(CustomerStatus.ATIVO);
         customerRepository.save(customer);
+    }
 
-        // Historico - Criação de conta
+    private Optional<Account> findClosedAccount(List<Account> accounts) {
+
+        return accounts.stream()
+                .filter(account ->
+                        account.getAccountStatus() == AccountStatus.ENCERRADO)
+                .findFirst();
+    }
+
+    private Account reactivateAccount(Account account, Customer customer) {
+
+        account.setAccountStatus(AccountStatus.ATIVO);
+
+        Account saved = accountRepository.save(account);
+
+        reactivateCustomerIfNecessary(customer, saved);
+        registerAccountReactivatedHistory(saved);
+
+        return saved;
+    }
+
+    private void reactivateCustomerIfNecessary(Customer customer, Account account) {
+        if(customer.getCustomerStatus() == CustomerStatus.INATIVO) {
+            customer.setCustomerStatus(CustomerStatus.ATIVO);
+            customerRepository.save(customer);
+
+            registerCustomerReactivatedHistory(account, customer);
+        }
+    }
+
+    private List<Account> findAccountsByType(String cpf, AccountType accountType) {
+        return accountRepository.findByCustomerCpfAndAccountType(cpf, accountType);
+    }
+
+    private void validateNoActiveAccount(List<Account> accounts, AccountType accountType) {
+        boolean hasActive = accounts.stream()
+                .anyMatch(account -> account.getAccountStatus() == AccountStatus.ATIVO);
+
+        if (hasActive) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "Cliente já possui uma conta do tipo solicitado: "  + accountType);
+        }
+    }
+
+    private void registerAccountReactivatedHistory(Account account) {
+
         historyService.register(
                 new RegisterHistoryRequest(
-                        saved,
-                        saved.getCustomer(),
-                        HistoryType.ACCOUNT_CREATED,
-                        "Conta Criada com sucesso!",
+                        account,
+                        account.getCustomer(),
+                        HistoryType.ACCOUNT_REACTIVATED,
+                        "Conta Reativada com sucesso!",
                         null
                 )
         );
+    }
 
-        return saved;
+    private void registerCustomerReactivatedHistory(Account account, Customer customer) {
+
+        historyService.register(
+                new RegisterHistoryRequest(
+                        account,
+                        customer,
+                        HistoryType.CUSTOMER_REACTIVATED,
+                        "Cliente reativado por possuir conta ativa.",
+                        null
+                )
+        );
     }
 
     /**
@@ -280,9 +305,7 @@ public class AccountService {
     @Transactional
     public UpdateAccountStatusResponse updateAccountStatus(UpdateAccountStatusRequest request) {
 
-        Account account = accountRepository.findByAccountNumberAndAgencyNumber(
-                        request.accountNumber(), request.agencyNumber())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada"));
+        Account account = findByAccountNumberAndAgencyNumber(request.accountNumber(), request.agencyNumber());
 
 
         if (account.getAccountStatus() == request.accountStatus()) {
@@ -383,13 +406,10 @@ public class AccountService {
      */
 
     public String withdrawal(AccountTransactionRequest request) {
-        Account account = accountRepository.findByAccountNumberAndAgencyNumber(request.accountNumber(), request.agencyNumber())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Conta não encontrada"));
+        Account account = findByAccountNumberAndAgencyNumber(request.accountNumber(), request.agencyNumber());
         try {
             validateAndMakeMoneyMovements(request, account);
-        } catch(Exception e){
+        } catch (Exception e) {
             historyService.register(
                     new RegisterHistoryRequest(
                             account,
@@ -414,7 +434,7 @@ public class AccountService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "A conta está ENCERRADA");
         }
 
-        if(request.amount().compareTo(BigDecimal.ZERO) <= 0 || account.getBalance().compareTo(request.amount()) < 0){
+        if (request.amount().compareTo(BigDecimal.ZERO) <= 0 || account.getBalance().compareTo(request.amount()) < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo Insuficiente");
         }
 
@@ -440,11 +460,8 @@ public class AccountService {
     @Transactional
     public String deposit(AccountTransactionRequest request) {
 
-        // Busca a conta com o ID fornecido na request
-        Account account = accountRepository.findByAccountNumberAndAgencyNumber(request.accountNumber(), request.agencyNumber())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Conta não encontrada"));
+        // Busca a conta por numero agencia de conta
+        Account account = findByAccountNumberAndAgencyNumber(request.accountNumber(), request.agencyNumber());
 
         if (account.getAccountStatus() == AccountStatus.ENCERRADO) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "A conta está ENCERRADA");
@@ -473,13 +490,36 @@ public class AccountService {
      * Consulta saldo da conta pelo id.
      * retorna um objeto (se quiser ja formatar pro front cria uma controler bff backforfrontend)
      */
-    public String getBalance(Long id) {
+    public String getBalance(String accountNumber, String agencyNumber) {
 
         // Busca a conta com o ID fornecido.
-        Account conta = accountRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Conta não encontrada"));
+        Account conta = findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
 
         // Retorna o saldo da conta e o número da conta.
-        return "Saldo R$" + conta.getBalance() + " da conta:" + conta.getAccountNumber();
+        return "Saldo R$" + conta.getBalance() + ". agência: " + conta.getAgencyNumber() + " conta:" + conta.getAccountNumber();
     }
+
+
+    public Account findByAccountNumberAndAgencyNumber(String accountNumber, String agencyNumber) {
+        return accountRepository.findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Conta não encontrada"));
+    }
+
+    private void validateAccountsWithoutBalance(List<Account> accounts) {
+        boolean hasBalance = accounts.stream()
+                .anyMatch(account -> account.getBalance().compareTo(BigDecimal.ZERO) == 0);
+
+        if (hasBalance) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cliente possui saldo na conta");
+        }
+    }
+
+    private Customer findCustomerByCpf(String cpf) {
+        return customerRepository.findByCpf(cpf)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+    }
+
 }
