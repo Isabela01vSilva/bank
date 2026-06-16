@@ -5,6 +5,7 @@ import com.Isabela01vSilva.bank_isabela.controller.request.account.SecondAccount
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.MessageResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.UpdateAccountStatusResponse;
+import com.Isabela01vSilva.bank_isabela.domain.mapper.AccountMappers;
 import com.Isabela01vSilva.bank_isabela.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,20 +50,14 @@ public class AccountController {
     @PostMapping("/abrir")
     public ResponseEntity<AccountWithCustomerResponse> openAccountByCpf(@RequestBody SecondAccountRequest request) {
         //voce vazou a entidade do db para a controller nao se pode fazer isso pq o swagger mapeia todos os dados de tudo que vazar aqui (entao sempre usar responses)
-        var account = accountService.createAccountForCpf(request.cpf(), request.accountType());
+        var account = accountService.createAccountForCpf(
+                request.cpf(),
+                request.accountType());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                //fazer um mapper aqui
-                new AccountWithCustomerResponse(
-                        account.getCustomer().getFullName(),
-                        account.getCustomer().getCpf(),
-                        account.getAgencyNumber(),
-                        account.getAccountNumber(),
-                        account.getAccountType(),
-                        account.getAccountStatus(),
-                        account.getBalance(),
-                        account.getCreationDate()
-                ));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(AccountMappers.fromAccountToResponse(account));
+
     }
 
     @PostMapping("/saque")

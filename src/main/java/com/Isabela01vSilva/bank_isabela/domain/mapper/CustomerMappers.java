@@ -17,7 +17,7 @@ public class CustomerMappers {
         return customer;
     }
 
-    public static CustomerResponse fromCustomerToResponse(Customer customer) {
+    /*public static CustomerResponse fromCustomerToResponse(Customer customer) {
         return new CustomerResponse(
                 customer.getId(),
                 customer.getFullName(),
@@ -27,5 +27,5 @@ public class CustomerMappers {
                 customer.getPhoneNumber(),
                 customer.getCustomerStatus()
         );
-    }
+    }*/
 }

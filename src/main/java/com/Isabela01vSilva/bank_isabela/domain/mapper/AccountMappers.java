@@ -1,6 +1,7 @@
 package com.Isabela01vSilva.bank_isabela.domain.mapper;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.account.CreateAccountDTO;
+import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountStatus;
 
@@ -21,6 +22,19 @@ public class AccountMappers {
         account.setAccountNumber(accountNumber);
 
         return account;
+    }
+
+    public static AccountWithCustomerResponse fromAccountToResponse(Account account) {
+        return new AccountWithCustomerResponse(
+                account.getCustomer().getFullName(),
+                account.getCustomer().getCpf(),
+                account.getAgencyNumber(),
+                account.getAccountNumber(),
+                account.getAccountType(),
+                account.getAccountStatus(),
+                account.getBalance(),
+                account.getCreationDate()
+        );
     }
 }
 
