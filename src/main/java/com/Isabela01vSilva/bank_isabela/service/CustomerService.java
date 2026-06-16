@@ -103,22 +103,12 @@ public class CustomerService {
     }
 
     /**
-     * Recupera um cliente pelo seu id.
-     * Lança EntityNotFoundException caso não exista.
-     */
-    public Customer getCustomerById(Long id) {
-        return customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
-    }
-
-    /**
      * Atualiza os dados permitidos do cliente.
      * Apenas nome, e-mail e telefone podem ser alterados.
      */
     @Transactional
     public Customer updateCustomer(Long id, UpdateCustomerRequest data) {
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
+        Customer customer = findCustomerById(id);
 
         // Valor anterior
         String oldName = customer.getFullName();
@@ -156,5 +146,10 @@ public class CustomerService {
         }
 
         return customer;
+    }
+
+    public Customer findCustomerById(Long id) {
+        return customerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
     }
 }
