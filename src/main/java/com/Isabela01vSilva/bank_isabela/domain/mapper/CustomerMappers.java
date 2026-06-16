@@ -2,8 +2,15 @@ package com.Isabela01vSilva.bank_isabela.domain.mapper;
 
 import com.Isabela01vSilva.bank_isabela.commons.Formatters;
 import com.Isabela01vSilva.bank_isabela.controller.request.CustomerAccountRequest;
+import com.Isabela01vSilva.bank_isabela.controller.response.CustomerAccountsResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.customer.CustomerResponse;
+import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerStatus;
+import com.Isabela01vSilva.bank_isabela.service.dto.AccountCustomerDTO;
+
+import java.util.List;
 
 public class CustomerMappers {
     public static Customer fromRequestToCustomer(CustomerAccountRequest data) {
@@ -17,7 +24,7 @@ public class CustomerMappers {
         return customer;
     }
 
-    /*public static CustomerResponse fromCustomerToResponse(Customer customer) {
+    public static CustomerResponse fromCustomerToResponse(Customer customer) {
         return new CustomerResponse(
                 customer.getId(),
                 customer.getFullName(),
@@ -27,5 +34,29 @@ public class CustomerMappers {
                 customer.getPhoneNumber(),
                 customer.getCustomerStatus()
         );
-    }*/
+    }
+
+    public static AccountResponse fromAccountToResponse(Account account) {
+        return new AccountResponse(
+                account.getAccountNumber(),
+                account.getAgencyNumber(),
+                account.getAccountType(),
+                account.getAccountStatus(),
+                account.getBalance(),
+                account.getCreationDate()
+        );
+    }
+
+    public static CustomerAccountsResponse fromAccountCustomerDTOToResponse(
+            AccountCustomerDTO dto) {
+
+        List<AccountResponse> contas = dto.conta().stream()
+                .map(CustomerMappers::fromAccountToResponse)
+                .toList();
+
+        return new CustomerAccountsResponse(
+                fromCustomerToResponse(dto.customer()),
+                contas
+        );
+    }
 }

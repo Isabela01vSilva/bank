@@ -5,6 +5,6 @@ import com.Isabela01vSilva.bank_isabela.controller.response.customer.CustomerRes
 
 import java.util.List;
 
-public record ClienteContasResponse(CustomerResponse cliente,
-                                    List<AccountResponse> conta) {
+public record CustomerAccountsResponse(CustomerResponse cliente,
+                                       List<AccountResponse> conta) {
 }
