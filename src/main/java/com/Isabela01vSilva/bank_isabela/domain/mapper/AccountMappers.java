@@ -2,6 +2,7 @@ package com.Isabela01vSilva.bank_isabela.domain.mapper;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.account.CreateAccountDTO;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.account.UpdateAccountStatusResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountStatus;
 
@@ -37,6 +38,16 @@ public class AccountMappers {
         );
     }
 
+    public static UpdateAccountStatusResponse toUpdateAccountStatusResponse(Account account) {
+        return new UpdateAccountStatusResponse(
+                account.getAccountNumber(),
+                account.getAgencyNumber(),
+                account.getAccountType(),
+                account.getAccountStatus(),
+                account.getBalance(),
+                account.getCreationDate(),
+                account.getStatusChangeDate(),
+                account.getStatusChangeReason()
+        );
+    }
 }
-
-

@@ -53,12 +53,4 @@ public class Account {
     @Column(name = "motivo_alteracao_status")
     private String statusChangeReason;
 
-
-    public void deposit(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("O valor deve ser maior que R$0.00");
-        }
-        this.balance = this.balance.add(amount);
-    }
-
 }
