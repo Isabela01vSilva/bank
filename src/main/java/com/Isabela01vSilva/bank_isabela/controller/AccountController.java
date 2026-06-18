@@ -22,12 +22,6 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    /**
-     * Busca todas as contas de um cliente pelo CPF.
-     *
-     * @param cpf O CPF do cliente (pode estar formatado ou não)
-     * @return Lista de contas com informações do cliente
-     */
     @GetMapping("/buscar/cpf")
     public ResponseEntity<List<AccountWithCustomerResponse>> searchByCpf(@RequestParam String cpf) {
         List<AccountWithCustomerResponse> accounts = accountService.searchAccountsByCpf(cpf);
@@ -49,15 +43,8 @@ public class AccountController {
     //Abrir segunda conta
     @PostMapping("/abrir")
     public ResponseEntity<AccountWithCustomerResponse> openAccountByCpf(@RequestBody SecondAccountRequest request) {
-        //voce vazou a entidade do db para a controller nao se pode fazer isso pq o swagger mapeia todos os dados de tudo que vazar aqui (entao sempre usar responses)
-        var account = accountService.createAccountForCpf(
-                request.cpf(),
-                request.accountType());
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(AccountMappers.fromAccountToResponse(account));
-
+        var account = accountService.createAccountForCpf(request.cpf(), request.accountType());
+        return ResponseEntity.status(HttpStatus.CREATED).body(AccountMappers.fromAccountToResponse(account));
     }
 
     @PostMapping("/saque")
@@ -71,10 +58,10 @@ public class AccountController {
         String message = accountService.deposit(depositRequest);
         return ResponseEntity.ok(new MessageResponse(message));
     }
-    //saldo da conta vai por numero de conta e agencia (nao vazar id da conta pro front NUNCA)
-    @GetMapping("/{id}/saldo")
-    public ResponseEntity<MessageResponse> getBalance(@PathVariable Long id) {
-        String message = accountService.getBalance(id);
+
+    @GetMapping("/saldo")
+    public ResponseEntity<MessageResponse> getBalance(@RequestParam String accountNumber, @RequestParam String agencyNumber) {
+        String message = accountService.getBalance(accountNumber, agencyNumber);
         return ResponseEntity.ok(new MessageResponse(message));
     }
 }

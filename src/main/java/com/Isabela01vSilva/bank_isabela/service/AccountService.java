@@ -97,7 +97,7 @@ public class AccountService {
      * Segue a regra RF008:
      * - Se existe conta ativa do tipo solicitado: lança erro de conflito
      * - Se existe conta encerrada do tipo solicitado: reativa a conta existente
-     * - Caso contrário: cria uma nova conta com saldo zero
+     * - Caso contrário: cria uma nova conta, do tipo solicitado, com saldo zero
      *
      * @param cpf           CPF do cliente (formatado ou não)
      * @param requestedType tipo de conta desejada
@@ -114,8 +114,6 @@ public class AccountService {
         Customer customer = findCustomerByCpf(normalizedCpf);
 
         List<Account> accountsOfType = findAccountsByType(normalizedCpf, requestedType);
-
-        validateAccountsWithoutBalance(accountsOfType);
 
         validateNoActiveAccount(accountsOfType, requestedType);
 
@@ -210,6 +208,18 @@ public class AccountService {
 
         return AccountMappers.fromAccountToResponse(account);
 
+    }
+    /**
+     * Consulta saldo da conta pelo id.
+     * retorna um objeto (se quiser ja formatar pro front cria uma controler bff backforfrontend)
+     */
+    public String getBalance(String accountNumber, String agencyNumber) {
+
+        // Busca a conta com o ID fornecido.
+        Account conta = findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
+
+        // Retorna o saldo da conta e o número da conta.
+        return "Saldo R$" + conta.getBalance() + ". agência: " + conta.getAgencyNumber() + " conta:" + conta.getAccountNumber();
     }
 
 
@@ -452,7 +462,7 @@ public class AccountService {
         return AccountMappers.fromRequestToAccount(dto, generateAccountNumber());
     }
 
-    public String generateAccountNumber() {
+    private String generateAccountNumber() {
         while (true) {
             String accountNumber = generateRandomAccountNumber();
             if (!accountRepository.existsByAccountNumber(accountNumber)) {
@@ -461,7 +471,7 @@ public class AccountService {
         }
     }
 
-    public String generateRandomAccountNumber() {
+    private String generateRandomAccountNumber() {
         Random random = new Random();
         StringBuilder number = new StringBuilder();
         for (int i = 0; i < 5; i++) {
@@ -471,7 +481,7 @@ public class AccountService {
         return number + "-" + digitoVerificador;
     }
 
-    public int calculateCheckDigit(String number) {
+    private int calculateCheckDigit(String number) {
         int sum = 0;
         // Calcula a soma ponderada
         for (int i = 0; i < 5 && i < number.length(); i++) {
