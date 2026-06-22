@@ -2,17 +2,19 @@ package com.Isabela01vSilva.bank_isabela.service;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.history.RegisterHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.history.HistoryResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.TransactionHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
+import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.historico.History;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
+import com.Isabela01vSilva.bank_isabela.domain.mapper.HistoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class HistoryService {
@@ -20,8 +22,10 @@ public class HistoryService {
     @Autowired
     private HistoryRepository historyRepository;
 
-    //nao é legal vazar o History sem um DTO ou Response caso for pra controller
-    public History register(RegisterHistoryRequest request) {
+    @Autowired
+    private CustomerService customerService;
+
+    public HistoryResponse register(RegisterHistoryRequest request) {
 
         // Criação de uma nova instância de Historico
         History history = new History();
@@ -34,18 +38,9 @@ public class HistoryService {
         history.setAmount(request.amount());
         history.setTransactionDate(LocalDateTime.now());
 
-        // Salva o histórico no banco de dados e retorna a entidade salva
-        return historyRepository.save(history);
+        History savedHistory =  historyRepository.save(history);
+        return HistoryMapper.toResponse(savedHistory);
     }
-
-    private static final Set<HistoryType> CUSTOMER_HISTORY_TYPES = Set.of(
-            HistoryType.ACCOUNT_CREATED,
-            HistoryType.ACCOUNT_REACTIVATED,
-            HistoryType.ACCOUNT_CLOSED,
-            HistoryType.CUSTOMER_UPDATED,
-            HistoryType.CUSTOMER_REACTIVATED,
-            HistoryType.CUSTOMER_INACTIVATED
-    );
 
     public List<TransactionHistoryResponse> getAccountHistoryByAccountType(Long customerId,
                                                                            AccountType accountType) {
@@ -54,26 +49,19 @@ public class HistoryService {
         return histories.stream()
                 .filter(history -> history.getAccount() != null)
                 .filter(history -> history.getAccount().getAccountType().equals(accountType))
-                .map(history -> new TransactionHistoryResponse(
-                        history.getCustomer().getCpf(),
-                        history.getAccount().getAccountNumber(),
-                        history.getAccount().getAgencyNumber(),
-                        history.getAmount(),
-                        history.getDescription()
-                ))
+                .map(HistoryMapper::toTransactionResponse)
                 .toList();
     }
 
-    public List<CustomerHistoryResponse> getCustomerHistoryByTransactionType(Long id,
-                                                                               List<HistoryType> historyTypes) {
-        return historyRepository.findByCustomerIdAndHistoryTypeIn(id, historyTypes)
+    public List<CustomerHistoryResponse> getCustomerHistoryByTransactionType(Long customerId,
+                                                                             List<HistoryType> historyTypes) {
+        customerService.findCustomerById(customerId);
+
+        return historyRepository.findByCustomerIdAndHistoryTypeIn(customerId, historyTypes)
                 .stream()
                 .filter(history -> history.getAccount() != null)
-                .map(history -> new CustomerHistoryResponse(
-                        history.getId(),
-                        history.getHistoryType(),
-                        history.getDescription()
-                )).toList();
+                .map(HistoryMapper::toCustomerResponse)
+                .toList();
     }
 
     public List<TransactionHistoryResponse> getAccountHistoryByTransactionType(Long id,
@@ -81,28 +69,14 @@ public class HistoryService {
         return historyRepository.findByAccountIdAndHistoryTypeIn(id, historyTypes)
                 .stream()
                 .filter(history -> history.getAccount() != null)
-                .map(history -> new TransactionHistoryResponse(
-                        history.getCustomer().getCpf(),
-                        history.getAccount().getAccountNumber(),
-                        history.getAccount().getAgencyNumber(),
-                        history.getAmount(),
-                        history.getDescription()
-                )).toList();
+                .map(HistoryMapper::toTransactionResponse).toList();
     }
-
 
     public List<TransactionHistoryResponse> getHistoryBetweenDates(Long accountId, LocalDateTime startDate, LocalDateTime endDate) {
 
         // Busca os históricos de uma conta entre duas datas
         List<History> histories = historyRepository.findByAccountIdAndTransactionDateBetween(accountId, startDate, endDate);
-
         return histories.stream()
-                .map(history -> new TransactionHistoryResponse(
-                        history.getCustomer().getCpf(),
-                        history.getAccount().getAccountNumber(),
-                        history.getAccount().getAgencyNumber(),
-                        history.getAmount(),
-                        history.getDescription()
-                )).toList();
+                .map(HistoryMapper::toTransactionResponse).toList();
     }
 }

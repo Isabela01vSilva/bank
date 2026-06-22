@@ -6,6 +6,7 @@ import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
 import com.Isabela01vSilva.bank_isabela.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class HistoryController {
     @Autowired
     private HistoryService historyService;
 
-    @GetMapping("/cliente/{customerId}")
+    @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<CustomerHistoryResponse>> getCustomerHistory(@PathVariable Long customerId) {
         var historyTypes = List.of(
                 HistoryType.ACCOUNT_CREATED,
@@ -32,11 +33,9 @@ public class HistoryController {
 
         List<CustomerHistoryResponse> history = historyService.getCustomerHistoryByTransactionType(customerId, historyTypes);
 
-        if (history.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(history);
+        return history.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(history);
     }
 
     @GetMapping("/account-type")
@@ -46,11 +45,9 @@ public class HistoryController {
                 customerId,
                 accountType);
 
-        if (history.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(history);
+        return history.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(history);
     }
 
     @GetMapping("/account/{accountId}")
@@ -65,27 +62,25 @@ public class HistoryController {
 
         List<TransactionHistoryResponse> history = historyService.getAccountHistoryByTransactionType(accountId, historyTypes);
 
-        if (history.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(history);
+        return history.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(history);
     }
 
 
-    @GetMapping("/between-dates/{accountId}")
+    @GetMapping("/accounts/{accountId}/between-dates")
     public ResponseEntity<List<TransactionHistoryResponse>> getHistoryBetweenDates(@PathVariable Long accountId,
+                                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                                                    @RequestParam LocalDateTime startDate,
+                                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                                                    @RequestParam LocalDateTime endDate) {
         List<TransactionHistoryResponse> history = historyService.getHistoryBetweenDates(
                 accountId,
                 startDate,
                 endDate);
 
-        if (history.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(history);
+        return history.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(history);
     }
 }

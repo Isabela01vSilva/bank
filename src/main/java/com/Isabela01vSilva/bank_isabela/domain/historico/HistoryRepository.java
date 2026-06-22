@@ -12,6 +12,6 @@ public interface HistoryRepository extends JpaRepository<History, Long> {
 
     List<History> findByCustomerIdAndHistoryTypeIn(Long customerId, List<HistoryType> historyType);
 
-    List<History> findByAccountIdAndHistoryTypeIn(Long customerId, List<HistoryType> historyType);
+    List<History> findByAccountIdAndHistoryTypeIn(Long accountId, List<HistoryType> historyType);
 
 }
