@@ -39,6 +39,7 @@ Legenda:
 - [✅] RF014 - Consultar Histórico por Tipo de Conta
 - [✅] RF015 - Consultar Histórico por Tipo de Movimentação
 - [✅] RF016 - Consultar Histórico por Período
+- [✅] RF017 - Consultar Extrato Consolidado do Cliente
 
 ---
 

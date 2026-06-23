@@ -40,7 +40,7 @@ public class HistoryService {
         history.setAmount(request.amount());
         history.setTransactionDate(LocalDateTime.now());
 
-        History savedHistory =  historyRepository.save(history);
+        History savedHistory = historyRepository.save(history);
         return HistoryMapper.toResponse(savedHistory);
     }
 
@@ -82,5 +82,20 @@ public class HistoryService {
         List<History> histories = historyRepository.findByAccountIdAndTransactionDateBetween(accountId, startDate, endDate);
         return histories.stream()
                 .map(HistoryMapper::toTransactionResponse).toList();
+    }
+
+    public List<TransactionHistoryResponse> getCustomerTransactions(Long customerId,
+                                                                    AccountType accountType) {
+
+        List<History> histories = historyRepository.findByCustomerId(customerId);
+
+        return histories.stream()
+                .filter(history -> history.getAccount() != null)
+                .filter(history -> accountType == null ||
+                        history.getAccount()
+                                .getAccountType()
+                                .equals(accountType))
+                .map(HistoryMapper::toTransactionResponse)
+                .toList();
     }
 }

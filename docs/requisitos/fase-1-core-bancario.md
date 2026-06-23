@@ -378,3 +378,25 @@ Permitir consultar as movimentações de uma conta dentro de um período informa
 
 - Os filtros podem ser utilizados de forma individual ou combinada. 
 - Caso nenhum resultado seja encontrado, o sistema deve informar que não existem movimentações para os filtros selecionados.
+
+---
+## RF017 - Consultar Extrato Consolidado do Cliente
+
+### Descrição
+
+Permitir consultar o histórico de movimentações de um cliente, considerando todas as suas contas cadastradas ou uma conta específica quando informada.
+
+### Filtros disponíveis
+
+- Tipo da conta (Corrente ou Poupança) - opcional
+- Tipo da movimentação (Depósito, Saque, Transferência, etc.) - opcional
+
+### Regras de negócio
+
+- O sistema deve permitir a consulta de todas as movimentações associadas ao cliente.
+- Caso o tipo da conta seja informado, o sistema deve retornar apenas as movimentações da conta selecionada.
+- Caso o tipo da conta não seja informado, o sistema deve retornar as movimentações de todas as contas vinculadas ao cliente.
+- Os filtros podem ser utilizados de forma individual ou combinada.
+- Caso o cliente não possua contas cadastradas, o sistema deve informar que não existem contas vinculadas ao cliente.
+- Caso nenhum resultado seja encontrado, o sistema deve informar que não existem movimentações para os filtros selecionados.
+- Caso o cliente informado não exista, o sistema deve retornar uma mensagem de cliente não encontrado.

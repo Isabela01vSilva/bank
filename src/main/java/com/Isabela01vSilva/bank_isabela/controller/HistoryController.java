@@ -77,4 +77,14 @@ public class HistoryController {
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.ok(history);
     }
+
+    @GetMapping("/customer/{customerId}/transaction")
+    public ResponseEntity<List<TransactionHistoryResponse>> getCustomerTransactions(@PathVariable Long customerId,
+                                                                                    @RequestParam(required = false) AccountType accountType){
+        List<TransactionHistoryResponse> history = historyService.getCustomerTransactions(customerId, accountType);
+
+        return history.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(history);
+    }
 }
