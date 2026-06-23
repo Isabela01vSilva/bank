@@ -58,7 +58,7 @@ public class TransferService {
         validateAccounts(sourceAccount, destinationAccount);
 
         validateSufficientBalance(sourceAccount, transferRequest.amount());
-        executeTransfer(sourceAccount, destinationAccount, transferRequest.amount());
+        //executeTransfer(sourceAccount, destinationAccount, transferRequest.amount());
 
         registerTransferHistory(sourceAccount, destinationAccount, transferRequest.amount());
 
@@ -111,7 +111,7 @@ public class TransferService {
         transfer.setDestinationAccount(destinationAccount);
         transfer.setAmount(transferRequest.amount());
         transfer.setExecutionDate(transferRequest.executionDate());
-        transfer.setTransferStatus(TransferStatus.AGENDADO);
+        transfer.setTransferStatus(TransferStatus.SCHEDULED);
 
         return transferRepository.save(transfer);
     }
@@ -154,7 +154,7 @@ public class TransferService {
                                  BigDecimal amount) {
 
         try {
-            transfer.setTransferStatus(TransferStatus.PROCESSANDO);
+            transfer.setTransferStatus(TransferStatus.PROCESSING);
             transferRepository.save(transfer);
 
             sourceAccount.setBalance(sourceAccount.getBalance().subtract(amount));
@@ -163,10 +163,10 @@ public class TransferService {
             accountRepository.save(sourceAccount);
             accountRepository.save(destinationAccount);
 
-            transfer.setTransferStatus(TransferStatus.CONCLUIDO);
+            transfer.setTransferStatus(TransferStatus.COMPLETED);
             transferRepository.save(transfer);
         } catch (Exception e) {
-            transfer.setTransferStatus(TransferStatus.FALHA);
+            transfer.setTransferStatus(TransferStatus.FAILED);
             transferRepository.save(transfer);
 
             throw e;

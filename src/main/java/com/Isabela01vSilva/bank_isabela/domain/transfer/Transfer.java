@@ -27,6 +27,9 @@ public class Transfer {
     @Column(name = "valor", nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "data_criacao", nullable = false)
+    private LocalDateTime createdAt;
+
     @Column(name = "data_execucao", nullable = false)
     private LocalDateTime executionDate;
 

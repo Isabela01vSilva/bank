@@ -1,92 +1,122 @@
----
-## RF013 - Transferência
 
-**Descrição:** Permitir a realização de transferências entre contas bancárias.
+# RF018 - Realizar Transferência
 
-### Campos Obrigatórios
+## Descrição
 
-* Número da agência Origem
-* Número da conta Origem
-* Valor
-* Número da agência Destino
-* Número da conta Destino
-
-### Exibir
-
-* Mensagem com "Valor de R$00.00 de transferido da conta: 00000-0 agencia: 0000, para a conta: 00000-0 agencia: 0000, saldo atual: "
-
-### Regras de Negócio
-
-* Aplicar as validações definidas no RF010.
-* A transferência deve possuir um valor.
-* O valor da transferência deve ser maior que zero.
-* A conta de origem deve possuir saldo suficiente para realizar a transferência.
-* O cliente pode realizar transferências entre suas próprias contas.
-* O cliente pode realizar transferências para contas de outros clientes.
-* O valor transferido pode ser debitado tanto de uma conta corrente quanto de uma conta poupança.
-* O saldo da conta de origem deve ser atualizado imediatamente após a transferência.
-* O saldo da conta de destino deve ser atualizado imediatamente após a transferência.
-* A conta de origem e a conta de destino não podem ser a mesma conta.
-* Cada conta possui realização de transferências independentes.
-* Ambas podem ser utilizadas para movimentações financeiras.
+Permitir que o cliente realize transferências financeiras entre contas bancárias.
 
 ---
 
-# Módulo 6 - Transferências
+## Dados de Entrada
 
-## RF017 - Realizar Transferência
-
-### Descrição
-
-Permitir que o cliente realize transferências entre contas bancárias.
-
-### Informações exibidas
-
-* Conta de origem
-* Conta de destino
-* Valor da transferência
-* Data e hora da transferência
-* Status da transferência
-
-### Regras de negócio
-
-* A conta de origem deve estar ativa.
-* A conta de destino deve estar ativa.
-* O valor da transferência deve ser maior que zero.
-* O cliente deve possuir saldo suficiente na conta de origem.
-* O sistema deve atualizar os saldos das contas envolvidas imediatamente após a realização da transferência.
-* O sistema deve registrar a movimentação no histórico das contas de origem e destino.
-* O sistema deve impedir transferências para a mesma conta de origem.
-* O sistema deve exibir uma mensagem de erro caso a transferência não possa ser realizada.
-* O sistema deve registrar data, hora, valor, conta de origem, conta de destino e status da transferência para fins de auditoria.
-
-### Status
-
-* PROCESSANDO
-* CONCLUIDA
-* FALHOU
-* CANCELADA
+| Campo | Obrigatório |
+|---------|---------|
+| Agência de origem | Sim |
+| Conta de origem | Sim |
+| Agência de destino | Sim |
+| Conta de destino | Sim |
+| Valor da transferência | Sim |
 
 ---
 
-## RF018 - Consultar Histórico de Transferências
+## Informações Retornadas
 
-### Descrição
+| Campo |
+|---------|
+| Conta de origem |
+| Conta de destino |
+| Valor transferido |
+| Data e hora da transferência |
+| Status da transferência |
+| Saldo atualizado da conta de origem |
 
-Permitir que o cliente visualize as transferências realizadas.
+### Exemplo
 
-### Informações exibidas
+```text
+Transferência realizada com sucesso.
 
-* Conta de origem
-* Conta de destino
-* Valor
-* Data e hora
-* Status
+Valor: R$ 500,00
+Conta Origem: 12345-6
+Agência Origem: 0001
 
-### Regras de negócio
+Conta Destino: 65432-1
+Agência Destino: 0002
 
-* O cliente pode visualizar apenas transferências relacionadas às suas contas.
-* O histórico deve apresentar as transferências mais recentes primeiro.
-* O histórico não pode ser alterado ou excluído pelo cliente.
+Saldo Atual: R$ 1.500,00
+Status: CONCLUIDA
+```
 
 ---
+
+## Regras de Negócio
+
+- A conta de origem deve existir e ativa.
+- A conta de destino deve existir e ativa.
+- O valor da transferência é obrigatório.
+- O valor da transferência deve ser maior que zero.
+- A conta de origem deve possuir saldo suficiente para realizar a transferência.
+- Não é permitido transferir para a mesma conta, mas é permitido transferir entre contas.
+- Após transferencia, o valor deve ser debitado da conta de origem.
+- Após transferencia, o valor deve ser creditado na conta de destino.
+- A atualização dos saldos deve ocorrer de forma imediata e atômica.
+- Em caso de falha, nenhuma movimentação financeira deverá ser realizada.
+- Toda transferência deve possuir um identificador único para rastreabilidade e auditoria.
+
+### RN013.01
+
+O sistema deve registrar a transferência para fins de auditoria.
+
+Devem ser armazenados:
+
+- Data
+- Hora
+- Conta de origem
+- Conta de destino
+- Valor
+- Status
+
+### RN013.02
+
+O sistema deve registrar movimentações no histórico das contas envolvidas.
+
+- Histórico da conta de origem
+- Histórico da conta de destino
+
+---
+
+## Status da Transferência
+
+| Status      | Descrição |
+|-------------|----------|
+| PROCESSANDO | Transferência em execução |
+| CONCLUIDA   | Transferência realizada com sucesso |
+| FALHOU      | Erro durante a operação |
+| CANCELADA   | Operação cancelada |
+
+---
+
+# RF019 - Consultar Histórico de Transferências
+
+## Descrição
+
+Permitir que o cliente visualize as transferências relacionadas às suas contas.
+
+---
+
+## Informações Exibidas
+
+| Campo |
+|---------|
+| Conta de origem |
+| Conta de destino |
+| Valor |
+| Data e hora |
+| Status |
+
+---
+
+## Regras de Negócio
+
+- O cliente pode visualizar apenas transferências associadas às suas contas.
+- O histórico deve ser exibido da mais recente para a mais antiga.
+- O histórico é somente leitura.

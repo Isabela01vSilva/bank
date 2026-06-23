@@ -47,9 +47,8 @@ Legenda:
 
 ## Transferências
 
-- [ ] Transferência entre contas
-- [ ] Validação de saldo
-- [ ] Histórico de transferências
+- [ ] RF018 - Realizar Transferência 
+- [ ] RF019 - Histórico de transferências
 
 ---
 
