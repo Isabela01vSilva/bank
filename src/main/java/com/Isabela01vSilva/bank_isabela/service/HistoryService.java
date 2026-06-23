@@ -5,13 +5,15 @@ import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHist
 import com.Isabela01vSilva.bank_isabela.controller.response.history.HistoryResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.TransactionHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
-import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
+import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.History;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
 import com.Isabela01vSilva.bank_isabela.domain.mapper.HistoryMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +25,7 @@ public class HistoryService {
     private HistoryRepository historyRepository;
 
     @Autowired
-    private CustomerService customerService;
+    private CustomerRepository customerRepository;
 
     public HistoryResponse register(RegisterHistoryRequest request) {
 
@@ -55,7 +57,9 @@ public class HistoryService {
 
     public List<CustomerHistoryResponse> getCustomerHistoryByTransactionType(Long customerId,
                                                                              List<HistoryType> historyTypes) {
-        customerService.findCustomerById(customerId);
+        if (!customerRepository.existsById(customerId)) {
+            throw new EntityNotFoundException("Cliente não encontrado");
+        }
 
         return historyRepository.findByCustomerIdAndHistoryTypeIn(customerId, historyTypes)
                 .stream()

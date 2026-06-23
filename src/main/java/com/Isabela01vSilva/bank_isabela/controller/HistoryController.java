@@ -51,14 +51,8 @@ public class HistoryController {
     }
 
     @GetMapping("/account/{accountId}")
-    public ResponseEntity<List<TransactionHistoryResponse>> getTransactionHistory(@PathVariable Long accountId) {
-
-        var historyTypes = List.of(
-                HistoryType.DEPOSIT,
-                HistoryType.WITHDRAWAL,
-                HistoryType.WITHDRAWAL_FAILED,
-                HistoryType.TRANSFER
-        );
+    public ResponseEntity<List<TransactionHistoryResponse>> getTransactionHistory(@PathVariable Long accountId,
+                                                                                  @RequestParam List<HistoryType> historyTypes) {
 
         List<TransactionHistoryResponse> history = historyService.getAccountHistoryByTransactionType(accountId, historyTypes);
 
@@ -68,7 +62,7 @@ public class HistoryController {
     }
 
 
-    @GetMapping("/accounts/{accountId}/between-dates")
+    @GetMapping("/between-dates/{accountId}")
     public ResponseEntity<List<TransactionHistoryResponse>> getHistoryBetweenDates(@PathVariable Long accountId,
                                                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                                                    @RequestParam LocalDateTime startDate,
