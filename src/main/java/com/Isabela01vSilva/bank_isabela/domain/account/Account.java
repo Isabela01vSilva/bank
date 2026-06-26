@@ -53,4 +53,12 @@ public class Account {
     @Column(name = "motivo_alteracao_status")
     private String statusChangeReason;
 
+
+    public void deposit(BigDecimal amount) {
+        this.balance = this.balance.add(amount);
+    }
+
+    public void withdraw(BigDecimal amount) {
+        this.balance = this.balance.subtract(amount);
+    }
 }

@@ -40,7 +40,7 @@ public class BankListenerService {
         System.out.println("Mensagem recebida do SQS: " + message);
         Long appointmentId = Long.valueOf(Objects.requireNonNull(message.getHeaders().get("appointmentId", String.class)));
 
-        try {
+      /*  try {
             PayloadDTO payloadDTO = objectMapper.readValue(message.getPayload(), PayloadDTO.class);
 
             Account contaOrigem = contaRepository.findByAccountNumber(payloadDTO.getNumeroContaOrigem())
@@ -61,6 +61,6 @@ public class BankListenerService {
             System.err.println("Falha na leitura ou execução da mensagem: " + ex.getMessage());
             scheduleClientService.enviarCallback(new CallbackDTO(appointmentId, TransferStatus.RETENTAR));
             throw ex;
-        }
+        }*/
     }
 }

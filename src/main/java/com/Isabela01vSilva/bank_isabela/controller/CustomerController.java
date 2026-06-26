@@ -5,7 +5,7 @@ import com.Isabela01vSilva.bank_isabela.controller.request.customer.UpdateCustom
 import com.Isabela01vSilva.bank_isabela.controller.response.CustomerAccountsResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.customer.CustomerResponse;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
-import com.Isabela01vSilva.bank_isabela.domain.mapper.CustomerMappers;
+import com.Isabela01vSilva.bank_isabela.mapper.CustomerMappers;
 import com.Isabela01vSilva.bank_isabela.service.CustomerService;
 import com.Isabela01vSilva.bank_isabela.service.dto.AccountCustomerDTO;
 import jakarta.validation.Valid;

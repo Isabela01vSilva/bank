@@ -12,7 +12,7 @@ import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerStatus;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
-import com.Isabela01vSilva.bank_isabela.domain.mapper.AccountMappers;
+import com.Isabela01vSilva.bank_isabela.mapper.AccountMappers;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

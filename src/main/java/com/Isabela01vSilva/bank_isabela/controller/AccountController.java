@@ -5,7 +5,7 @@ import com.Isabela01vSilva.bank_isabela.controller.request.account.SecondAccount
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.MessageResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.UpdateAccountStatusResponse;
-import com.Isabela01vSilva.bank_isabela.domain.mapper.AccountMappers;
+import com.Isabela01vSilva.bank_isabela.mapper.AccountMappers;
 import com.Isabela01vSilva.bank_isabela.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.Isabela01vSilva.bank_isabela.domain.mapper;
+package com.Isabela01vSilva.bank_isabela.mapper;
 
 import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.HistoryResponse;

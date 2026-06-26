@@ -8,7 +8,7 @@ import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
-import com.Isabela01vSilva.bank_isabela.domain.mapper.CustomerMappers;
+import com.Isabela01vSilva.bank_isabela.mapper.CustomerMappers;
 import com.Isabela01vSilva.bank_isabela.commons.Formatters;
 import com.Isabela01vSilva.bank_isabela.service.dto.AccountCustomerDTO;
 import jakarta.persistence.EntityNotFoundException;

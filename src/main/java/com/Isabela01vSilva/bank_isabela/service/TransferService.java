@@ -1,9 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.history.RegisterHistoryRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferRequest;
-import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferenciaRequest;
-import com.Isabela01vSilva.bank_isabela.domain.account.AccountStatus;
 import com.Isabela01vSilva.bank_isabela.domain.historico.History;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
@@ -14,8 +11,6 @@ import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferStatus;
 import com.Isabela01vSilva.bank_isabela.service.client.ScheduleClientService;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.*;
-import com.Isabela01vSilva.bank_isabela.service.data.request.CreateAppointmentScheduleRequest;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -38,10 +33,14 @@ public class TransferService {
     private HistoryRepository historyRepository;
 
     @Autowired
+    private AccountValidationService accountValidationService;
+
+    @Autowired
+    private BalanceService balanceService;
+
+    @Autowired
     private ScheduleClientService scheduleClientService;
 
-
-    @Transactional
     public String transfer(TransferRequest transferRequest) {
         Account sourceAccount = findAccount(
                 transferRequest.sourceAgencyNumber(),
@@ -53,17 +52,26 @@ public class TransferService {
                 transferRequest.destinationAccountNumber()
         );
 
-        validateActiveAccount(sourceAccount);
-        validateActiveAccount(destinationAccount);
+        validateTransfer(sourceAccount, destinationAccount, transferRequest.amount());
 
-        validateAccounts(sourceAccount, destinationAccount);
-
-        validateSufficientBalance(sourceAccount, transferRequest.amount());
         executeTransfer(sourceAccount, destinationAccount, transferRequest.amount());
 
         registerTransferHistory(sourceAccount, destinationAccount, transferRequest.amount());
 
         return "Transferência realizada com sucesso!";
+    }
+
+    private void validateTransfer(Account sourceAccount,
+                                  Account destinationAccount,
+                                  BigDecimal amount) {
+
+        accountValidationService.validateActiveAccount(sourceAccount);
+
+        accountValidationService.validateActiveAccount(destinationAccount);
+
+        accountValidationService.validateAccounts(sourceAccount, destinationAccount);
+
+        accountValidationService.validateSufficientBalance(sourceAccount, amount);
     }
 
     public Account findAccount(String agencyNumber,
@@ -72,54 +80,13 @@ public class TransferService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    private void validateActiveAccount(Account account) {
-        if (account.getAccountStatus() != AccountStatus.ATIVO) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
-                    String.format("Account %s is not active", account.getAccountNumber()
-                    )
-            );
-        }
-    }
-
-    private void validateSufficientBalance(Account sourceAccount,
-                                           BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "O valor deve ser maior que Zero");
-        }
-
-        if (amount.compareTo(sourceAccount.getBalance()) > 0) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Saldo insuficiente");
-        }
-    }
-
-    private void validateAccounts(Account sourceAccount,
-                                  Account destinationAccount) {
-        if (sourceAccount.getId().equals(destinationAccount.getId())) {
-            throw new ResponseStatusException(
-                    HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Não é permitido transferir para a mesma conta"
-            );
-        }
-    }
-
-    private Transfer createTransfer(TransferRequest transferRequest,
-                                    Account sourceAccount,
-                                    Account destinationAccount) {
-
-        Transfer transfer = new Transfer();
-
-        transfer.setSourceAccount(sourceAccount);
-        transfer.setDestinationAccount(destinationAccount);
-        transfer.setAmount(transferRequest.amount());
-        transfer.setTransferStatus(TransferStatus.SCHEDULED);
-
-        return transferRepository.save(transfer);
-    }
 
     private void registerTransferHistory(Account sourceAccount,
                                          Account destinationAccount,
                                          BigDecimal amount) {
+
         History transferOut = new History();
+
         transferOut.setAccount(sourceAccount);
         transferOut.setCustomer(sourceAccount.getCustomer());
         transferOut.setHistoryType(HistoryType.TRANSFER);
@@ -148,26 +115,35 @@ public class TransferService {
         historyRepository.save(transferIn);
     }
 
+    private Transfer createTransfer(Account sourceAccount,
+                                    Account destinationAccount,
+                                    BigDecimal amount,
+                                    TransferStatus transferStatus
+    ) {
+
+        Transfer transfer = new Transfer();
+
+        transfer.setSourceAccount(sourceAccount);
+        transfer.setDestinationAccount(destinationAccount);
+        transfer.setAmount(amount);
+        transfer.setCreatedAt(LocalDateTime.now());
+        transfer.setExecutionDate(LocalDateTime.now());
+        transfer.setTransferStatus(transferStatus);
+
+        return transfer;
+    }
+
+    @Transactional
     private void executeTransfer(Account sourceAccount,
                                  Account destinationAccount,
                                  BigDecimal amount) {
 
-        Transfer transfer = new Transfer();
-        transfer.setCreatedAt(LocalDateTime.now());
-        transfer.setExecutionDate(LocalDateTime.now());
-        transfer.setAmount(amount);
-        transfer.setTransferStatus(TransferStatus.PROCESSING);
-        transfer.setDestinationAccount(destinationAccount);
-        transfer.setSourceAccount(sourceAccount);
+        Transfer transfer = createTransfer(sourceAccount,  destinationAccount, amount, TransferStatus.PROCESSING);
 
         try {
             transfer = transferRepository.save(transfer);
 
-            sourceAccount.setBalance(sourceAccount.getBalance().subtract(amount));
-            destinationAccount.setBalance(destinationAccount.getBalance().add(amount));
-
-            accountRepository.save(sourceAccount);
-            accountRepository.save(destinationAccount);
+            balanceService.transfer(sourceAccount, destinationAccount, amount);
 
             transfer.setTransferStatus(TransferStatus.COMPLETED);
             transferRepository.save(transfer);
