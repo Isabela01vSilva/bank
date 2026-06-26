@@ -22,11 +22,11 @@ public class ScheduledTransferController {
     @Autowired
     private ScheduleClientService scheduleClient;
 
-    @PostMapping("/realizar")
+    /*@PostMapping("/realizar")
     public ResponseEntity<MessageResponse> realizarTransferenciaAg(@RequestBody TransferenciaRequest transferenciaRequest) {
         service.agendarTransferencia(transferenciaRequest);
         return ResponseEntity.ok(new MessageResponse("Transferencia agendada com sucesso!"));
-    }
+    }*/
 
     @PostMapping("/agendar")
     public ResponseEntity<String> criarAgendamento(@RequestBody CreateAppointmentScheduleRequest request) {
