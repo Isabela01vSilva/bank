@@ -17,9 +17,9 @@ public class TransferController {
     @Autowired
     private TransferService service;
 
-    /*@PostMapping("/realizar")
+    @PostMapping("/realizar")
     public ResponseEntity<MessageResponse> realizarTransferencia(@RequestBody TransferRequest transferenciaRequest) {
-        service.transferir(transferenciaRequest);
+        service.transfer(transferenciaRequest);
         return ResponseEntity.ok(new MessageResponse("Transferencia realizada com sucesso!"));
-    }*/
+    }
 }

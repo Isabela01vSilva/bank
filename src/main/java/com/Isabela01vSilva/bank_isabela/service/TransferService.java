@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 public class TransferService {
@@ -58,7 +59,7 @@ public class TransferService {
         validateAccounts(sourceAccount, destinationAccount);
 
         validateSufficientBalance(sourceAccount, transferRequest.amount());
-        //executeTransfer(sourceAccount, destinationAccount, transferRequest.amount());
+        executeTransfer(sourceAccount, destinationAccount, transferRequest.amount());
 
         registerTransferHistory(sourceAccount, destinationAccount, transferRequest.amount());
 
@@ -67,7 +68,7 @@ public class TransferService {
 
     public Account findAccount(String agencyNumber,
                                String accountNumber) {
-        return accountRepository.findByAccountNumberAndAgencyNumber(agencyNumber, accountNumber)
+        return accountRepository.findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber )
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
@@ -110,7 +111,6 @@ public class TransferService {
         transfer.setSourceAccount(sourceAccount);
         transfer.setDestinationAccount(destinationAccount);
         transfer.setAmount(transferRequest.amount());
-        transfer.setExecutionDate(transferRequest.executionDate());
         transfer.setTransferStatus(TransferStatus.SCHEDULED);
 
         return transferRepository.save(transfer);
@@ -148,14 +148,20 @@ public class TransferService {
         historyRepository.save(transferIn);
     }
 
-    private void executeTransfer(Transfer transfer,
-                                 Account sourceAccount,
+    private void executeTransfer(Account sourceAccount,
                                  Account destinationAccount,
                                  BigDecimal amount) {
 
+        Transfer transfer = new Transfer();
+        transfer.setCreatedAt(LocalDateTime.now());
+        transfer.setExecutionDate(LocalDateTime.now());
+        transfer.setAmount(amount);
+        transfer.setTransferStatus(TransferStatus.PROCESSING);
+        transfer.setDestinationAccount(destinationAccount);
+        transfer.setSourceAccount(sourceAccount);
+
         try {
-            transfer.setTransferStatus(TransferStatus.PROCESSING);
-            transferRepository.save(transfer);
+            transfer = transferRepository.save(transfer);
 
             sourceAccount.setBalance(sourceAccount.getBalance().subtract(amount));
             destinationAccount.setBalance(destinationAccount.getBalance().add(amount));
