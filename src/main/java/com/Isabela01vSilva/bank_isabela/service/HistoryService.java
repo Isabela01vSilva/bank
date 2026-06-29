@@ -4,6 +4,7 @@ import com.Isabela01vSilva.bank_isabela.controller.request.history.RegisterHisto
 import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.HistoryResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.TransactionHistoryResponse;
+import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
 import com.Isabela01vSilva.bank_isabela.domain.historico.History;
@@ -14,6 +15,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -96,5 +98,14 @@ public class HistoryService {
                                 .equals(accountType))
                 .map(HistoryMapper::toTransactionResponse)
                 .toList();
+    }
+
+    public void registerTransfer(Account source,
+                                 Account destination,
+                                 BigDecimal amount){
+        historyRepository.saveAll(List.of(
+                HistoryMapper.createTransferOut(source, destination, amount),
+                HistoryMapper.createTransferIn(source, destination, amount)
+        ));
     }
 }

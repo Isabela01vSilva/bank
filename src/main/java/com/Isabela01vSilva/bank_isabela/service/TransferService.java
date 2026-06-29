@@ -1,9 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.service;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferRequest;
-import com.Isabela01vSilva.bank_isabela.domain.historico.History;
-import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryRepository;
-import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.Transfer;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferRepository;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
@@ -19,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TransferService {
@@ -30,17 +28,18 @@ public class TransferService {
     private TransferRepository transferRepository;
 
     @Autowired
-    private HistoryRepository historyRepository;
-
-    @Autowired
     private AccountValidationService accountValidationService;
 
     @Autowired
     private BalanceService balanceService;
 
     @Autowired
+    private HistoryService historyService;
+
+    @Autowired
     private ScheduleClientService scheduleClientService;
 
+    @Transactional
     public String transfer(TransferRequest transferRequest) {
         Account sourceAccount = findAccount(
                 transferRequest.sourceAgencyNumber(),
@@ -56,7 +55,7 @@ public class TransferService {
 
         executeTransfer(sourceAccount, destinationAccount, transferRequest.amount());
 
-        registerTransferHistory(sourceAccount, destinationAccount, transferRequest.amount());
+        historyService.registerTransfer(sourceAccount, destinationAccount, transferRequest.amount());
 
         return "Transferência realizada com sucesso!";
     }
@@ -80,40 +79,6 @@ public class TransferService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-
-    private void registerTransferHistory(Account sourceAccount,
-                                         Account destinationAccount,
-                                         BigDecimal amount) {
-
-        History transferOut = new History();
-
-        transferOut.setAccount(sourceAccount);
-        transferOut.setCustomer(sourceAccount.getCustomer());
-        transferOut.setHistoryType(HistoryType.TRANSFER);
-        transferOut.setAmount(amount);
-        transferOut.setDescription(
-                "Transferência enviada para a conta: "
-                        + destinationAccount.getAgencyNumber()
-                        + destinationAccount.getAccountNumber()
-                        + " no valor de R$ " + amount
-        );
-
-        historyRepository.save(transferOut);
-
-        History transferIn = new History();
-        transferIn.setAccount(destinationAccount);
-        transferIn.setCustomer(destinationAccount.getCustomer());
-        transferIn.setHistoryType(HistoryType.TRANSFER);
-        transferIn.setAmount(amount);
-        transferIn.setDescription(
-                "Transferência recebida da conta: "
-                        + sourceAccount.getAgencyNumber()
-                        + sourceAccount.getAccountNumber()
-                        + " no valor de R$ " + amount
-        );
-
-        historyRepository.save(transferIn);
-    }
 
     private Transfer createTransfer(Account sourceAccount,
                                     Account destinationAccount,
@@ -155,11 +120,6 @@ public class TransferService {
         }
     }
 
-    private void updateTransferStatus(Transfer transfer,
-                                      TransferStatus transferStatus) {
-        transfer.setTransferStatus(transferStatus);
-        transferRepository.save(transfer);
-    }
 
     //Fluxo Principal de agendamento
     /*@Transactional
