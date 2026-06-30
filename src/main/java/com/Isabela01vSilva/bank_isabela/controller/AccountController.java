@@ -5,9 +5,12 @@ import com.Isabela01vSilva.bank_isabela.controller.request.account.SecondAccount
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.MessageResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.UpdateAccountStatusResponse;
+import com.Isabela01vSilva.bank_isabela.domain.account.Account;
+import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import com.Isabela01vSilva.bank_isabela.mapper.AccountMappers;
-import com.Isabela01vSilva.bank_isabela.service.AccountService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.Isabela01vSilva.bank_isabela.service.account.AccountService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,51 +20,46 @@ import java.util.List;
 
 @RestController
 @RequestMapping("contas")
+@RequiredArgsConstructor
 public class AccountController {
 
-    @Autowired
-    private AccountService accountService;
-
-    @GetMapping("/buscar/cpf")
-    public ResponseEntity<List<AccountWithCustomerResponse>> searchByCpf(@RequestParam String cpf) {
-        List<AccountWithCustomerResponse> accounts = accountService.searchAccountsByCpf(cpf);
-        return ResponseEntity.ok(accounts);
-    }
-
-    @GetMapping("/buscar/conta")
-    public ResponseEntity<AccountWithCustomerResponse> searchByAccuntNumberAndAgencyNumber(@RequestParam String accountNumber, @RequestParam String agencyNumber) {
-        AccountWithCustomerResponse account = accountService.searchAccountsByAccountNumberAndAgencyNumber(accountNumber, agencyNumber);
-        return ResponseEntity.ok(account);
-    }
-
-    @PatchMapping("/atualizarStatus")
-    public ResponseEntity<UpdateAccountStatusResponse> updateAccountStatus(@RequestBody UpdateAccountStatusRequest request) {
-        UpdateAccountStatusResponse response = accountService.updateAccountStatus(request);
-        return ResponseEntity.ok(response);
-    }
-
-    //Abrir segunda conta
-    @PostMapping("/abrir")
-    public ResponseEntity<AccountWithCustomerResponse> openAccountByCpf(@RequestBody SecondAccountRequest request) {
-        var account = accountService.createAccountForCpf(request.cpf(), request.accountType());
-        return ResponseEntity.status(HttpStatus.CREATED).body(AccountMappers.fromAccountToResponse(account));
-    }
+    private final AccountService accountService;
 
     @PostMapping("/saque")
-    public ResponseEntity<MessageResponse> withdraw(@RequestBody AccountTransactionRequest withdrawalRequest) {
-        String message = accountService.withdrawal(withdrawalRequest);
-        return ResponseEntity.ok(new MessageResponse(message));
+    public ResponseEntity<String> withdrawal(@RequestBody @Valid AccountTransactionRequest request) {
+        return ResponseEntity.ok(accountService.withdrawal(request));
     }
 
     @PostMapping("/depositar")
-    public ResponseEntity<MessageResponse> deposit(@RequestBody AccountTransactionRequest depositRequest) {
-        String message = accountService.deposit(depositRequest);
-        return ResponseEntity.ok(new MessageResponse(message));
+    public ResponseEntity<String> deposit(@RequestBody @Valid AccountTransactionRequest request) {
+        return ResponseEntity.ok(accountService.deposit(request));
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account createForCpf(@RequestParam String cpf, @RequestParam AccountType accountType) {
+        return accountService.createAccountForCpf(cpf, accountType);
+    }
+
+    @PatchMapping("/atualizarStatus")
+    public UpdateAccountStatusResponse updateStatus(@RequestBody @Valid UpdateAccountStatusRequest request) {
+        return accountService.updateAccountStatus(request);
+    }
+
+    @GetMapping("/buscar/cpf")
+    public List<AccountWithCustomerResponse> searchByCpf(@PathVariable String cpf) {
+        return accountService.searchByCpf(cpf);
+    }
+
+    @GetMapping("/buscar/conta")
+    public ResponseEntity<AccountWithCustomerResponse> searchByAccuntNumberAndAgencyNumber(@RequestParam String accountNumber,
+                                                                                           @RequestParam String agencyNumber) {
+        return accountService.searchByAccountNumberAndAgency(accountNumber, agencyNumber);
     }
 
     @GetMapping("/saldo")
-    public ResponseEntity<MessageResponse> getBalance(@RequestParam String accountNumber, @RequestParam String agencyNumber) {
-        String message = accountService.getBalance(accountNumber, agencyNumber);
-        return ResponseEntity.ok(new MessageResponse(message));
+    public String getBalance(@RequestParam String accountNumber, @RequestParam String agencyNumber) {
+        return accountService.getBalance(accountNumber, agencyNumber);
     }
+
 }

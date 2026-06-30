@@ -2,16 +2,12 @@ package com.Isabela01vSilva.bank_isabela.domain.account;
 
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Getter
-@Setter
+@Data
 @Table(name = "contas")
 @Entity(name = "Conta")
 @AllArgsConstructor
@@ -53,12 +49,57 @@ public class Account {
     @Column(name = "motivo_alteracao_status")
     private String statusChangeReason;
 
+    // Factory method — substitui o mapper com setters em cadeia
+    public static Account create(String accountNumber,
+                                 String agencyNumber,
+                                 AccountType accountType,
+                                 Customer customer) {
+        Account account = new Account();
+        account.accountNumber = accountNumber;
+        account.agencyNumber = agencyNumber;
+        account.accountType = accountType;
+        account.customer = customer;
+        account.accountStatus = AccountStatus.ATIVO;
+        account.balance = BigDecimal.ZERO;
+        account.creationDate = LocalDate.now();
+        return account;
+    }
 
+    // Operações financeiras
     public void deposit(BigDecimal amount) {
         this.balance = this.balance.add(amount);
     }
 
     public void withdraw(BigDecimal amount) {
         this.balance = this.balance.subtract(amount);
+    }
+
+    // Consultas de estado
+    public boolean isActive() {
+        return this.accountStatus.equals(AccountStatus.ATIVO);
+    }
+
+    public boolean isClosed() {
+        return this.accountStatus.equals(AccountStatus.ENCERRADO);
+    }
+
+    public boolean hasInsufficientBalance(BigDecimal amount) {
+        return this.balance.compareTo(amount) < 0;
+    }
+
+    public boolean hasBalance() {
+        return this.balance.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    // Mudança de stts
+    public void close(String reason) {
+        this.statusChangeReason = reason;
+        this.statusChangeDate = LocalDate.now();
+        this.accountStatus = AccountStatus.ENCERRADO;
+    }
+
+    public void reactivate() {
+        this.accountStatus = AccountStatus.ATIVO;
+        this.statusChangeDate = LocalDate.now();
     }
 }

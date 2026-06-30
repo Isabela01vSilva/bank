@@ -25,7 +25,7 @@ public class AccountMappers {
         return account;
     }
 
-    public static AccountWithCustomerResponse fromAccountToResponse(Account account) {
+    public static AccountWithCustomerResponse toAccountWithCustomerResponse(Account account) {
         return new AccountWithCustomerResponse(
                 account.getCustomer().getFullName(),
                 account.getCustomer().getCpf(),
@@ -38,7 +38,7 @@ public class AccountMappers {
         );
     }
 
-    public static UpdateAccountStatusResponse toUpdateAccountStatusResponse(Account account) {
+    public static UpdateAccountStatusResponse toUpdateStatusResponse(Account account) {
         return new UpdateAccountStatusResponse(
                 account.getAccountNumber(),
                 account.getAgencyNumber(),

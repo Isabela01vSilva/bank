@@ -9,6 +9,7 @@ import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountStatus;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
+import com.Isabela01vSilva.bank_isabela.service.account.AccountService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
