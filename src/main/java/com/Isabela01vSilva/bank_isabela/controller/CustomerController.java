@@ -1,28 +1,28 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.CustomerAccountRequest;
+import com.Isabela01vSilva.bank_isabela.controller.request.customer.CustomerAccountRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.customer.UpdateCustomerRequest;
-import com.Isabela01vSilva.bank_isabela.controller.response.CustomerAccountsResponse;
+import com.Isabela01vSilva.bank_isabela.controller.response.customer.CustomerAccountsResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.customer.CustomerResponse;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.mapper.CustomerMappers;
-import com.Isabela01vSilva.bank_isabela.service.CustomerService;
+import com.Isabela01vSilva.bank_isabela.service.customer.CustomerService;
 import com.Isabela01vSilva.bank_isabela.service.dto.AccountCustomerDTO;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("clientes")
+@RequiredArgsConstructor
 public class CustomerController {
 
-    @Autowired
-    private CustomerService customerService;
+    private final CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<CustomerAccountsResponse> createCustomer(@Valid @RequestBody CustomerAccountRequest data) {
+    public ResponseEntity<CustomerAccountsResponse> createCustomer(@RequestBody @Valid CustomerAccountRequest data) {
         AccountCustomerDTO createCustomer = customerService.register(data);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -30,20 +30,15 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable Long id) {
+    public CustomerResponse getCustomerById(@PathVariable Long id) {
         Customer customer = customerService.findCustomerById(id);
-
-        return ResponseEntity.ok(
-                CustomerMappers.fromCustomerToResponse(customer)
-        );
+        return CustomerMappers.fromCustomerToResponse(customer);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponse> updateCustomer(@PathVariable Long id, @Valid @RequestBody UpdateCustomerRequest data) {
-        Customer updatedCustomer = customerService.updateCustomer(id, data);
-
-        return ResponseEntity.ok(
-                CustomerMappers.fromCustomerToResponse(updatedCustomer)
-        );
+    public CustomerResponse updateCustomer(@PathVariable Long id,
+                                                           @RequestBody @Valid UpdateCustomerRequest request) {
+        Customer updatedCustomer = customerService.updateCustomer(id, request);
+        return CustomerMappers.fromCustomerToResponse(updatedCustomer);
     }
 }

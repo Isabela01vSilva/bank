@@ -1,7 +1,6 @@
-package com.Isabela01vSilva.bank_isabela.controller.response;
+package com.Isabela01vSilva.bank_isabela.controller.response.customer;
 
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountResponse;
-import com.Isabela01vSilva.bank_isabela.controller.response.customer.CustomerResponse;
 
 import java.util.List;
 

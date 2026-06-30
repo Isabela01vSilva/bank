@@ -1,21 +1,18 @@
 package com.Isabela01vSilva.bank_isabela.domain.customer;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.customer.CustomerRequest;
 import com.Isabela01vSilva.bank_isabela.controller.request.customer.UpdateCustomerRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 import java.time.LocalDate;
 
-@Setter
-@Getter
+
 @Table(name = "cliente")
 @Entity(name = "Cliente")
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +39,20 @@ public class Customer {
     @Column(name = "status_cliente", nullable = false)
     private CustomerStatus customerStatus;
 
-    public void updateInfoCustomer(UpdateCustomerRequest data) {
+    // Métodos
+    public boolean isActive(){
+        return this.customerStatus == CustomerStatus.ATIVO;
+    }
+
+    public void activate(){
+        this.customerStatus = CustomerStatus.ATIVO;
+    }
+
+    public void deactivate(){
+        this.customerStatus = CustomerStatus.INATIVO;
+    }
+
+    public void updateInfo(UpdateCustomerRequest data) {
         // Atualiza somente campos não-nulos da requisição
         if (data.fullName() != null) {
             this.fullName = data.fullName();

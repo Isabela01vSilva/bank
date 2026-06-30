@@ -1,18 +1,18 @@
 package com.Isabela01vSilva.bank_isabela.mapper;
 
 import com.Isabela01vSilva.bank_isabela.commons.Formatters;
-import com.Isabela01vSilva.bank_isabela.controller.request.CustomerAccountRequest;
-import com.Isabela01vSilva.bank_isabela.controller.response.CustomerAccountsResponse;
+import com.Isabela01vSilva.bank_isabela.controller.request.customer.CustomerAccountRequest;
+import com.Isabela01vSilva.bank_isabela.controller.response.customer.CustomerAccountsResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.customer.CustomerResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
-import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerStatus;
 import com.Isabela01vSilva.bank_isabela.service.dto.AccountCustomerDTO;
 
 import java.util.List;
 
 public class CustomerMappers {
+
     public static Customer fromRequestToCustomer(CustomerAccountRequest data) {
         Customer customer = new Customer();
         customer.setFullName(data.fullName());
@@ -20,7 +20,7 @@ public class CustomerMappers {
         customer.setCpf(Formatters.normalize(data.cpf()));
         customer.setEmail(Formatters.normalizeEmail(data.email()));
         customer.setPhoneNumber(Formatters.normalizePhone(data.phoneNumber()));
-        customer.setCustomerStatus(CustomerStatus.ATIVO);
+        customer.activate(); // usa o metodo de domínio
         return customer;
     }
 

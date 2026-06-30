@@ -1,4 +1,4 @@
-package com.Isabela01vSilva.bank_isabela.controller.request;
+package com.Isabela01vSilva.bank_isabela.controller.request.customer;
 
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import jakarta.validation.constraints.NotBlank;
@@ -17,6 +17,7 @@ public record CustomerAccountRequest(
         @NotNull(message = "Data de nascimento é obrigatória")
         @Past(message = "Data de nascimento deve ser uma data válida")
         LocalDate birthDate,
+
         @NotBlank(message = "CPF é obrigatório")
         String cpf,
 
