@@ -43,26 +43,27 @@ Legenda:
 
 ---
 
-# 🚧 Fase 2 - Transferências
+# ✅ Fase 2 - Transferências
 
 ## Transferências
 
-- [ ] RF018 - Realizar Transferência 
-- [ ] RF019 - Histórico de transferências
+- [✅] RF018 - Realizar transferência
+- [✅] RF019 - Consultar histórico de transferências
 
 ---
 
-### Fase 2.1 - Qualidade e Padronização
+# 🚧 Fase 3 - Qualidade e Padronização
 
-- [ ] Tratamento global de exceções
-- [ ] Padronização das mensagens de erro
-- [ ] Padronização das respostas da API
-- [ ] Validações avançadas
-- [ ] Melhorias de código
+- [ ] RF020 - Tratamento global de exceções
+- [ ] RF021 - Padronização das respostas da API
+- [ ] RF022 - Validações avançadas com Bean Validation
+- [🚧] RF024 - Melhorias de código (refactor em andamento)
+- [ ] RF023 - Documentação com Swagger / OpenAPI
+- [ ] Ordenação decrescente por data nos endpoints de histórico
 
 ---
 
-# 📅 Fase 3 - Agendamentos
+# 📅 Fase 4 - Agendamentos
 
 ## Scheduler
 
@@ -74,7 +75,7 @@ Legenda:
 
 ---
 
-# 📅 Fase 4 - Dashboard Financeiro
+# 📅 Fase 5 - Dashboard Financeiro
 
 ## Indicadores
 
@@ -98,7 +99,7 @@ Legenda:
 
 ---
 
-# 📅 Fase 5 - Boletos
+# 📅 Fase 6 - Boletos
 
 ## Boleto de Depósito
 
@@ -115,7 +116,7 @@ Legenda:
 
 ---
 
-# 📅 Fase 6 - Cartão de Crédito
+# 📅 Fase 7 - Cartão de Crédito
 
 ## Cartão
 

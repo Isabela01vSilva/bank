@@ -93,7 +93,11 @@ O Bank Isabela foi criado como um projeto de portfólio para demonstrar conhecim
 
 ## Roadmap
 
-### 🚧 [Fase 2 - Transferencia](docs/requisitos/fase-2-transferenciaso.md) - Em desenvolvimento
+### ✅ [Fase 1 - Core Bancário](docs/requisitos/fase-1-core-bancario.md) - Concluída
+### ✅ [Fase 2 - Transferências](docs/requisitos/fase-2-transferencias.md) - Concluída
+### 🚧 [Fase 3 - Qualidade e Padronização](docs/requisitos/fase-3-qualidade.md) - Em desenvolvimento
+### 📅 [Fase 4 - Agendamentos](docs/requisitos/fase-4-agendamentos.md) - Planejada
+### 📅 Fase 5 - Frontend - Planejada
 
 Confira o roadmap completo do projeto:
 
