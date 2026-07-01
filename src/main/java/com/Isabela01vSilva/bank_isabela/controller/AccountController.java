@@ -1,13 +1,10 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.account.*;
-import com.Isabela01vSilva.bank_isabela.controller.request.account.SecondAccountRequest;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.AccountWithCustomerResponse;
-import com.Isabela01vSilva.bank_isabela.controller.response.account.MessageResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.account.UpdateAccountStatusResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
-import com.Isabela01vSilva.bank_isabela.mapper.AccountMappers;
 import com.Isabela01vSilva.bank_isabela.service.account.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

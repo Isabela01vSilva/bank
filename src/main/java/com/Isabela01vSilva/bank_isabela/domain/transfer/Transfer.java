@@ -2,14 +2,16 @@ package com.Isabela01vSilva.bank_isabela.domain.transfer;
 
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @Entity
 @Table(name = "transferencia")
+@NoArgsConstructor
 public class Transfer {
 
     @Id
@@ -36,4 +38,24 @@ public class Transfer {
     @Enumerated(EnumType.STRING)
     @Column(name = "status_transferencia", nullable = false)
     private TransferStatus transferStatus;
+
+    public static Transfer create(Account sourceAccount, Account destinationAccount, BigDecimal amount) {
+        Transfer transfer = new Transfer();
+        transfer.sourceAccount = sourceAccount;
+        transfer.destinationAccount = destinationAccount;
+        transfer.amount = amount;
+        transfer.createdAt = LocalDateTime.now();
+        transfer.transferStatus = TransferStatus.PROCESSING;
+        return transfer;
+    }
+
+    public void complete() {
+        this.transferStatus  = TransferStatus.COMPLETED;
+        this.executionDate   = LocalDateTime.now();
+    }
+
+    public void fail() {
+        this.transferStatus  = TransferStatus.FAILED;
+        this.executionDate   = LocalDateTime.now();
+    }
 }

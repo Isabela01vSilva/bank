@@ -1,46 +1,34 @@
-package com.Isabela01vSilva.bank_isabela.service;
+package com.Isabela01vSilva.bank_isabela.service.transfer;
 
 import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferRequest;
+import com.Isabela01vSilva.bank_isabela.controller.response.transfer.TransferResponse;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.Transfer;
 import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferRepository;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
-import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferStatus;
-import com.Isabela01vSilva.bank_isabela.service.client.ScheduleClientService;
-import com.Isabela01vSilva.bank_isabela.service.client.dto.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.Isabela01vSilva.bank_isabela.mapper.TransferMappers;
+import com.Isabela01vSilva.bank_isabela.service.HistoryService;
+import com.Isabela01vSilva.bank_isabela.service.account.AccountValidationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TransferService {
 
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private TransferRepository transferRepository;
-
-    @Autowired
-    private AccountValidationService accountValidationService;
-
-    @Autowired
-    private BalanceService balanceService;
-
-    @Autowired
-    private HistoryService historyService;
-
-    @Autowired
-    private ScheduleClientService scheduleClientService;
+    private final TransferRepository transferRepository;
+    private final AccountRepository accountRepository;
+    private final AccountValidationService accountValidationService;
+    private final BalanceService balanceService;
+    private final HistoryService historyService;
 
     @Transactional
-    public String transfer(TransferRequest transferRequest) {
+    public TransferResponse transfer(TransferRequest transferRequest) {
         Account sourceAccount = findAccount(
                 transferRequest.sourceAgencyNumber(),
                 transferRequest.sourceAccountNumber()
@@ -53,73 +41,44 @@ public class TransferService {
 
         validateTransfer(sourceAccount, destinationAccount, transferRequest.amount());
 
-        executeTransfer(sourceAccount, destinationAccount, transferRequest.amount());
+        Transfer transfer = executeTransfer(sourceAccount, destinationAccount, transferRequest.amount());
 
         historyService.registerTransfer(sourceAccount, destinationAccount, transferRequest.amount());
 
-        return "Transferência realizada com sucesso!";
+        return TransferMappers.toResponse(transfer);
     }
 
-    private void validateTransfer(Account sourceAccount,
-                                  Account destinationAccount,
-                                  BigDecimal amount) {
-
+    private void validateTransfer(Account sourceAccount, Account destinationAccount, BigDecimal amount) {
         accountValidationService.validateActiveAccount(sourceAccount);
-
         accountValidationService.validateActiveAccount(destinationAccount);
-
-        accountValidationService.validateAccounts(sourceAccount, destinationAccount);
-
+        accountValidationService.validateDifferentAccounts(sourceAccount, destinationAccount);
+        accountValidationService.validateAmount(amount);
         accountValidationService.validateSufficientBalance(sourceAccount, amount);
     }
 
-    public Account findAccount(String agencyNumber,
-                               String accountNumber) {
-        return accountRepository.findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber )
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
+    private Transfer executeTransfer(Account sourceAccount, Account destinationAccount, BigDecimal amount) {
 
-
-    private Transfer createTransfer(Account sourceAccount,
-                                    Account destinationAccount,
-                                    BigDecimal amount,
-                                    TransferStatus transferStatus
-    ) {
-
-        Transfer transfer = new Transfer();
-
-        transfer.setSourceAccount(sourceAccount);
-        transfer.setDestinationAccount(destinationAccount);
-        transfer.setAmount(amount);
-        transfer.setCreatedAt(LocalDateTime.now());
-        transfer.setExecutionDate(LocalDateTime.now());
-        transfer.setTransferStatus(transferStatus);
-
-        return transfer;
-    }
-
-    @Transactional
-    private void executeTransfer(Account sourceAccount,
-                                 Account destinationAccount,
-                                 BigDecimal amount) {
-
-        Transfer transfer = createTransfer(sourceAccount,  destinationAccount, amount, TransferStatus.PROCESSING);
+        Transfer transfer = Transfer.create(sourceAccount, destinationAccount, amount);
+        transferRepository.save(transfer);
 
         try {
-            transfer = transferRepository.save(transfer);
-
             balanceService.transfer(sourceAccount, destinationAccount, amount);
+            accountRepository.save(sourceAccount);
+            accountRepository.save(destinationAccount);
 
-            transfer.setTransferStatus(TransferStatus.COMPLETED);
-            transferRepository.save(transfer);
+            transfer.complete();
+            return transferRepository.save(transfer);
         } catch (Exception e) {
-            transfer.setTransferStatus(TransferStatus.FAILED);
+            transfer.fail();
             transferRepository.save(transfer);
-
             throw e;
         }
     }
 
+    public Account findAccount(String agencyNumber,String accountNumber) {
+        return accountRepository.findByAccountNumberAndAgencyNumber(accountNumber, agencyNumber)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada: " + accountNumber));
+    }
 
     //Fluxo Principal de agendamento
     /*@Transactional
