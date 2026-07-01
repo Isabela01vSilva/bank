@@ -1,4 +1,4 @@
-package com.Isabela01vSilva.bank_isabela.service.client;
+package com.Isabela01vSilva.bank_isabela.service.schedule.client;
 
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
 import com.Isabela01vSilva.bank_isabela.service.transfer.TransferService;

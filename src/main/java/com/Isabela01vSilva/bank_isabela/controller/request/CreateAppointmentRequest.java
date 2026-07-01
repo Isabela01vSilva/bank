@@ -1,6 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.controller.request;
 
-import com.Isabela01vSilva.bank_isabela.service.client.dto.PayloadDTO;
+import com.Isabela01vSilva.bank_isabela.service.schedule.client.dto.PayloadDTO;
 
 import java.time.LocalDate;
 

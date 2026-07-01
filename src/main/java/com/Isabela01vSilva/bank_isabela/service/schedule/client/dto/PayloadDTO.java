@@ -1,4 +1,4 @@
-package com.Isabela01vSilva.bank_isabela.service.client.dto;
+package com.Isabela01vSilva.bank_isabela.service.schedule.client.dto;
 
 public class PayloadDTO {
 

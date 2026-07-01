@@ -1,8 +1,8 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
-import com.Isabela01vSilva.bank_isabela.service.client.dto.SchedulingDTO;
-import com.Isabela01vSilva.bank_isabela.service.client.ScheduleClientService;
-import com.Isabela01vSilva.bank_isabela.service.client.dto.StatusDTO;
+import com.Isabela01vSilva.bank_isabela.service.schedule.client.dto.SchedulingDTO;
+import com.Isabela01vSilva.bank_isabela.service.schedule.client.ScheduleClientService;
+import com.Isabela01vSilva.bank_isabela.service.schedule.client.dto.StatusDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,8 +1,12 @@
-package com.Isabela01vSilva.bank_isabela.service.client;
+package com.Isabela01vSilva.bank_isabela.service.schedule.client;
 
 import com.Isabela01vSilva.bank_isabela.exception.SchedulingNotFoundException;
 import com.Isabela01vSilva.bank_isabela.service.client.dto.*;
-import com.Isabela01vSilva.bank_isabela.service.data.request.CreateAppointmentScheduleRequest;
+import com.Isabela01vSilva.bank_isabela.service.schedule.client.request.CreateAppointmentScheduleRequest;
+import com.Isabela01vSilva.bank_isabela.service.schedule.client.dto.CallbackDTO;
+import com.Isabela01vSilva.bank_isabela.service.schedule.client.dto.SchedulingDTO;
+import com.Isabela01vSilva.bank_isabela.service.schedule.client.dto.StatusDTO;
+import com.Isabela01vSilva.bank_isabela.service.schedule.client.dto.UpdateAppointmentDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
