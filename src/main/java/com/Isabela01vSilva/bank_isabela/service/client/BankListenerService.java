@@ -1,20 +1,14 @@
 package com.Isabela01vSilva.bank_isabela.service.client;
 
-import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
-import com.Isabela01vSilva.bank_isabela.service.TransferService;
-import com.Isabela01vSilva.bank_isabela.service.client.dto.CallbackDTO;
-import com.Isabela01vSilva.bank_isabela.service.client.dto.PayloadDTO;
-import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferStatus;
+import com.Isabela01vSilva.bank_isabela.service.transfer.TransferService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Objects;
 

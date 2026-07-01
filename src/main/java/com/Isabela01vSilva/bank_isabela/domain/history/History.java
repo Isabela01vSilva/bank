@@ -1,4 +1,4 @@
-package com.Isabela01vSilva.bank_isabela.domain.historico;
+package com.Isabela01vSilva.bank_isabela.domain.history;
 
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Table(name = "historicos")
 @Entity(name = "Historico")
+@AllArgsConstructor
+@NoArgsConstructor
 public class History {
 
     @Id
@@ -27,11 +27,11 @@ public class History {
     private Account account;
 
     @ManyToOne
-    @JoinColumn(name = "id_cliente")
+    @JoinColumn(name = "id_cliente", nullable = false)
     private Customer customer;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_operacao")
+    @Column(name = "tipo_operacao", nullable = false)
     private HistoryType historyType;
 
     @Column(name = "valor")
@@ -40,7 +40,10 @@ public class History {
     @Column(name = "descricao")
     private String description;
 
-    @Column(name = "data_transacao")
+    @Column(name = "data_transacao", nullable = false)
     private LocalDateTime transactionDate;
 
+    public boolean hasAccount() {
+        return this.account != null;
+    }
 }

@@ -7,7 +7,7 @@ import com.Isabela01vSilva.bank_isabela.domain.transfer.TransferRepository;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
 import com.Isabela01vSilva.bank_isabela.mapper.TransferMappers;
-import com.Isabela01vSilva.bank_isabela.service.HistoryService;
+import com.Isabela01vSilva.bank_isabela.service.history.HistoryService;
 import com.Isabela01vSilva.bank_isabela.service.account.AccountValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

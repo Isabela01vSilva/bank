@@ -49,8 +49,8 @@ public class AccountController {
     }
 
     @GetMapping("/buscar/conta")
-    public ResponseEntity<AccountWithCustomerResponse> searchByAccuntNumberAndAgencyNumber(@RequestParam String accountNumber,
-                                                                                           @RequestParam String agencyNumber) {
+    public AccountWithCustomerResponse searchByAccuntNumberAndAgencyNumber(@RequestParam String accountNumber,
+                                                                           @RequestParam String agencyNumber) {
         return accountService.searchByAccountNumberAndAgency(accountNumber, agencyNumber);
     }
 

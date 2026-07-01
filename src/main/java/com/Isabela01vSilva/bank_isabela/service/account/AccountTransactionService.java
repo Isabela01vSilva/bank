@@ -3,7 +3,7 @@ package com.Isabela01vSilva.bank_isabela.service.account;
 import com.Isabela01vSilva.bank_isabela.controller.request.account.AccountTransactionRequest;
 import com.Isabela01vSilva.bank_isabela.domain.account.Account;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountRepository;
-import com.Isabela01vSilva.bank_isabela.service.HistoryService;
+import com.Isabela01vSilva.bank_isabela.service.history.HistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class AccountTransactionService {
 
             historyService.registerWithdrawal(account, request.amount());
         } catch (Exception e){
-            historyService.registerWithdrawalFailed(account, request.amount());
+            historyService.registerWithdrawalFailed(account, request.amount(), e.getMessage());
             throw  e;
         }
         return "Valor sacado: R$" + request.amount();

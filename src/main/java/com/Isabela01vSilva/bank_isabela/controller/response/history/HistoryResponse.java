@@ -1,6 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.controller.response.history;
 
-import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
+import com.Isabela01vSilva.bank_isabela.domain.history.HistoryType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

@@ -11,7 +11,7 @@ import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
 import com.Isabela01vSilva.bank_isabela.domain.customer.Customer;
 import com.Isabela01vSilva.bank_isabela.domain.customer.CustomerRepository;
 import com.Isabela01vSilva.bank_isabela.mapper.AccountMappers;
-import com.Isabela01vSilva.bank_isabela.service.HistoryService;
+import com.Isabela01vSilva.bank_isabela.service.history.HistoryService;
 import com.Isabela01vSilva.bank_isabela.service.customer.CustomerStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

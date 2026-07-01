@@ -3,11 +3,10 @@ package com.Isabela01vSilva.bank_isabela.controller;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.CustomerHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.controller.response.history.TransactionHistoryResponse;
 import com.Isabela01vSilva.bank_isabela.domain.account.AccountType;
-import com.Isabela01vSilva.bank_isabela.domain.historico.HistoryType;
-import com.Isabela01vSilva.bank_isabela.service.HistoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.Isabela01vSilva.bank_isabela.domain.history.HistoryType;
+import com.Isabela01vSilva.bank_isabela.service.history.HistoryQueryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -15,76 +14,39 @@ import java.util.List;
 
 @RestController
 @RequestMapping("historicos")
+@RequiredArgsConstructor
 public class HistoryController {
 
-    @Autowired
-    private HistoryService historyService;
+    private final HistoryQueryService historyQueryService;
 
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<CustomerHistoryResponse>> getCustomerHistory(@PathVariable Long customerId) {
-        var historyTypes = List.of(
-                HistoryType.ACCOUNT_CREATED,
-                HistoryType.ACCOUNT_REACTIVATED,
-                HistoryType.ACCOUNT_CLOSED,
-                HistoryType.CUSTOMER_UPDATED,
-                HistoryType.CUSTOMER_REACTIVATED,
-                HistoryType.CUSTOMER_INACTIVATED
-        );
-
-        List<CustomerHistoryResponse> history = historyService.getCustomerHistoryByTransactionType(customerId, historyTypes);
-
-        return history.isEmpty()
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(history);
+    @GetMapping("/conta/tipo")
+    public List<TransactionHistoryResponse> getByAccountType(@RequestParam Long customerId,
+                                                             @RequestParam AccountType accountType) {
+        return historyQueryService.getAccountType(customerId, accountType);
     }
 
-    @GetMapping("/account-type")
-    public ResponseEntity<List<TransactionHistoryResponse>> getAccountTypeHistory(@RequestParam Long customerId,
-                                                                                  @RequestParam AccountType accountType) {
-        List<TransactionHistoryResponse> history = historyService.getAccountHistoryByAccountType(
-                customerId,
-                accountType);
-
-        return history.isEmpty()
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(history);
+    @GetMapping("/cliente/tipo")
+    public List<CustomerHistoryResponse> getCustomerHistoryByTypes(@RequestParam Long customerId,
+                                                                   @RequestParam List<HistoryType> historyTypes) {
+        return historyQueryService.getCustomerHistoryByTypes(customerId, historyTypes);
     }
 
-    @GetMapping("/account/{accountId}")
-    public ResponseEntity<List<TransactionHistoryResponse>> getTransactionHistory(@PathVariable Long accountId,
-                                                                                  @RequestParam List<HistoryType> historyTypes) {
-
-        List<TransactionHistoryResponse> history = historyService.getAccountHistoryByTransactionType(accountId, historyTypes);
-
-        return history.isEmpty()
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(history);
+    @GetMapping("/conta/tipos")
+    public List<TransactionHistoryResponse> getAccountHistoryByTypes(@RequestParam Long accountId,
+                                                                     @RequestParam List<HistoryType> historyTypes) {
+        return historyQueryService.getAccountHistoryByTypes(accountId, historyTypes);
     }
 
-
-    @GetMapping("/between-dates/{accountId}")
-    public ResponseEntity<List<TransactionHistoryResponse>> getHistoryBetweenDates(@PathVariable Long accountId,
-                                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                                                   @RequestParam LocalDateTime startDate,
-                                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                                                   @RequestParam LocalDateTime endDate) {
-        List<TransactionHistoryResponse> history = historyService.getHistoryBetweenDates(
-                accountId,
-                startDate,
-                endDate);
-
-        return history.isEmpty()
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(history);
+    @GetMapping("/conta/dates")
+    public List<TransactionHistoryResponse> getByDateRange(@RequestParam Long accountId,
+                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end){
+        return historyQueryService.getByDateRange(accountId, start, end);
     }
 
-    @GetMapping("/customer/{customerId}/transaction")
-    public ResponseEntity<List<TransactionHistoryResponse>> getCustomerTransactions(@PathVariable Long customerId,
-                                                                                    @RequestParam(required = false) AccountType accountType){
-        List<TransactionHistoryResponse> history = historyService.getCustomerTransactions(customerId, accountType);
-
-        return history.isEmpty()
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.ok(history);
+    @GetMapping("/cliente/transacoes")
+    public List<TransactionHistoryResponse> getCustomerTransactions(@RequestParam Long customerId,
+                                                                    @RequestParam(required = false) AccountType accountType) {
+        return historyQueryService.getCustomerTransactions(customerId, accountType);
     }
 }

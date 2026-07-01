@@ -1,4 +1,4 @@
-package com.Isabela01vSilva.bank_isabela.domain.historico;
+package com.Isabela01vSilva.bank_isabela.domain.history;
 
 public enum HistoryType {
 
@@ -18,6 +18,7 @@ public enum HistoryType {
 
     // Movimentações financeiras
     DEPOSIT,
+    DEPOSIT_FAILED,
     WITHDRAWAL,
     WITHDRAWAL_FAILED,
     TRANSFER

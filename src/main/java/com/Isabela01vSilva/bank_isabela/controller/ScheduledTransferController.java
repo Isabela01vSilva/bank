@@ -1,8 +1,6 @@
 package com.Isabela01vSilva.bank_isabela.controller;
 
-import com.Isabela01vSilva.bank_isabela.controller.request.transfer.TransferenciaRequest;
-import com.Isabela01vSilva.bank_isabela.controller.response.account.MessageResponse;
-import com.Isabela01vSilva.bank_isabela.service.TransferService;
+import com.Isabela01vSilva.bank_isabela.service.transfer.TransferService;
 import com.Isabela01vSilva.bank_isabela.service.client.ScheduleClientService;
 import com.Isabela01vSilva.bank_isabela.service.data.request.CreateAppointmentScheduleRequest;
 import org.springframework.beans.factory.annotation.Autowired;
